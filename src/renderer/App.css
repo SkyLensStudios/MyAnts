@@ -1,0 +1,74 @@
+/* App component specific styles */
+
+.app {
+  /* Styles already defined in index.css */
+}
+
+.simulation-controls {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  z-index: 1000;
+  background: rgba(42, 42, 42, 0.95);
+  border-radius: 8px;
+  padding: 1rem;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.data-panel {
+  background: #2a2a2a;
+  border-bottom: 1px solid #444;
+  padding: 1rem;
+  max-height: 50%;
+  overflow-y: auto;
+}
+
+.performance-monitor {
+  background: #2a2a2a;
+  padding: 1rem;
+  flex: 1;
+  overflow-y: auto;
+}
+
+.threejs-container {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.loading-overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 2rem;
+  border-radius: 8px;
+  text-align: center;
+  z-index: 100;
+}
+
+/* Environmental Configuration Styles */
+.config-section {
+  margin-top: 1rem;
+  padding: 0.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.config-section h5 {
+  margin: 0 0 0.5rem 0;
+  color: #61dafb;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.config-section small {
+  display: block;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.75rem;
+  margin-top: 0.25rem;
+}
