@@ -65,14 +65,14 @@ async function testECSInitialization(): Promise<TestResult> {
       testName: 'ECS Initialization',
       passed,
       duration: performance.now() - startTime,
-      details: `${systemCount} systems initialized, ${entityCount} entities`
+      details: `${systemCount} systems initialized, ${entityCount} entities`,
     };
   } catch (error) {
     return {
       testName: 'ECS Initialization',
       passed: false,
       duration: performance.now() - startTime,
-      details: `Failed: ${error}`
+      details: `Failed: ${error}`,
     };
   }
 }
@@ -91,14 +91,14 @@ async function testConfigurationSystem(): Promise<TestResult> {
       testName: 'Configuration System',
       passed,
       duration: performance.now() - startTime,
-      details: `Preset: ${presetResult.isValid}, Export: ${exportedConfig.length} chars`
+      details: `Preset: ${presetResult.isValid}, Export: ${exportedConfig.length} chars`,
     };
   } catch (error) {
     return {
       testName: 'Configuration System',
       passed: false,
       duration: performance.now() - startTime,
-      details: `Failed: ${error}`
+      details: `Failed: ${error}`,
     };
   }
 }
@@ -114,23 +114,23 @@ async function testDataCompression(): Promise<TestResult> {
       ants: {
         positions: new Float32Array([1, 2, 3, 4, 5, 6]),
         states: new Float32Array([10, 20, 30, 40, 50, 60]),
-        count: 2
+        count: 2,
       },
       environment: {
         pheromones: new Float32Array([0.1, 0.2, 0.3]),
         temperature: new Float32Array([20, 21, 22]),
         humidity: new Float32Array([0.5, 0.6, 0.7]),
-        dimensions: { width: 100, height: 100 }
+        dimensions: { width: 100, height: 100 },
       },
       ai: { 
         memory: new Float32Array([1, 2, 3]),
-        decisions: new Float32Array([0.1, 0.2])
+        decisions: new Float32Array([0.1, 0.2]),
       },
       physics: { 
         forces: new Float32Array([0.1, 0.2]),
-        velocities: new Float32Array([1.0, 2.0])
+        velocities: new Float32Array([1.0, 2.0]),
       },
-      metadata: { simulationTime: Date.now(), frameCount: 1 }
+      metadata: { simulationTime: Date.now(), frameCount: 1 },
     };
 
     const compressed = await dataCompressionSystem.compressSimulationState(testData);
@@ -145,14 +145,14 @@ async function testDataCompression(): Promise<TestResult> {
       testName: 'Data Compression',
       passed,
       duration: performance.now() - startTime,
-      details: `Ratio: ${compressionRatio.toFixed(2)}:1, Valid: ${dataValid}`
+      details: `Ratio: ${compressionRatio.toFixed(2)}:1, Valid: ${dataValid}`,
     };
   } catch (error) {
     return {
       testName: 'Data Compression',
       passed: false,
       duration: performance.now() - startTime,
-      details: `Failed: ${error}`
+      details: `Failed: ${error}`,
     };
   }
 }
@@ -190,14 +190,14 @@ async function testFullIntegration(): Promise<TestResult> {
       testName: 'Full Integration',
       passed,
       duration: performance.now() - startTime,
-      details: `Ants: ${antCount}, Serialized: ${!!serialized}, Restored: ${restoredStats.entities.total > 0}`
+      details: `Ants: ${antCount}, Serialized: ${!!serialized}, Restored: ${restoredStats.entities.total > 0}`,
     };
   } catch (error) {
     return {
       testName: 'Full Integration',
       passed: false,
       duration: performance.now() - startTime,
-      details: `Failed: ${error}`
+      details: `Failed: ${error}`,
     };
   }
 }

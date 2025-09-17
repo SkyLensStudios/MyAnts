@@ -17,7 +17,7 @@ const AdvancedThreeJSRenderer: React.FC<AdvancedThreeJSRendererProps> = ({
   environmentData,
   simulationState,
   onAntSelected,
-  selectedAnt
+  selectedAnt,
 }) => {
   const mountRef = useRef<HTMLDivElement>(null);
   const sceneRef = useRef<THREE.Scene | null>(null);
@@ -59,7 +59,7 @@ const AdvancedThreeJSRenderer: React.FC<AdvancedThreeJSRendererProps> = ({
   const maxInstancesRef = useRef({
     workers: 1500,  // Increased to handle 1000+ workers
     soldiers: 300,  // Increased for larger colonies
-    queens: 100     // Increased for multiple queens
+    queens: 100,     // Increased for multiple queens
   });
   
   const [isInitialized, setIsInitialized] = useState(false);
@@ -88,32 +88,32 @@ const AdvancedThreeJSRenderer: React.FC<AdvancedThreeJSRendererProps> = ({
     // Create instanced materials for different castes (with vertex colors enabled)
     const workerMaterial = new THREE.MeshLambertMaterial({ 
       color: 0x8B4513, // Brown fallback
-      vertexColors: true // Enable instance colors
+      vertexColors: true, // Enable instance colors
     }); 
     const soldierMaterial = new THREE.MeshLambertMaterial({ 
       color: 0x800000, // Dark red fallback
-      vertexColors: true // Enable instance colors
+      vertexColors: true, // Enable instance colors
     }); 
     const queenMaterial = new THREE.MeshLambertMaterial({ 
       color: 0xFFD700, // Gold fallback
-      vertexColors: true // Enable instance colors
+      vertexColors: true, // Enable instance colors
     });
 
     // Create instanced meshes for each caste
     instancedMeshesRef.current.workers = new THREE.InstancedMesh(
       combinedGeometry, 
       workerMaterial, 
-      maxInstancesRef.current.workers
+      maxInstancesRef.current.workers,
     );
     instancedMeshesRef.current.soldiers = new THREE.InstancedMesh(
       combinedGeometry.clone(), 
       soldierMaterial, 
-      maxInstancesRef.current.soldiers
+      maxInstancesRef.current.soldiers,
     );
     instancedMeshesRef.current.queens = new THREE.InstancedMesh(
       combinedGeometry.clone(), 
       queenMaterial, 
-      maxInstancesRef.current.queens
+      maxInstancesRef.current.queens,
     );
 
     // Initialize matrices and colors
@@ -280,7 +280,7 @@ const AdvancedThreeJSRenderer: React.FC<AdvancedThreeJSRendererProps> = ({
       75,
       window.innerWidth / window.innerHeight,
       0.1,
-      1000
+      1000,
     );
     // Much closer camera position for seeing ants
     camera.position.set(0, 25, 40);
@@ -384,7 +384,7 @@ const AdvancedThreeJSRenderer: React.FC<AdvancedThreeJSRendererProps> = ({
     const groundMaterial = new THREE.MeshLambertMaterial({ 
       color: 0x8B7355,
       transparent: true,
-      opacity: 0.9
+      opacity: 0.9,
     });
     const ground = new THREE.Mesh(groundGeometry, groundMaterial);
     ground.rotation.x = -Math.PI / 2;
@@ -407,7 +407,7 @@ const AdvancedThreeJSRenderer: React.FC<AdvancedThreeJSRendererProps> = ({
       rock.position.set(
         (Math.random() - 0.5) * 80,
         Math.random() * 1,
-        (Math.random() - 0.5) * 80
+        (Math.random() - 0.5) * 80,
       );
       rock.castShadow = true;
       scene.add(rock);
@@ -429,7 +429,7 @@ const AdvancedThreeJSRenderer: React.FC<AdvancedThreeJSRendererProps> = ({
 
       const deltaMove = {
         x: event.clientX - previousMousePosition.x,
-        y: event.clientY - previousMousePosition.y
+        y: event.clientY - previousMousePosition.y,
       };
 
       // Rotate camera around center
@@ -481,7 +481,7 @@ const AdvancedThreeJSRenderer: React.FC<AdvancedThreeJSRendererProps> = ({
     // Body (main part) - use pooled geometry and materials
     const body = new THREE.Mesh(
       geometryPoolRef.current.antBody!, 
-      materialPoolRef.current.antBody!
+      materialPoolRef.current.antBody!,
     );
     body.castShadow = true;
     antGroup.add(body);
@@ -489,7 +489,7 @@ const AdvancedThreeJSRenderer: React.FC<AdvancedThreeJSRendererProps> = ({
     // Head - use pooled geometry and materials
     const head = new THREE.Mesh(
       geometryPoolRef.current.antHead!, 
-      materialPoolRef.current.antHead!
+      materialPoolRef.current.antHead!,
     );
     head.position.set(0, 0, 0.5);
     head.castShadow = true;
@@ -499,14 +499,14 @@ const AdvancedThreeJSRenderer: React.FC<AdvancedThreeJSRendererProps> = ({
     for (let i = 0; i < 6; i++) {
       const leg = new THREE.Mesh(
         geometryPoolRef.current.antLeg!, 
-        materialPoolRef.current.antLeg!
+        materialPoolRef.current.antLeg!,
       );
       const angle = (i / 6) * Math.PI * 2;
       const side = i < 3 ? 1 : -1;
       leg.position.set(
         Math.cos(angle) * 0.4 * side,
         -0.3,
-        Math.sin(angle) * 0.2
+        Math.sin(angle) * 0.2,
       );
       leg.rotation.z = side * Math.PI * 0.3;
       antGroup.add(leg);
@@ -523,7 +523,7 @@ const AdvancedThreeJSRenderer: React.FC<AdvancedThreeJSRendererProps> = ({
       console.log('🚫 AdvancedThreeJSRenderer: Scene not ready for rendering', {
         scene: !!sceneRef.current,
         antGroup: !!antGroupRef.current,
-        initialized: isInitialized
+        initialized: isInitialized,
       });
       return;
     }
@@ -557,7 +557,7 @@ const AdvancedThreeJSRenderer: React.FC<AdvancedThreeJSRendererProps> = ({
         matrix.setPosition(
           ant.position.x,
           Math.max(ant.position.y, 1.25), // Position above nest (nest height=1, top at Y=1)
-          ant.position.z
+          ant.position.z,
         );
         
         // Debug first few ants
@@ -599,7 +599,7 @@ const AdvancedThreeJSRenderer: React.FC<AdvancedThreeJSRendererProps> = ({
         matrix.setPosition(
           ant.position.x,
           Math.max(ant.position.y, 1.25), // Position above nest
-          ant.position.z
+          ant.position.z,
         );
         
         matrix.toArray(instanceMatricesRef.current.soldiers, i * 16);
@@ -632,7 +632,7 @@ const AdvancedThreeJSRenderer: React.FC<AdvancedThreeJSRendererProps> = ({
         matrix.setPosition(
           ant.position.x,
           Math.max(ant.position.y, 1.25), // Position above nest
-          ant.position.z
+          ant.position.z,
         );
         
         matrix.toArray(instanceMatricesRef.current.queens, i * 16);
@@ -713,7 +713,7 @@ const AdvancedThreeJSRenderer: React.FC<AdvancedThreeJSRendererProps> = ({
             size: 4, // Larger points
             vertexColors: true,
             transparent: true,
-            opacity: 0.8
+            opacity: 0.8,
           });
 
           const pheromoneSystem = new THREE.Points(geometry, material);
@@ -761,7 +761,7 @@ const AdvancedThreeJSRenderer: React.FC<AdvancedThreeJSRendererProps> = ({
         width: '100%', 
         height: '100vh',
         position: 'relative',
-        overflow: 'hidden'
+        overflow: 'hidden',
       }}
     >
       {/* Status Overlay */}
@@ -775,7 +775,7 @@ const AdvancedThreeJSRenderer: React.FC<AdvancedThreeJSRendererProps> = ({
         borderRadius: '5px',
         fontFamily: 'monospace',
         fontSize: '14px',
-        zIndex: 1000
+        zIndex: 1000,
       }}>
         <div>🐜 Ants: {antData.length}</div>
         <div>{simulationState.isRunning ? '🟢 Running' : '🔴 Paused'}</div>

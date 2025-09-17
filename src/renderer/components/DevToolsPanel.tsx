@@ -46,7 +46,7 @@ const DevToolsPanel: React.FC<DevToolsPanelProps> = ({
   selectedAnt,
   onAntSelect,
   onToggleOverlay,
-  onSimulationControl
+  onSimulationControl,
 }) => {
   const [activeTab, setActiveTab] = useState<'overview' | 'ants' | 'environment' | 'performance' | 'debug'>('overview');
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -58,7 +58,7 @@ const DevToolsPanel: React.FC<DevToolsPanelProps> = ({
     visionCones: false,
     foodDetection: false,
     taskColors: true,
-    antIDs: false
+    antIDs: false,
   });
 
   const performanceRef = useRef<PerformanceMetrics>({
@@ -68,7 +68,7 @@ const DevToolsPanel: React.FC<DevToolsPanelProps> = ({
     simulationTime: 0,
     memoryUsage: 0,
     antCount: 0,
-    visibleAnts: 0
+    visibleAnts: 0,
   });
 
   // Update performance metrics
@@ -82,7 +82,7 @@ const DevToolsPanel: React.FC<DevToolsPanelProps> = ({
         simulationTime: 0, // Will be updated by simulation
         memoryUsage: (performance as any).memory?.usedJSHeapSize || 0,
         antCount: antData.length,
-        visibleAnts: antData.length
+        visibleAnts: antData.length,
       };
       
       setPerformanceHistory(prev => {
@@ -150,7 +150,7 @@ const DevToolsPanel: React.FC<DevToolsPanelProps> = ({
       spreadX,
       spreadZ,
       foodSources: environmentData?.foodSources?.length || 0,
-      pheromoneFields: pheromoneData?.length || 0
+      pheromoneFields: pheromoneData?.length || 0,
     };
   };
 
@@ -167,7 +167,7 @@ const DevToolsPanel: React.FC<DevToolsPanelProps> = ({
         color: 'white',
         padding: '8px',
         borderRadius: '4px',
-        cursor: 'pointer'
+        cursor: 'pointer',
       }} onClick={() => setIsCollapsed(false)}>
         🔧 Dev Tools
       </div>
@@ -188,7 +188,7 @@ const DevToolsPanel: React.FC<DevToolsPanelProps> = ({
       zIndex: 10000,
       fontFamily: 'monospace',
       fontSize: '12px',
-      border: '1px solid #333'
+      border: '1px solid #333',
     }}>
       {/* Header */}
       <div style={{
@@ -197,7 +197,7 @@ const DevToolsPanel: React.FC<DevToolsPanelProps> = ({
         borderBottom: '1px solid #333',
         display: 'flex',
         justifyContent: 'space-between',
-        alignItems: 'center'
+        alignItems: 'center',
       }}>
         <span style={{ fontWeight: 'bold', color: '#00ff00' }}>🔧 Developer Tools</span>
         <button
@@ -207,7 +207,7 @@ const DevToolsPanel: React.FC<DevToolsPanelProps> = ({
             border: 'none',
             color: 'white',
             cursor: 'pointer',
-            padding: '4px'
+            padding: '4px',
           }}
         >
           ✕
@@ -218,7 +218,7 @@ const DevToolsPanel: React.FC<DevToolsPanelProps> = ({
       <div style={{
         display: 'flex',
         background: '#2d2d2d',
-        borderBottom: '1px solid #333'
+        borderBottom: '1px solid #333',
       }}>
         {['overview', 'ants', 'environment', 'performance', 'debug'].map(tab => (
           <button
@@ -231,7 +231,7 @@ const DevToolsPanel: React.FC<DevToolsPanelProps> = ({
               padding: '8px 12px',
               cursor: 'pointer',
               textTransform: 'capitalize',
-              fontSize: '11px'
+              fontSize: '11px',
             }}
           >
             {tab}
@@ -243,7 +243,7 @@ const DevToolsPanel: React.FC<DevToolsPanelProps> = ({
       <div style={{
         padding: '12px',
         maxHeight: '60vh',
-        overflowY: 'auto'
+        overflowY: 'auto',
       }}>
         {activeTab === 'overview' && (
           <div>
@@ -395,7 +395,7 @@ const DevToolsPanel: React.FC<DevToolsPanelProps> = ({
                     color: metric.fps < 30 ? '#ff6666' : metric.fps < 50 ? '#ffff66' : '#66ff66',
                     borderBottom: i < 9 ? '1px solid #444' : 'none',
                     paddingBottom: '2px',
-                    marginBottom: '2px'
+                    marginBottom: '2px',
                   }}>
                     {metric.fps} FPS | {metric.frameTime.toFixed(1)}ms | {(metric.memoryUsage / 1024 / 1024).toFixed(1)}MB
                   </div>
@@ -493,7 +493,7 @@ const DevToolsPanel: React.FC<DevToolsPanelProps> = ({
                   selectedAnt: selectedAnt,
                   simulationRunning: simulationState?.isRunning,
                   environmentLoaded: !!environmentData,
-                  pheromoneDataSize: pheromoneData?.length || 0
+                  pheromoneDataSize: pheromoneData?.length || 0,
                 }, null, 2)}
               </div>
             </div>

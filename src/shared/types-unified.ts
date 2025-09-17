@@ -195,7 +195,7 @@ export class ModeConversionUtils {
       color: ant3D.color,
       animationState: ant3D.animationState || 0,
       visible: ant3D.visible,
-      lodLevel: ant3D.lodLevel || 0
+      lodLevel: ant3D.lodLevel || 0,
     };
   }
 
@@ -219,7 +219,7 @@ export class ModeConversionUtils {
       generation: 1,
       animationState: ant2D.animationState,
       lodLevel: ant2D.lodLevel,
-      ...additionalData
+      ...additionalData,
     };
   }
 
@@ -231,7 +231,7 @@ export class ModeConversionUtils {
       position: ModeConversionUtils.to2D(pheromone3D.position),
       strength: pheromone3D.strength,
       type: pheromone3D.type.toString(),
-      decay: pheromone3D.decay
+      decay: pheromone3D.decay,
     };
   }
 
@@ -243,7 +243,7 @@ export class ModeConversionUtils {
       position: ModeConversionUtils.to2D(env3D.position),
       size: { x: env3D.size.x, y: env3D.size.y },
       type: env3D.type,
-      properties: env3D.properties
+      properties: env3D.properties,
     };
   }
 
@@ -258,7 +258,7 @@ export class ModeConversionUtils {
     return {
       antData: update.antData.map(ant => ModeConversionUtils.antDataTo2D(ant)),
       pheromoneData: update.pheromoneData.map(p => ModeConversionUtils.pheromoneDataTo2D(p)),
-      environmentData: update.environmentData.map(e => ModeConversionUtils.environmentDataTo2D(e))
+      environmentData: update.environmentData.map(e => ModeConversionUtils.environmentDataTo2D(e)),
     };
   }
 }

@@ -64,25 +64,25 @@ export class EnhancedLODSystem {
         fullDetail: 25,
         simplified: 75,
         statistical: 150,
-        aggregate: Number.MAX_VALUE
+        aggregate: Number.MAX_VALUE,
       },
       geometryReduction: {
         fullDetail: 1.0,
         simplified: 0.4,
         statistical: 0.15,
-        aggregate: 0.05
+        aggregate: 0.05,
       },
       maxAntsPerLOD: {
         fullDetail: 500,
         simplified: 2000,
         statistical: 5000,
-        aggregate: Number.MAX_VALUE
+        aggregate: Number.MAX_VALUE,
       },
       adaptiveThresholds: {
         performanceTarget: 60,
-        qualityReduction: 0.8
+        qualityReduction: 0.8,
       },
-      ...config
+      ...config,
     };
 
     this.performanceMetrics = {
@@ -91,11 +91,11 @@ export class EnhancedLODSystem {
         [LODLevel.FULL_DETAIL]: 0,
         [LODLevel.SIMPLIFIED]: 0,
         [LODLevel.STATISTICAL]: 0,
-        [LODLevel.AGGREGATE]: 0
+        [LODLevel.AGGREGATE]: 0,
       },
       renderTimeMs: 0,
       geometryReduction: 0,
-      performanceGain: 0
+      performanceGain: 0,
     };
 
     console.log('🎯 Enhanced LOD System initialized');
@@ -124,7 +124,7 @@ export class EnhancedLODSystem {
    */
   public processAntRenderData(
     antData: AntRenderData[],
-    currentFPS: number
+    currentFPS: number,
   ): LODRenderData[] {
     if (!this.config.enabled) {
       return antData.map(ant => ({
@@ -132,7 +132,7 @@ export class EnhancedLODSystem {
         lodLevel: LODLevel.FULL_DETAIL,
         distanceFromCamera: 0,
         geometryComplexity: 1.0,
-        renderPriority: 1.0
+        renderPriority: 1.0,
       }));
     }
 
@@ -145,7 +145,7 @@ export class EnhancedLODSystem {
       [LODLevel.FULL_DETAIL]: 0,
       [LODLevel.SIMPLIFIED]: 0,
       [LODLevel.STATISTICAL]: 0,
-      [LODLevel.AGGREGATE]: 0
+      [LODLevel.AGGREGATE]: 0,
     };
 
     // Calculate distances and assign LOD levels
@@ -178,7 +178,7 @@ export class EnhancedLODSystem {
     const scaledDistances = {
       fullDetail: this.config.distances.fullDetail * performanceScale,
       simplified: this.config.distances.simplified * performanceScale,
-      statistical: this.config.distances.statistical * performanceScale
+      statistical: this.config.distances.statistical * performanceScale,
     };
 
     // Determine LOD level
@@ -211,7 +211,7 @@ export class EnhancedLODSystem {
       lodLevel,
       distanceFromCamera: distance,
       geometryComplexity: geometryComplexity,
-      renderPriority: renderPriority * importanceMultiplier
+      renderPriority: renderPriority * importanceMultiplier,
     };
   }
 
@@ -238,7 +238,7 @@ export class EnhancedLODSystem {
    */
   private applyLODLimits(
     antData: LODRenderData[],
-    currentFPS: number
+    currentFPS: number,
   ): LODRenderData[] {
     const limits = this.config.maxAntsPerLOD;
     const counts = { ...this.performanceMetrics.lodDistribution };
@@ -249,7 +249,7 @@ export class EnhancedLODSystem {
       [LODLevel.FULL_DETAIL]: Math.floor(limits.fullDetail * performanceMultiplier),
       [LODLevel.SIMPLIFIED]: Math.floor(limits.simplified * performanceMultiplier),
       [LODLevel.STATISTICAL]: Math.floor(limits.statistical * performanceMultiplier),
-      [LODLevel.AGGREGATE]: limits.aggregate
+      [LODLevel.AGGREGATE]: limits.aggregate,
     };
 
     const result: LODRenderData[] = [];
@@ -305,7 +305,7 @@ export class EnhancedLODSystem {
       ...ant,
       lodLevel: newLodLevel,
       geometryComplexity: newGeometryComplexity,
-      renderPriority: ant.renderPriority * 0.8 // Slightly reduce priority
+      renderPriority: ant.renderPriority * 0.8, // Slightly reduce priority
     };
   }
 
@@ -379,7 +379,7 @@ export class EnhancedLODSystem {
       config: this.config,
       metrics: this.performanceMetrics,
       frameCount: this.frameCount,
-      cameraPosition: this.cameraPosition
+      cameraPosition: this.cameraPosition,
     };
   }
 }

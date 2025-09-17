@@ -103,7 +103,7 @@ export class MEBVHSpatialStructure {
     totalQueries: 0,
     averageQueryTime: 0,
     averageNodesVisited: 0,
-    cacheHitRate: 0
+    cacheHitRate: 0,
   };
   
   // Memory usage tracking
@@ -112,7 +112,7 @@ export class MEBVHSpatialStructure {
     entityMemory: 0,
     spatialHashMemory: 0,
     cacheMemory: 0,
-    totalMemory: 0
+    totalMemory: 0,
   };
 
   constructor(config: MEBVHConfig) {
@@ -302,7 +302,7 @@ export class MEBVHSpatialStructure {
     const boundsSize = {
       x: bounds.max.x - bounds.min.x,
       y: bounds.max.y - bounds.min.y,
-      z: bounds.max.z - bounds.min.z
+      z: bounds.max.z - bounds.min.z,
     };
 
     // Try splitting on each axis
@@ -341,7 +341,7 @@ export class MEBVHSpatialStructure {
 
     return {
       leftEntities: entities.slice(0, bestSplitPos),
-      rightEntities: entities.slice(bestSplitPos)
+      rightEntities: entities.slice(bestSplitPos),
     };
   }
 
@@ -364,7 +364,7 @@ export class MEBVHSpatialStructure {
       entities: [],
       queryTime: 0,
       nodesVisited: 0,
-      entitiesChecked: 0
+      entitiesChecked: 0,
     };
 
     if (this.rootNodeIndex === -1) {
@@ -544,13 +544,13 @@ export class MEBVHSpatialStructure {
       min: {
         x: entity.position.x - entity.radius,
         y: entity.position.y - entity.radius,
-        z: entity.position.z - entity.radius
+        z: entity.position.z - entity.radius,
       },
       max: {
         x: entity.position.x + entity.radius,
         y: entity.position.y + entity.radius,
-        z: entity.position.z + entity.radius
-      }
+        z: entity.position.z + entity.radius,
+      },
     };
   }
 
@@ -564,7 +564,7 @@ export class MEBVHSpatialStructure {
 
     const bounds: AABB = {
       min: { x: Infinity, y: Infinity, z: Infinity },
-      max: { x: -Infinity, y: -Infinity, z: -Infinity }
+      max: { x: -Infinity, y: -Infinity, z: -Infinity },
     };
 
     for (const entity of entities) {
@@ -616,7 +616,7 @@ export class MEBVHSpatialStructure {
     const invDir = {
       x: 1.0 / ray.direction.x,
       y: 1.0 / ray.direction.y,
-      z: 1.0 / ray.direction.z
+      z: 1.0 / ray.direction.z,
     };
 
     const t1 = (aabb.min.x - ray.origin.x) * invDir.x;
@@ -661,7 +661,7 @@ export class MEBVHSpatialStructure {
           const pos = {
             x: center.x + x * hashSize,
             y: center.y + y * hashSize,
-            z: center.z + z * hashSize
+            z: center.z + z * hashSize,
           };
           keys.add(this.calculateSpatialHash(pos));
         }
@@ -696,7 +696,7 @@ export class MEBVHSpatialStructure {
       isLeaf: false,
       entityCount: 0,
       lastAccess: performance.now(),
-      lodLevel: 0
+      lodLevel: 0,
     };
   }
 
@@ -708,7 +708,7 @@ export class MEBVHSpatialStructure {
       query.type,
       query.center ? `${query.center.x.toFixed(1)},${query.center.y.toFixed(1)},${query.center.z.toFixed(1)}` : '',
       query.radius?.toFixed(1) || '',
-      query.maxResults?.toString() || ''
+      query.maxResults?.toString() || '',
     ];
     return parts.join('|');
   }
@@ -786,7 +786,7 @@ export class MEBVHSpatialStructure {
       queryStats: { ...this.queryStats },
       memoryStats: { ...this.memoryStats },
       entityCount: this.entities.size,
-      nodeCount: this.nodes.length
+      nodeCount: this.nodes.length,
     };
   }
 

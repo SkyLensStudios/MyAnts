@@ -14,7 +14,7 @@ import {
   PerformanceStats,
   SimulationState,
   ConfigurationUtils,
-  isSimulationMode2D
+  isSimulationMode2D,
 } from '../shared/types-unified';
 import { AntSpecies } from '../shared/types';
 import SimulationControls from './components/SimulationControls';
@@ -41,7 +41,7 @@ const App: React.FC = () => {
     zoom: 1.0,
     rotation: 0,
     viewportWidth: 800,
-    viewportHeight: 600
+    viewportHeight: 600,
   });
   const [renderMetrics2D, setRenderMetrics2D] = useState<RenderMetrics2D | null>(null);
 
@@ -91,7 +91,7 @@ const App: React.FC = () => {
           isRunning: true,
           mode: update.mode,
           currentTime: update.timestamp,
-          stepCount: (prev?.stepCount || 0) + 1
+          stepCount: (prev?.stepCount || 0) + 1,
         }));
       }
     });
@@ -134,7 +134,7 @@ const App: React.FC = () => {
               antData: antData || [],
               pheromoneData: pheromoneData || [],
               environmentData: environmentData ? [environmentData] : [],
-              deltaTime: 16.67 // ~60fps
+              deltaTime: 16.67, // ~60fps
             };
             setSimulationData(unifiedData);
           }
@@ -238,7 +238,7 @@ const App: React.FC = () => {
       worldSeed: 12345,
       render3D: false,
       enableAdvancedRendering: false,
-      ...config
+      ...config,
     };
     
     await handleConfigureSimulation(currentConfig);
@@ -262,7 +262,7 @@ const App: React.FC = () => {
       worldSeed: 12345,
       render3D: true,
       enableAdvancedRendering: true,
-      ...config
+      ...config,
     };
     
     await handleConfigureSimulation(currentConfig);
@@ -301,7 +301,7 @@ const App: React.FC = () => {
             maxAntsToRender: 10000,
             antSize: 4,
             backgroundColor: '#1a1a1a',
-            enablePerformanceOptimizations: true
+            enablePerformanceOptimizations: true,
           }}
         />
       );
@@ -329,8 +329,8 @@ const App: React.FC = () => {
         additionalInfo: {
           pheromonesRendered: renderMetrics2D.pheromonesRendered,
           culledObjects: renderMetrics2D.culledObjects,
-          drawCalls: renderMetrics2D.totalDrawCalls
-        }
+          drawCalls: renderMetrics2D.totalDrawCalls,
+        },
       };
     }
     return performanceStats;

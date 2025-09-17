@@ -86,7 +86,7 @@ export class EnhancedChemicalSystemV3 {
     speedupFactor: 1,
     memoryUsage: 0,
     gpuUtilization: 0,
-    accuracy: 1.0
+    accuracy: 1.0,
   };
   
   // Visualization data
@@ -95,7 +95,7 @@ export class EnhancedChemicalSystemV3 {
 
   constructor(
     config: ChemicalSystemConfig,
-    performanceSystem: PerformanceOptimizationIntegrationV3
+    performanceSystem: PerformanceOptimizationIntegrationV3,
   ) {
     this.config = config;
     this.performanceSystem = performanceSystem;
@@ -156,7 +156,7 @@ export class EnhancedChemicalSystemV3 {
       height: this.config.gridDimensions.height,
       cellSize: this.config.cellSize,
       timeStep: this.config.timeStep,
-      spatialResolution: 1.0
+      spatialResolution: 1.0,
     };
 
     const cnnConfig: CNNConfig = {
@@ -167,13 +167,13 @@ export class EnhancedChemicalSystemV3 {
       padding: Math.floor(this.config.kernelSize / 2),
       activationFunction: 'relu',
       learningRate: 0.001,
-      batchSize: 32
+      batchSize: 32,
     };
 
     this.cnnDiffusion = new CNNAcceleratedDiffusion(
       gridConfig,
       cnnConfig,
-      this.performanceSystem
+      this.performanceSystem,
     );
 
     await this.cnnDiffusion.initialize();
@@ -190,13 +190,13 @@ export class EnhancedChemicalSystemV3 {
       spatialPartitions: this.config.spatialPartitions,
       enableAdaptiveTimeStep: true,
       convergenceThreshold: 1e-6,
-      stochasticSeed: 12345
+      stochasticSeed: 12345,
     };
 
     this.gillespieAlgorithm = new SpatialGillespieAlgorithm(
       this.config.gridDimensions.width,
       this.config.gridDimensions.height,
-      gillespieConfig
+      gillespieConfig,
     );
 
     console.log('✅ Spatial Gillespie algorithm initialized');
@@ -212,7 +212,7 @@ export class EnhancedChemicalSystemV3 {
       this.visualizationGrids.set(species, new Float32Array(gridSize));
       this.gradientCaches.set(species, {
         x: new Float32Array(gridSize),
-        y: new Float32Array(gridSize)
+        y: new Float32Array(gridSize),
       });
     }
 
@@ -249,7 +249,7 @@ export class EnhancedChemicalSystemV3 {
       this.visualizationGrids.set(species.id, new Float32Array(gridSize));
       this.gradientCaches.set(species.id, {
         x: new Float32Array(gridSize),
-        y: new Float32Array(gridSize)
+        y: new Float32Array(gridSize),
       });
     }
 
@@ -310,7 +310,7 @@ export class EnhancedChemicalSystemV3 {
           species: product.species,
           location: reaction.location,
           amount: product.amount,
-          time: this.currentTime
+          time: this.currentTime,
         };
 
         this.eventHistory.push(chemicalEvent);
@@ -323,7 +323,7 @@ export class EnhancedChemicalSystemV3 {
           species: reactant.species,
           location: reaction.location,
           amount: -reactant.amount,
-          time: this.currentTime
+          time: this.currentTime,
         };
 
         this.eventHistory.push(chemicalEvent);
@@ -422,7 +422,7 @@ export class EnhancedChemicalSystemV3 {
     worldX: number, 
     worldY: number, 
     amount: number,
-    antId?: string
+    antId?: string,
   ): void {
     if (!this.isInitialized) return;
 
@@ -446,7 +446,7 @@ export class EnhancedChemicalSystemV3 {
       species,
       location: { x: worldX, y: worldY },
       amount,
-      time: this.currentTime
+      time: this.currentTime,
     };
     this.eventHistory.push(event);
   }
@@ -487,7 +487,7 @@ export class EnhancedChemicalSystemV3 {
     return {
       concentrations,
       gradients,
-      dimensions: this.config.gridDimensions
+      dimensions: this.config.gridDimensions,
     };
   }
 
@@ -562,7 +562,7 @@ export class EnhancedChemicalSystemV3 {
       cnnEnabled: this.config.cnnEnabled,
       gillespieEnabled: this.config.gillespieEnabled,
       gpuAcceleration: this.config.enableGPUAcceleration,
-      qualityPreset: this.config.qualityPreset
+      qualityPreset: this.config.qualityPreset,
     };
   }
 
@@ -594,7 +594,7 @@ export class EnhancedChemicalSystemV3 {
       speedupFactor: 1,
       memoryUsage: 0,
       gpuUtilization: 0,
-      accuracy: 1.0
+      accuracy: 1.0,
     };
 
     console.log('🔄 Enhanced Chemical System v3 reset');

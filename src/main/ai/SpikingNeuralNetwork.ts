@@ -81,12 +81,12 @@ export class SpikingNeuralNetwork {
     averageStepTime: 0,
     spikeRate: 0,
     synapticActivity: 0,
-    networkSynchrony: 0
+    networkSynchrony: 0,
   };
 
   constructor(
     topology: SpikingNetworkTopology,
-    neuronParams: Partial<SpikingNeuronParameters> = {}
+    neuronParams: Partial<SpikingNeuronParameters> = {},
   ) {
     this.topology = topology;
     this.neuronParams = {
@@ -102,13 +102,13 @@ export class SpikingNeuralNetwork {
       stdpWindow: 20.0,           // ms
       potentiationFactor: 1.05,
       depressionFactor: 0.95,
-      ...neuronParams
+      ...neuronParams,
     };
     
     this.totalNeurons = [
       ...topology.inputLayers,
       ...topology.hiddenLayers,
-      ...topology.outputLayers
+      ...topology.outputLayers,
     ].reduce((sum, size) => sum + size, 0);
     
     this.totalSynapses = this.estimateSynapseCount();
@@ -121,7 +121,7 @@ export class SpikingNeuralNetwork {
       lastSpikeTime: new Float32Array(this.totalNeurons),
       synapticWeights: new Float32Array(this.totalSynapses),
       networkActivity: 0,
-      averageFiringRate: 0
+      averageFiringRate: 0,
     };
     
     this.initializeNetworkState();
@@ -138,7 +138,7 @@ export class SpikingNeuralNetwork {
       }
       
       const adapter = await navigator.gpu.requestAdapter({
-        powerPreference: 'high-performance'
+        powerPreference: 'high-performance',
       });
       
       if (!adapter) {
@@ -151,8 +151,8 @@ export class SpikingNeuralNetwork {
           maxStorageBufferBindingSize: 128 * 1024 * 1024, // 128MB for large networks
           maxComputeWorkgroupSizeX: 256,
           maxComputeWorkgroupSizeY: 256,
-          maxComputeWorkgroupSizeZ: 64
-        }
+          maxComputeWorkgroupSizeZ: 64,
+        },
       });
       
       // Create compute shaders
@@ -251,7 +251,7 @@ export class SpikingNeuralNetwork {
           // Decay synaptic current
           synapticCurrents[neuronId] *= exp(-dt / neuronParams.synapticDecay);
         }
-      `
+      `,
     });
 
     // Synaptic transmission shader
@@ -284,7 +284,7 @@ export class SpikingNeuralNetwork {
             synapticCurrents[synapse.postNeuronId] += synapse.weight;
           }
         }
-      `
+      `,
     });
 
     // STDP plasticity shader
@@ -333,7 +333,7 @@ export class SpikingNeuralNetwork {
             }
           }
         }
-      `
+      `,
     });
 
     // Create compute pipelines
@@ -341,24 +341,24 @@ export class SpikingNeuralNetwork {
       layout: 'auto',
       compute: {
         module: neuronUpdateShader,
-        entryPoint: 'main'
-      }
+        entryPoint: 'main',
+      },
     }));
 
     this.computePipelines.set('synapticUpdate', this.device.createComputePipeline({
       layout: 'auto',
       compute: {
         module: synapticUpdateShader,
-        entryPoint: 'main'
-      }
+        entryPoint: 'main',
+      },
     }));
 
     this.computePipelines.set('stdpUpdate', this.device.createComputePipeline({
       layout: 'auto',
       compute: {
         module: stdpShader,
-        entryPoint: 'main'
-      }
+        entryPoint: 'main',
+      },
     }));
   }
 
@@ -371,33 +371,33 @@ export class SpikingNeuralNetwork {
     // Neuron state buffers
     this.buffers.set('membraneVoltages', this.device.createBuffer({
       size: this.totalNeurons * 4, // Float32
-      usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST | GPUBufferUsage.COPY_SRC
+      usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST | GPUBufferUsage.COPY_SRC,
     }));
 
     this.buffers.set('synapticCurrents', this.device.createBuffer({
       size: this.totalNeurons * 4,
-      usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST | GPUBufferUsage.COPY_SRC
+      usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST | GPUBufferUsage.COPY_SRC,
     }));
 
     this.buffers.set('refractoryStates', this.device.createBuffer({
       size: this.totalNeurons * 4, // Uint32 for alignment
-      usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST | GPUBufferUsage.COPY_SRC
+      usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST | GPUBufferUsage.COPY_SRC,
     }));
 
     this.buffers.set('lastSpikeTime', this.device.createBuffer({
       size: this.totalNeurons * 4,
-      usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST | GPUBufferUsage.COPY_SRC
+      usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST | GPUBufferUsage.COPY_SRC,
     }));
 
     this.buffers.set('spikeEvents', this.device.createBuffer({
       size: this.totalNeurons * 4,
-      usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST | GPUBufferUsage.COPY_SRC
+      usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST | GPUBufferUsage.COPY_SRC,
     }));
 
     // Synaptic weights buffer
     this.buffers.set('synapticWeights', this.device.createBuffer({
       size: this.totalSynapses * 4,
-      usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST | GPUBufferUsage.COPY_SRC
+      usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST | GPUBufferUsage.COPY_SRC,
     }));
 
     // Parameter buffers
@@ -407,12 +407,12 @@ export class SpikingNeuralNetwork {
       this.neuronParams.resetPotential,
       this.neuronParams.timeConstant,
       this.neuronParams.refractoryPeriod,
-      this.neuronParams.synapticDecay
+      this.neuronParams.synapticDecay,
     ]);
 
     this.buffers.set('neuronParams', this.device.createBuffer({
       size: neuronParamsData.byteLength,
-      usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST
+      usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
     }));
 
     // Upload initial data
@@ -432,19 +432,19 @@ export class SpikingNeuralNetwork {
     this.device.queue.writeBuffer(
       this.buffers.get('membraneVoltages')!,
       0,
-      this.currentState.membraneVoltages
+      this.currentState.membraneVoltages,
     );
 
     this.device.queue.writeBuffer(
       this.buffers.get('synapticCurrents')!,
       0,
-      this.currentState.synapticCurrents
+      this.currentState.synapticCurrents,
     );
 
     this.device.queue.writeBuffer(
       this.buffers.get('synapticWeights')!,
       0,
-      this.currentState.synapticWeights
+      this.currentState.synapticWeights,
     );
   }
 
@@ -464,8 +464,8 @@ export class SpikingNeuralNetwork {
         { binding: 2, resource: { buffer: this.buffers.get('refractoryStates')! } },
         { binding: 3, resource: { buffer: this.buffers.get('lastSpikeTime')! } },
         { binding: 4, resource: { buffer: this.buffers.get('spikeEvents')! } },
-        { binding: 5, resource: { buffer: this.buffers.get('neuronParams')! } }
-      ]
+        { binding: 5, resource: { buffer: this.buffers.get('neuronParams')! } },
+      ],
     }));
   }
 
@@ -519,7 +519,7 @@ export class SpikingNeuralNetwork {
     // Create staging buffer
     const stagingBuffer = this.device.createBuffer({
       size: this.totalNeurons * 4,
-      usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ
+      usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ,
     });
 
     // Copy data to staging buffer
@@ -529,7 +529,7 @@ export class SpikingNeuralNetwork {
       0,
       stagingBuffer,
       0,
-      this.totalNeurons * 4
+      this.totalNeurons * 4,
     );
     this.device.queue.submit([commandEncoder.finish()]);
 
@@ -545,7 +545,7 @@ export class SpikingNeuralNetwork {
           neuronId: i,
           timestamp: this.simulationTime,
           layer: this.getNeuronLayer(i),
-          position: this.getNeuronPosition(i)
+          position: this.getNeuronPosition(i),
         });
       }
     }
@@ -587,7 +587,7 @@ export class SpikingNeuralNetwork {
           neuronId: i,
           timestamp: this.simulationTime,
           layer: this.getNeuronLayer(i),
-          position: this.getNeuronPosition(i)
+          position: this.getNeuronPosition(i),
         });
       } else {
         this.currentState.membraneVoltages[i] = newVoltage;
@@ -675,7 +675,7 @@ export class SpikingNeuralNetwork {
     
     return {
       x: positionInLayer % neuronsPerRow,
-      y: Math.floor(positionInLayer / neuronsPerRow)
+      y: Math.floor(positionInLayer / neuronsPerRow),
     };
   }
 
@@ -756,14 +756,14 @@ export class SpikingNetworkFactory {
       outputLayers: [8],        // Motor outputs (movement directions)
       connectionDensity: 0.7,
       lateralConnections: true,
-      recurrentConnections: false
+      recurrentConnections: false,
     };
     
     const neuronParams: Partial<SpikingNeuronParameters> = {
       learningRate: 0.005,      // Moderate learning rate
       stdpWindow: 15.0,         // 15ms STDP window
       excitatorySynapticWeight: 0.3,
-      inhibitorySynapticWeight: -0.2
+      inhibitorySynapticWeight: -0.2,
     };
     
     return new SpikingNeuralNetwork(topology, neuronParams);
@@ -779,13 +779,13 @@ export class SpikingNetworkFactory {
       outputLayers: [16],       // Memory outputs
       connectionDensity: 0.5,
       lateralConnections: true,
-      recurrentConnections: true
+      recurrentConnections: true,
     };
     
     const neuronParams: Partial<SpikingNeuronParameters> = {
       timeConstant: 30.0,       // Longer time constant for memory
       learningRate: 0.001,      // Slower learning for stability
-      stdpWindow: 25.0          // Longer STDP window
+      stdpWindow: 25.0,          // Longer STDP window
     };
     
     return new SpikingNeuralNetwork(topology, neuronParams);
@@ -801,13 +801,13 @@ export class SpikingNetworkFactory {
       outputLayers: [16],       // Processed features
       connectionDensity: 0.8,
       lateralConnections: false,
-      recurrentConnections: false
+      recurrentConnections: false,
     };
     
     const neuronParams: Partial<SpikingNeuronParameters> = {
       timeConstant: 10.0,       // Fast processing
       learningRate: 0.01,       // Rapid adaptation
-      threshold: -45.0          // Lower threshold for sensitivity
+      threshold: -45.0,          // Lower threshold for sensitivity
     };
     
     return new SpikingNeuralNetwork(topology, neuronParams);

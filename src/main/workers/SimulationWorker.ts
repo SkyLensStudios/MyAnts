@@ -12,7 +12,7 @@ import {
   PheromoneRenderData, 
   EnvironmentRenderData,
   SimulationUpdate,
-  AntSpecies
+  AntSpecies,
 } from '../../shared/types';
 
 // Worker message types
@@ -43,7 +43,7 @@ class SimulationWorker {
     avgUpdateTime: 0,
     maxUpdateTime: 0,
     totalUpdates: 0,
-    memoryUsage: 0
+    memoryUsage: 0,
   };
 
   constructor() {
@@ -51,7 +51,7 @@ class SimulationWorker {
       targetFPS: 60,
       maxDeltaTime: 50, // Max 50ms per frame to prevent spiral of death
       enablePerformanceLogging: true,
-      batchSize: 100 // Process ants in batches
+      batchSize: 100, // Process ants in batches
     };
 
     this.simulationEngine = new SimulationEngine();
@@ -143,7 +143,7 @@ class SimulationWorker {
       enableLearning: true,
       maxAnts: 1000,
       worldSeed: Math.random(),
-      ...config
+      ...config,
     };
     
     this.simulationEngine.configure(fullConfig);
@@ -244,7 +244,7 @@ class SimulationWorker {
         pheromoneData: renderData.pheromoneData,
         environmentData: renderData.environmentData,
         simulationState: simulationState,
-        frameCount: this.frameCount
+        frameCount: this.frameCount,
       });
     } catch (error) {
       console.error('Error sending render data:', error);
@@ -267,7 +267,7 @@ class SimulationWorker {
       const antPosition = position || {
         x: (Math.random() - 0.5) * 100,
         y: 0,
-        z: (Math.random() - 0.5) * 100
+        z: (Math.random() - 0.5) * 100,
       };
       
       this.simulationEngine.addAnt(antPosition);
@@ -315,7 +315,7 @@ class SimulationWorker {
       frameCount: this.frameCount,
       isRunning: this.isRunning,
       isPaused: this.isPaused,
-      config: this.config
+      config: this.config,
     };
   }
 
@@ -347,7 +347,7 @@ self.addEventListener('error', (event: ErrorEvent) => {
   console.error('Worker error:', event.error);
   self.postMessage({
     type: 'WORKER_ERROR',
-    data: { error: event.error.message, filename: event.filename, lineno: event.lineno }
+    data: { error: event.error.message, filename: event.filename, lineno: event.lineno },
   });
 });
 
@@ -356,7 +356,7 @@ self.addEventListener('unhandledrejection', (event: PromiseRejectionEvent) => {
   console.error('Worker unhandled promise rejection:', event.reason);
   self.postMessage({
     type: 'WORKER_ERROR',
-    data: { error: event.reason }
+    data: { error: event.reason },
   });
 });
 

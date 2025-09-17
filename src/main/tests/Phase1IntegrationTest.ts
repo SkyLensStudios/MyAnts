@@ -36,7 +36,7 @@ class Phase1IntegrationTest {
             webgpuPreferred: true,
             threadGroupSwizzling: true,
             memoryArenaSize: 268435456, // 256MB
-            temporalCompression: true
+            temporalCompression: true,
         };
         
         this.performanceSystem = new PerformanceOptimizationIntegrationV3(defaultConfig);
@@ -89,7 +89,7 @@ class Phase1IntegrationTest {
                     nearbyAnts: this.getNearbyAnts(ant, 50),
                     pheromoneGradient: { x: 0.1, y: 0.1 },
                     obstacles: [],
-                    resources: []
+                    resources: [],
                 };
                 
                 // Create AI for ant if not exists
@@ -181,7 +181,7 @@ class Phase1IntegrationTest {
         const tests = [
             { name: 'Massive Scale Mode', test: () => this.testMassiveScaleMode() },
             { name: 'AI Engine Scaling', test: () => this.testAIEngineScaling() },
-            { name: 'Performance Scaling', test: () => this.testPerformanceScaling() }
+            { name: 'Performance Scaling', test: () => this.testPerformanceScaling() },
         ];
         
         const results: { name: string; passed: boolean; error?: string }[] = [];
@@ -232,12 +232,12 @@ class Phase1IntegrationTest {
                 position: {
                     x: Math.random() * 1000,
                     y: Math.random() * 1000,
-                    z: 0
+                    z: 0,
                 },
                 genetics: { strength: 0.5, speed: 0.5, intelligence: 0.5 },
                 caste: i === 0 ? 'queen' : (i % 10 === 0 ? 'soldier' : 'worker'),
                 energy: 100,
-                age: Math.random() * 365
+                age: Math.random() * 365,
             });
         }
     }

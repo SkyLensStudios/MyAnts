@@ -111,7 +111,7 @@ export class PerformanceOptimizationIntegration {
     weatherComplexity: 0,
     soilComputeTime: 0,
     environmentalInfluence: 0,
-    ecosystemStability: 1.0
+    ecosystemStability: 1.0,
   };
 
   constructor(config: PerformanceIntegrationConfig) {
@@ -130,13 +130,13 @@ export class PerformanceOptimizationIntegration {
       maxFPS: config.targetFPS * 1.3,
       targetFrameTime: 1000 / config.targetFPS,
       maxMemoryUsage: config.massiveScaleMode ? 8 * 1024 * 1024 * 1024 : 4 * 1024 * 1024 * 1024, // 8GB for massive scale
-      maxCPUUsage: config.massiveScaleMode ? 95 : 80 // Higher CPU usage for massive scale
+      maxCPUUsage: config.massiveScaleMode ? 95 : 80, // Higher CPU usage for massive scale
     };
     
     this.performanceManager = new AdaptivePerformanceManager(
       targets,
       this.lodController,
-      this.computeCoordinator
+      this.computeCoordinator,
     );
     
     // Initialize v3 enhanced features
@@ -235,7 +235,7 @@ export class PerformanceOptimizationIntegration {
       isSupported: true,
       computePipelines: new Map(),
       bindGroups: new Map(),
-      commandEncoder: null
+      commandEncoder: null,
     };
     
     console.log('🔥 WebGPU device initialized with compute capabilities');
@@ -259,7 +259,7 @@ export class PerformanceOptimizationIntegration {
       diffusionRate: 0.1,
       evaporationRate: 0.01,
       sparseThreshold: 0.001,
-      activeRegionSize: 64
+      activeRegionSize: 64,
     });
     
     await this.gpuPheromones.initialize();
@@ -299,7 +299,7 @@ export class PerformanceOptimizationIntegration {
       this.advancedMemoryMgr = new AdvancedMemoryManager(
         this.config.memoryPool,
         this.config.isabela,
-        this.config.mebvh
+        this.config.mebvh,
       );
       console.log('🧠 Advanced memory manager initialized');
     }
@@ -349,7 +349,7 @@ export class PerformanceOptimizationIntegration {
             avgTemperature: 15,
             tempVariation: 10,
             precipitationChance: 0.3,
-            stormFrequency: 0.1
+            stormFrequency: 0.1,
           }],
           ['summer', {
             season: 'summer', 
@@ -357,7 +357,7 @@ export class PerformanceOptimizationIntegration {
             avgTemperature: 25,
             tempVariation: 8,
             precipitationChance: 0.2,
-            stormFrequency: 0.15
+            stormFrequency: 0.15,
           }],
           ['autumn', {
             season: 'autumn',
@@ -365,7 +365,7 @@ export class PerformanceOptimizationIntegration {
             avgTemperature: 10,
             tempVariation: 12,
             precipitationChance: 0.4,
-            stormFrequency: 0.08
+            stormFrequency: 0.08,
           }],
           ['winter', {
             season: 'winter',
@@ -373,9 +373,9 @@ export class PerformanceOptimizationIntegration {
             avgTemperature: -2,
             tempVariation: 15,
             precipitationChance: 0.25,
-            stormFrequency: 0.12
-          }]
-        ])
+            stormFrequency: 0.12,
+          }],
+        ]),
       };
       
       this.weatherSystem = new WeatherSystem(climateZone, new Date());
@@ -400,7 +400,7 @@ export class PerformanceOptimizationIntegration {
         computeMode: this.config.soilComputeMode,
         waterTableDepth: 2.0, // 2 meter water table
         erosionEnabled: true,
-        compactionEnabled: true
+        compactionEnabled: true,
       };
       
       // Calculate world dimensions based on ant count and resolution
@@ -411,7 +411,7 @@ export class PerformanceOptimizationIntegration {
         worldSize, // width
         worldSize, // height  
         5.0,       // depth (5 meters)
-        cellSize   // cell resolution
+        cellSize,   // cell resolution
       );
       
       console.log('🌱 Advanced soil system initialized');
@@ -593,7 +593,7 @@ export class PerformanceOptimizationIntegration {
   public processAntLOD(
     ants: Array<{ id: string; position: any; caste: string; lastActivity: number; isSelected: boolean; groupSize: number }>,
     camera: { position: any; direction: any; fov: number; farClip: number },
-    deltaTime: number
+    deltaTime: number,
   ): Map<LODLevel, string[]> {
     this.lodController.updateCamera(camera);
     
@@ -619,7 +619,7 @@ export class PerformanceOptimizationIntegration {
         radius: 0.1, // Standard ant radius
         bounds: { min: { x: 0, y: 0, z: 0 }, max: { x: 0, y: 0, z: 0 } }, // Will be calculated
         type: 'ant',
-        lastUpdate: performance.now()
+        lastUpdate: performance.now(),
       };
       
       // Update or add entity to spatial structure
@@ -633,7 +633,7 @@ export class PerformanceOptimizationIntegration {
   public async querySpatialAnts(
     center: { x: number; y: number; z: number },
     radius: number,
-    maxResults?: number
+    maxResults?: number,
   ): Promise<string[]> {
     if (!this.mebvhSpatial) return [];
     
@@ -641,7 +641,7 @@ export class PerformanceOptimizationIntegration {
       type: 'radius' as const,
       center,
       radius,
-      maxResults
+      maxResults,
     };
     
     const result = await this.mebvhSpatial.query(query);
@@ -654,7 +654,7 @@ export class PerformanceOptimizationIntegration {
   public async allocateAntMemory(
     antId: string,
     dataSize: number,
-    priority: number = 5
+    priority: number = 5,
   ): Promise<ArrayBuffer | null> {
     if (!this.advancedMemoryMgr) return new ArrayBuffer(dataSize);
     
@@ -664,7 +664,7 @@ export class PerformanceOptimizationIntegration {
       type: 'ant_data' as const,
       priority,
       accessPattern: 'spatial' as const,
-      expectedLifetime: 30000 // 30 seconds average ant lifetime
+      expectedLifetime: 30000, // 30 seconds average ant lifetime
     };
     
     return await this.advancedMemoryMgr.allocate(request);
@@ -720,12 +720,12 @@ export class PerformanceOptimizationIntegration {
       lodDistribution: performanceStatus.currentMetrics?.lodDistribution || new Map(),
       memoryUsage: {
         wasm: this.wasmManager.getMemoryUsage(),
-        gpu: this.gpuPheromones?.getPerformanceMetrics()
+        gpu: this.gpuPheromones?.getPerformanceMetrics(),
       },
       computeUtilization: computeQueue,
       qualityPreset: performanceStatus.currentPreset.name,
       autoScalingEnabled: performanceStatus.autoScalingEnabled,
-      capabilities
+      capabilities,
     };
   }
 
@@ -810,25 +810,25 @@ export class PerformanceOptimizationIntegration {
       compression: {
         ratio: compressionRatio,
         enabled: !!this.isabelaCompression,
-        memoryReduction: memoryReduction
+        memoryReduction: memoryReduction,
       },
       spatial: {
         queryTime: this.performanceMetrics.spatialQueryTime,
         enabled: !!this.mebvhSpatial,
-        memoryReduction: 50 // ME-BVH provides 50% spatial memory reduction
+        memoryReduction: 50, // ME-BVH provides 50% spatial memory reduction
       },
       memory: {
         tierDistribution: this.performanceMetrics.memoryTierDistribution,
         enabled: !!this.advancedMemoryMgr,
-        totalReduction: memoryReduction + 50 // Combined reduction
+        totalReduction: memoryReduction + 50, // Combined reduction
       },
       overall: {
         massiveScaleReady: this.performanceMetrics.massiveScaleActive && 
                           compressionRatio > 10 && 
                           this.performanceMetrics.spatialQueryTime < 5,
         performanceScore: performanceScore,
-        recommendations: recommendations
-      }
+        recommendations: recommendations,
+      },
     };
   }
 
@@ -875,7 +875,7 @@ export class PerformanceOptimizationIntegration {
       lod: this.lodController.getStatistics(),
       compute: this.computeCoordinator.getPerformanceStats(),
       wasm: this.wasmManager.getPerformanceMetrics(),
-      gpu: this.gpuPheromones?.getPerformanceMetrics()
+      gpu: this.gpuPheromones?.getPerformanceMetrics(),
     };
   }
 
@@ -887,7 +887,7 @@ export class PerformanceOptimizationIntegration {
       config: this.config,
       currentPreset: this.performanceManager.getPerformanceStatus().currentPreset,
       capabilities: this.getSystemCapabilities(),
-      timestamp: Date.now()
+      timestamp: Date.now(),
     };
   }
 
@@ -1032,7 +1032,7 @@ export class PerformanceOptimizationIntegration {
       soil: this.getSoilPropertiesAt(x, y, z),
       foragingFavorable: this.isForagingWeatherFavorable(),
       tunnelingSuitable: this.isTunnelingSuitable(x, y, z),
-      environmentalInfluence: this.getEnvironmentalInfluence()
+      environmentalInfluence: this.getEnvironmentalInfluence(),
     };
   }
 }
@@ -1070,7 +1070,7 @@ export function createPhase3Config(maxAnts: number = 50000): PerformanceIntegrat
       blockSize: 1024,
       quantizationBits: 12,
       enableWASMAcceleration: true,
-      targetCompressionRatio: 20 // 95% compression
+      targetCompressionRatio: 20, // 95% compression
     },
     
     mebvh: {
@@ -1081,7 +1081,7 @@ export function createPhase3Config(maxAnts: number = 50000): PerformanceIntegrat
       enableMemoryOptimization: true,
       enableSIMDOptimization: true,
       spatialHashBuckets: 1024,
-      temporalCoherence: true
+      temporalCoherence: true,
     },
     
     memoryPool: {
@@ -1094,7 +1094,7 @@ export function createPhase3Config(maxAnts: number = 50000): PerformanceIntegrat
       defragmentationInterval: 10000,
       accessDecayRate: 0.1,
       enablePredictiveAllocation: true,
-      enableAdaptiveCompression: true
+      enableAdaptiveCompression: true,
     },
     
     // Phase 4 Environmental Systems Configuration
@@ -1103,6 +1103,6 @@ export function createPhase3Config(maxAnts: number = 50000): PerformanceIntegrat
     enableEcosystemInteractions: maxAnts > 10000, // Enable for large simulations
     environmentalResolution: Math.min(512, Math.sqrt(maxAnts)), // Adaptive resolution
     weatherUpdateInterval: 5000, // Update every 5 seconds
-    soilComputeMode: maxAnts > 25000 ? 'gpu' : 'hybrid' // GPU for massive scale
+    soilComputeMode: maxAnts > 25000 ? 'gpu' : 'hybrid', // GPU for massive scale
   };
 }

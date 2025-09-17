@@ -11,7 +11,7 @@ import {
   SpatialQuery2D,
   QueryResult2D,
   Vector2DUtils,
-  AABB2DUtils
+  AABB2DUtils,
 } from '../../shared/types-2d';
 
 // 2D BVH Node
@@ -87,9 +87,9 @@ export class SpatialHashGrid2D {
         entities: new Set(),
         bounds: {
           min: { x: cellX * this.cellSize, y: cellY * this.cellSize },
-          max: { x: (cellX + 1) * this.cellSize, y: (cellY + 1) * this.cellSize }
+          max: { x: (cellX + 1) * this.cellSize, y: (cellY + 1) * this.cellSize },
         },
-        lastUpdate: Date.now()
+        lastUpdate: Date.now(),
       };
       this.cells.set(key, cell);
     }
@@ -235,7 +235,7 @@ export class SpatialHashGrid2D {
       totalCells: this.cells.size,
       totalEntities: this.entities.size,
       averageEntitiesPerCell: this.entities.size / Math.max(1, this.cells.size),
-      cellSize: this.cellSize
+      cellSize: this.cellSize,
     };
   }
 }
@@ -261,7 +261,7 @@ export class BVH2D {
       enableSpatialHashing: true,
       enableBVH: true,
       queryOptimization: true,
-      ...config
+      ...config,
     };
   }
 
@@ -279,7 +279,7 @@ export class BVH2D {
         entities: [],
         entityCount: 0,
         lastAccess: Date.now(),
-        depth: 0
+        depth: 0,
       });
     }
     return index;
@@ -318,7 +318,7 @@ export class BVH2D {
 
     return {
       min: { x: minX, y: minY },
-      max: { x: maxX, y: maxY }
+      max: { x: maxX, y: maxY },
     };
   }
 
@@ -392,7 +392,7 @@ export class BVH2D {
       const mid = Math.floor(entityIds.length / 2);
       return {
         left: entityIds.slice(0, mid),
-        right: entityIds.slice(mid)
+        right: entityIds.slice(mid),
       };
     }
 
@@ -452,7 +452,7 @@ export class BVH2D {
     const radiusSquared = radius * radius;
     const queryBounds: AABB2D = {
       min: { x: center.x - radius, y: center.y - radius },
-      max: { x: center.x + radius, y: center.y + radius }
+      max: { x: center.x + radius, y: center.y + radius },
     };
 
     this.queryNodeRadius(this.rootIndex, center, radiusSquared, queryBounds, results);
@@ -467,7 +467,7 @@ export class BVH2D {
     center: Vector2D,
     radiusSquared: number,
     queryBounds: AABB2D,
-    results: SpatialEntity2D[]
+    results: SpatialEntity2D[],
   ): void {
     const node = this.nodes[nodeIndex];
     if (!node || !AABB2DUtils.intersects(node.bounds, queryBounds)) {
@@ -549,7 +549,7 @@ export class BVH2D {
       totalNodes: this.nodes.length,
       totalEntities: this.entities.size,
       maxDepth: this.getMaxDepth(),
-      averageDepth: this.getAverageDepth()
+      averageDepth: this.getAverageDepth(),
     };
   }
 
@@ -586,7 +586,7 @@ export class SpatialOptimization2D {
       enableSpatialHashing: true,
       enableBVH: true,
       queryOptimization: true,
-      ...config
+      ...config,
     };
 
     this.hashGrid = new SpatialHashGrid2D(this.config.hashGridCellSize);
@@ -642,7 +642,7 @@ export class SpatialOptimization2D {
   public query(query: SpatialQuery2D): QueryResult2D {
     const startTime = performance.now();
     let entities: SpatialEntity2D[] = [];
-    let nodesVisited = 0;
+    const nodesVisited = 0;
     let entitiesChecked = 0;
 
     // Choose optimal query method based on query type and data structures
@@ -679,7 +679,7 @@ export class SpatialOptimization2D {
       entities,
       queryTime,
       nodesVisited,
-      entitiesChecked
+      entitiesChecked,
     };
   }
 
@@ -691,7 +691,7 @@ export class SpatialOptimization2D {
       type: 'radius',
       center: position,
       radius: maxRadius,
-      maxResults: count * 2 // Get more than needed for sorting
+      maxResults: count * 2, // Get more than needed for sorting
     };
 
     const result = this.query(query);
@@ -723,7 +723,7 @@ export class SpatialOptimization2D {
       entityCount: this.entityCount,
       hashGrid: this.config.enableSpatialHashing ? this.hashGrid.getStats() : null,
       bvh: this.config.enableBVH ? this.bvh.getStats() : null,
-      config: this.config
+      config: this.config,
     };
   }
 

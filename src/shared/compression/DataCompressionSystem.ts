@@ -78,7 +78,7 @@ export class DataCompressionSystem {
       compressionTime: 0,
       decompressionTime: 0,
       chunksActive: 0,
-      errorRate: 0
+      errorRate: 0,
     };
 
     console.log('🗜️ Data Compression System initialized');
@@ -243,7 +243,7 @@ export class DataCompressionSystem {
       if (simulationState.ants.positions.length > 0) {
         const posChunk = await this.compressAntPositions(
           simulationState.ants.positions, 
-          simulationState.ants.count
+          simulationState.ants.count,
         );
         if (posChunk) {
           chunks.push(posChunk);
@@ -253,7 +253,7 @@ export class DataCompressionSystem {
         const stateChunk = await this.compressAntStates(
           simulationState.ants.states, 
           simulationState.ants.count, 
-          10 // Assume 10 state fields per ant
+          10, // Assume 10 state fields per ant
         );
         if (stateChunk) {
           chunks.push(stateChunk);
@@ -265,7 +265,7 @@ export class DataCompressionSystem {
       const pheromoneChunk = await this.compressPheromoneGrid(
         simulationState.environment.pheromones,
         simulationState.environment.dimensions.width,
-        simulationState.environment.dimensions.height
+        simulationState.environment.dimensions.height,
       );
       if (pheromoneChunk) {
         chunks.push(pheromoneChunk);
@@ -274,7 +274,7 @@ export class DataCompressionSystem {
 
       const tempChunk = await this.compressEnvironmentData(
         simulationState.environment.temperature,
-        simulationState.environment.dimensions
+        simulationState.environment.dimensions,
       );
       if (tempChunk) {
         chunks.push(tempChunk);
@@ -309,10 +309,10 @@ export class DataCompressionSystem {
           simulationTime: simulationState.metadata.simulationTime,
           compressionConfig: this.config,
           originalSize,
-          compressedSize
+          compressedSize,
         },
         chunks,
-        checksum: this.calculatePackageChecksum(chunks)
+        checksum: this.calculatePackageChecksum(chunks),
       };
 
       console.log(`📦 Compressed simulation state: ${originalSize} → ${compressedSize} bytes (${((1 - compressedSize/originalSize) * 100).toFixed(1)}% reduction)`);
@@ -346,8 +346,8 @@ export class DataCompressionSystem {
         metadata: {
           simulationTime: statePackage.metadata.simulationTime,
           originalSize: statePackage.metadata.originalSize,
-          compressedSize: statePackage.metadata.compressedSize
-        }
+          compressedSize: statePackage.metadata.compressedSize,
+        },
       };
 
       // Decompress each chunk
@@ -414,7 +414,7 @@ export class DataCompressionSystem {
     
     console.log('🔧 Updated compression settings:', {
       level: this.config.compressionLevel,
-      targets: this.targets
+      targets: this.targets,
     });
   }
 
@@ -432,7 +432,7 @@ export class DataCompressionSystem {
       blockSize: 64,
       quantizationBits: 16,
       enableWASMAcceleration: systemConfig.performance.gpuAcceleration,
-      targetCompressionRatio: 10 // Target 90% compression
+      targetCompressionRatio: 10, // Target 90% compression
     };
   }
 
@@ -450,7 +450,7 @@ export class DataCompressionSystem {
       aiMemory: config.ai.memoryCapacity > 500,
       physicsStates: config.world.maxAnts > 2000,
       colonyStatistics: false, // Usually small data
-      spatialStructures: config.world.maxAnts > 5000
+      spatialStructures: config.world.maxAnts > 5000,
     };
   }
 
@@ -513,7 +513,7 @@ export class DataCompressionSystem {
     return {
       totalSaved: this.metrics.totalMemorySaved,
       compressionRatio: this.metrics.averageCompressionRatio,
-      activeChunks: this.metrics.chunksActive
+      activeChunks: this.metrics.chunksActive,
     };
   }
 }

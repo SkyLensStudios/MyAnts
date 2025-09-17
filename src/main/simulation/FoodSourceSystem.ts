@@ -50,7 +50,7 @@ export class FoodSourceSystem {
     position: Vector3,
     amount: number,
     type: FoodSource['type'] = 'fruit',
-    quality: number = 0.8
+    quality: number = 0.8,
   ): string {
     const id = `food_${this.nextFoodId++}`;
     
@@ -68,7 +68,7 @@ export class FoodSourceSystem {
       regenerationRate: type === 'nectar' ? 0.1 : type === 'fruit' ? 0.05 : 0,
       discoveredBy: new Set(),
       isExhausted: false,
-      radius: 2.0 // 2 meter detection radius
+      radius: 2.0, // 2 meter detection radius
     };
 
     this.foodSources.set(id, foodSource);
@@ -84,7 +84,7 @@ export class FoodSourceSystem {
     antId: string,
     position: Vector3,
     collectAmount: number,
-    deltaTime: number
+    deltaTime: number,
   ): { success: boolean; actualAmount: number; foodSourceId: string | null } {
     // Find nearby food sources
     const nearbyFoodSources = this.findNearbyFoodSources(position, 2.0);
@@ -105,7 +105,7 @@ export class FoodSourceSystem {
     const actualAmount = Math.min(
       collectAmount,
       maxCollectable,
-      bestFoodSource.currentAmount
+      bestFoodSource.currentAmount,
     );
 
     if (actualAmount > 0) {
@@ -126,7 +126,7 @@ export class FoodSourceSystem {
         foodSourceId: bestFoodSource.id,
         amountCollected: actualAmount,
         timestamp: Date.now(),
-        efficiency: actualAmount / maxCollectable
+        efficiency: actualAmount / maxCollectable,
       };
       this.collectionEvents.push(event);
 
@@ -138,7 +138,7 @@ export class FoodSourceSystem {
       return {
         success: true,
         actualAmount,
-        foodSourceId: bestFoodSource.id
+        foodSourceId: bestFoodSource.id,
       };
     }
 
@@ -155,7 +155,7 @@ export class FoodSourceSystem {
         const regenerated = foodSource.regenerationRate * deltaTime;
         foodSource.currentAmount = Math.min(
           foodSource.totalAmount,
-          foodSource.currentAmount + regenerated
+          foodSource.currentAmount + regenerated,
         );
       }
 
@@ -208,7 +208,7 @@ export class FoodSourceSystem {
       const position: Vector3 = {
         x: (Math.random() - 0.5) * worldSize,
         y: (Math.random() - 0.5) * worldSize,
-        z: 0
+        z: 0,
       };
       
       const type = foodTypes[Math.floor(Math.random() * foodTypes.length)];
@@ -233,7 +233,7 @@ export class FoodSourceSystem {
   } {
     const sources = Array.from(this.foodSources.values());
     const recentCollections = this.collectionEvents.filter(
-      event => Date.now() - event.timestamp < 10000 // Last 10 seconds
+      event => Date.now() - event.timestamp < 10000, // Last 10 seconds
     ).length;
 
     return {
@@ -241,7 +241,7 @@ export class FoodSourceSystem {
       exhaustedSources: sources.filter(s => s.isExhausted).length,
       totalFood: sources.reduce((sum, s) => sum + s.totalAmount, 0),
       remainingFood: sources.reduce((sum, s) => sum + s.currentAmount, 0),
-      recentCollections
+      recentCollections,
     };
   }
 

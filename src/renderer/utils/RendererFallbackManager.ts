@@ -40,13 +40,13 @@ export class RendererFallbackManager {
     console.log('🔧 Initializing renderer with fallback chain...');
     
     // Default result structure
-    let result: FallbackResult = {
+    const result: FallbackResult = {
       renderer: null,
       webgpuIntegration: null,
       renderingConfig: this.capabilityDetector.getRecommendedConfig(),
       actualRenderer: 'failed',
       limitations: [],
-      performanceHints: []
+      performanceHints: [],
     };
 
     // Try WebGPU first (if supported and recommended)
@@ -99,7 +99,7 @@ export class RendererFallbackManager {
           result.limitations.push(
             'Limited to WebGL1 features',
             'Reduced performance for large simulations',
-            'Some advanced rendering features disabled'
+            'Some advanced rendering features disabled',
           );
           console.log('✅ WebGL1 renderer initialized successfully');
           return result;
@@ -117,7 +117,7 @@ export class RendererFallbackManager {
       'No 3D acceleration available',
       'Simulation limited to 2D visualization',
       'Severely reduced performance',
-      'Limited visual fidelity'
+      'Limited visual fidelity',
     );
     result.performanceHints.push('Consider updating graphics drivers or using a different browser');
 
@@ -139,7 +139,7 @@ export class RendererFallbackManager {
         antialias: options.antialias ?? true,
         alpha: options.alpha ?? true,
         powerPreference: options.powerPreference ?? 'high-performance',
-        failIfMajorPerformanceCaveat: options.failIfMajorPerformanceCaveat ?? false
+        failIfMajorPerformanceCaveat: options.failIfMajorPerformanceCaveat ?? false,
       });
 
       // Ensure we're using WebGL2
@@ -155,7 +155,7 @@ export class RendererFallbackManager {
         lodLevels: 4,
         enableInstancedRendering: true,
         enableComputeShaderAcceleration: true,
-        gpuBufferPoolSize: 32 * 1024 * 1024 // 32MB buffer pool
+        gpuBufferPoolSize: 32 * 1024 * 1024, // 32MB buffer pool
       };
 
       // Create basic scene and camera for WebGPU integration
@@ -193,7 +193,7 @@ export class RendererFallbackManager {
         antialias: options.antialias ?? true,
         alpha: options.alpha ?? true,
         powerPreference: options.powerPreference ?? 'high-performance',
-        failIfMajorPerformanceCaveat: options.failIfMajorPerformanceCaveat ?? false
+        failIfMajorPerformanceCaveat: options.failIfMajorPerformanceCaveat ?? false,
       });
 
       // Verify WebGL2 context
@@ -227,7 +227,7 @@ export class RendererFallbackManager {
         antialias: options.antialias ?? false, // Reduce antialiasing for performance
         alpha: options.alpha ?? true,
         powerPreference: options.powerPreference ?? 'default',
-        failIfMajorPerformanceCaveat: false // Be more permissive
+        failIfMajorPerformanceCaveat: false, // Be more permissive
       });
 
       // Verify we have at least WebGL1

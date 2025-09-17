@@ -65,7 +65,7 @@ export class Transform implements Component {
     public rotationZ: number = 0,
     public scaleX: number = 1,
     public scaleY: number = 1,
-    public scaleZ: number = 1
+    public scaleZ: number = 1,
   ) {}
 
   setPosition(x: number, y: number, z: number): void {
@@ -95,7 +95,7 @@ export class Velocity implements Component {
     public x: number = 0,
     public y: number = 0,
     public z: number = 0,
-    public maxSpeed: number = 1.0
+    public maxSpeed: number = 1.0,
   ) {}
 
   setVelocity(x: number, y: number, z: number): void {
@@ -135,7 +135,7 @@ export class Health implements Component {
   constructor(
     public current: number = 100,
     public maximum: number = 100,
-    public regenerationRate: number = 0
+    public regenerationRate: number = 0,
   ) {}
 
   takeDamage(amount: number): boolean {
@@ -164,7 +164,7 @@ export class Energy implements Component {
     public current: number = 100,
     public maximum: number = 100,
     public consumptionRate: number = 1,
-    public regenerationRate: number = 0
+    public regenerationRate: number = 0,
   ) {}
 
   consume(amount: number): boolean {
@@ -189,7 +189,7 @@ export class AntIdentity implements Component {
     public caste: string,
     public age: number = 0,
     public generation: number = 0,
-    public colonyId: EntityId = 0
+    public colonyId: EntityId = 0,
   ) {}
 }
 
@@ -203,7 +203,7 @@ export class Task implements Component {
     public targetEntityId?: EntityId,
     public targetPosition?: { x: number; y: number; z: number },
     public progress: number = 0,
-    public isComplete: boolean = false
+    public isComplete: boolean = false,
   ) {}
 
   setTask(task: string, priority: number = 0): void {
@@ -228,7 +228,7 @@ export class Inventory implements Component {
   public items: Map<string, number> = new Map();
 
   constructor(
-    public capacity: number = 1
+    public capacity: number = 1,
   ) {}
 
   addItem(itemType: string, amount: number = 1): boolean {
@@ -284,7 +284,7 @@ export class Pheromone implements Component {
     public pheromoneType: string,
     public strength: number = 1.0,
     public decayRate: number = 0.01,
-    public radius: number = 10
+    public radius: number = 10,
   ) {}
 
   decay(deltaTime: number): boolean {
@@ -303,7 +303,7 @@ export class Renderable implements Component {
     public visible: boolean = true,
     public castShadow: boolean = true,
     public receiveShadow: boolean = true,
-    public scale: number = 1.0
+    public scale: number = 1.0,
   ) {}
 }
 
@@ -316,7 +316,7 @@ export class Physics implements Component {
     public friction: number = 0.1,
     public restitution: number = 0.3,
     public isStatic: boolean = false,
-    public gravityScale: number = 1.0
+    public gravityScale: number = 1.0,
   ) {}
 }
 
@@ -330,7 +330,7 @@ export class Collision implements Component {
     public width: number = 1.0,
     public height: number = 1.0,
     public depth: number = 1.0,
-    public isTrigger: boolean = false
+    public isTrigger: boolean = false,
   ) {}
 }
 
@@ -347,7 +347,7 @@ export class AI implements Component {
     public intelligence: number = 0.5,
     public aggressiveness: number = 0.5,
     public curiosity: number = 0.5,
-    public socialTendency: number = 0.5
+    public socialTendency: number = 0.5,
   ) {}
 
   canMakeDecision(currentTime: number): boolean {

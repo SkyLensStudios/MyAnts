@@ -35,6 +35,7 @@
     "engine/**/*",
     "src/shared/**/*",
     "src/types/**/*",
+    "src/tests/**/*",
     "*.ts",
     "*.tsx"
   ],

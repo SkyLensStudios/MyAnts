@@ -16,7 +16,7 @@ import {
   Energy,
   AntIdentity,
   Task,
-  AI
+  AI,
 } from './ECSCore';
 
 import {
@@ -28,13 +28,13 @@ import {
   PheromoneSystem,
   CollisionSystem,
   AgingSystem,
-  ecsSystems
+  ecsSystems,
 } from './ECSSystems';
 
 import { 
   EntityFactory, 
   createEntityFactory, 
-  createSimulationEnvironment 
+  createSimulationEnvironment, 
 } from './EntityFactory';
 
 import { SimulationConfiguration } from '../types-enhanced';
@@ -54,7 +54,7 @@ export class ECSManager {
     averageFrameTime: 0,
     entitiesCount: 0,
     systemsCount: 0,
-    lastFrameTime: 0
+    lastFrameTime: 0,
   };
 
   constructor() {
@@ -141,14 +141,14 @@ export class ECSManager {
     console.log('✅ Simulation environment created:', {
       ants: environment.colony.ants.length,
       foodSources: environment.foodSources.length,
-      entities: this.world.entityManager.getEntityCount()
+      entities: this.world.entityManager.getEntityCount(),
     });
 
     return {
       colonyId: environment.colony.colonyId,
       ants: environment.colony.ants,
       foodSources: environment.foodSources,
-      environment
+      environment,
     };
   }
 
@@ -187,7 +187,7 @@ export class ECSManager {
           energy: energy ? energy.current : 0,
           caste: identity.caste,
           task: task ? task.currentTask : 'idle',
-          age: identity.age
+          age: identity.age,
         });
       }
     }
@@ -227,17 +227,17 @@ export class ECSManager {
         total: this.world.entityManager.getEntityCount(),
         ants: antEntities.length,
         foodSources: foodEntities.length,
-        pheromones: pheromoneEntities.length
+        pheromones: pheromoneEntities.length,
       },
       performance: {
         frameTime: this.performanceMetrics.lastFrameTime,
         averageFrameTime: this.performanceMetrics.averageFrameTime,
-        fps: this.performanceMetrics.averageFrameTime > 0 ? 1000 / this.performanceMetrics.averageFrameTime : 0
+        fps: this.performanceMetrics.averageFrameTime > 0 ? 1000 / this.performanceMetrics.averageFrameTime : 0,
       },
       systems: {
         count: systemsCount,
-        enabled: enabledSystems
-      }
+        enabled: enabledSystems,
+      },
     };
   }
 
@@ -279,26 +279,26 @@ export class ECSManager {
       ants: {
         positions,
         states,
-        count: antData.length
+        count: antData.length,
       },
       environment: {
         pheromones: new Float32Array(0), // Would contain pheromone grid data
         temperature: new Float32Array(0), // Would contain temperature data
         humidity: new Float32Array(0), // Would contain humidity data
-        dimensions: { width: 200, height: 200 }
+        dimensions: { width: 200, height: 200 },
       },
       ai: {
         memory: new Float32Array(0), // Would contain AI memory data
-        decisions: new Float32Array(0)
+        decisions: new Float32Array(0),
       },
       physics: {
         forces: new Float32Array(0), // Would contain physics forces
-        velocities: new Float32Array(0)
+        velocities: new Float32Array(0),
       },
       metadata: {
         simulationTime: performance.now(),
-        frameCount: this.performanceMetrics.entitiesCount
-      }
+        frameCount: this.performanceMetrics.entitiesCount,
+      },
     };
 
     try {
@@ -422,7 +422,7 @@ export class ECSManager {
       const position = {
         x: positions[basePos] || 0,
         y: positions[basePos + 1] || 0,
-        z: positions[basePos + 2] || 0
+        z: positions[basePos + 2] || 0,
       };
 
       const health = states[baseState] || 100;
@@ -501,7 +501,7 @@ export async function createECSSimulation(): Promise<{
   
   return {
     manager: ecsManager,
-    simulation
+    simulation,
   };
 }
 
@@ -523,7 +523,7 @@ export function getSimulationData(): {
 } {
   return {
     ants: ecsManager.getAntData(),
-    stats: ecsManager.getSimulationStats()
+    stats: ecsManager.getSimulationStats(),
   };
 }
 

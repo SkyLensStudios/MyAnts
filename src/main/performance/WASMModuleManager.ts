@@ -70,10 +70,10 @@ export class WASMModuleManager {
           'updateCollisions',
           'calculateForces', 
           'integrateMotion',
-          'processBatch'
+          'processBatch',
         ],
         sharedMemorySize: 8 * 1024 * 1024, // 8MB
-        isLoaded: false
+        isLoaded: false,
       },
       {
         name: 'pathfinding',
@@ -83,10 +83,10 @@ export class WASMModuleManager {
           'calculatePath',
           'updateFlowField',
           'findNearest',
-          'batchPathfinding'
+          'batchPathfinding',
         ],
         sharedMemorySize: 4 * 1024 * 1024, // 4MB
-        isLoaded: false
+        isLoaded: false,
       },
       {
         name: 'ai',
@@ -96,10 +96,10 @@ export class WASMModuleManager {
           'makeDecision',
           'updateMemory',
           'processLearning',
-          'batchAIUpdate'
+          'batchAIUpdate',
         ],
         sharedMemorySize: 16 * 1024 * 1024, // 16MB
-        isLoaded: false
+        isLoaded: false,
       },
       {
         name: 'pheromones',
@@ -109,11 +109,11 @@ export class WASMModuleManager {
           'diffuseChemicals',
           'updateConcentration',
           'calculateGradient',
-          'batchDiffusion'
+          'batchDiffusion',
         ],
         sharedMemorySize: 2 * 1024 * 1024, // 2MB
-        isLoaded: false
-      }
+        isLoaded: false,
+      },
     ];
   }
 
@@ -136,13 +136,13 @@ export class WASMModuleManager {
           memory: new WebAssembly.Memory({
             initial: config.sharedMemorySize / (64 * 1024), // Convert to pages
             maximum: config.sharedMemorySize / (64 * 1024),
-            shared: true
+            shared: true,
           }),
           // Import JavaScript functions that WASM can call
           log: (level: number, message: number) => this.handleWASMLog(level, message),
           getTime: () => performance.now(),
-          random: () => Math.random()
-        }
+          random: () => Math.random(),
+        },
       };
       
       const instance = await WebAssembly.instantiate(module, importObject);
@@ -198,7 +198,7 @@ export class WASMModuleManager {
   public async processPhysicsBatch(
     antIds: Uint32Array,
     deltaTime: number,
-    forceMultiplier: number = 1.0
+    forceMultiplier: number = 1.0,
   ): Promise<void> {
     const startTime = performance.now();
     
@@ -212,7 +212,7 @@ export class WASMModuleManager {
         antIds.byteOffset,
         antIds.length,
         deltaTime,
-        forceMultiplier
+        forceMultiplier,
       );
       
       const endTime = performance.now();
@@ -221,7 +221,7 @@ export class WASMModuleManager {
         wasmComputeTime: endTime - startTime,
         memoryTransferTime: 0.05, // Estimated
         batchSize: antIds.length,
-        throughputPerSecond: (antIds.length / ((endTime - startTime) / 1000))
+        throughputPerSecond: (antIds.length / ((endTime - startTime) / 1000)),
       });
       
     } catch (error) {
@@ -236,7 +236,7 @@ export class WASMModuleManager {
   public async processAIBatch(
     antIds: Uint32Array, 
     contextData: Float32Array,
-    environmentData: Float32Array
+    environmentData: Float32Array,
   ): Promise<Uint32Array> {
     const startTime = performance.now();
     
@@ -255,7 +255,7 @@ export class WASMModuleManager {
         antIds.byteOffset,
         antIds.length,
         contextData.byteOffset,
-        environmentData.byteOffset
+        environmentData.byteOffset,
       );
       
       // Extract results from shared memory
@@ -269,7 +269,7 @@ export class WASMModuleManager {
         wasmComputeTime: endTime - startTime,
         memoryTransferTime: 0.1,
         batchSize: antIds.length,
-        throughputPerSecond: (antIds.length / ((endTime - startTime) / 1000))
+        throughputPerSecond: (antIds.length / ((endTime - startTime) / 1000)),
       });
       
       return results;
@@ -286,7 +286,7 @@ export class WASMModuleManager {
   public async processPathfindingBatch(
     antIds: Uint32Array,
     targets: Float32Array,
-    obstacles: Float32Array
+    obstacles: Float32Array,
   ): Promise<Float32Array> {
     const startTime = performance.now();
     
@@ -305,7 +305,7 @@ export class WASMModuleManager {
         antIds.byteOffset,
         antIds.length,
         targets.byteOffset,
-        obstacles.byteOffset
+        obstacles.byteOffset,
       );
       
       // Extract path results
@@ -319,7 +319,7 @@ export class WASMModuleManager {
         wasmComputeTime: endTime - startTime,
         memoryTransferTime: 0.08,
         batchSize: antIds.length,
-        throughputPerSecond: (antIds.length / ((endTime - startTime) / 1000))
+        throughputPerSecond: (antIds.length / ((endTime - startTime) / 1000)),
       });
       
       return results;
@@ -336,7 +336,7 @@ export class WASMModuleManager {
   public async processPheromonesDiffusion(
     gridSize: number,
     deltaTime: number,
-    diffusionRate: number
+    diffusionRate: number,
   ): Promise<void> {
     const startTime = performance.now();
     
@@ -350,7 +350,7 @@ export class WASMModuleManager {
         gridSize,
         gridSize,
         deltaTime,
-        diffusionRate
+        diffusionRate,
       );
       
       const endTime = performance.now();
@@ -359,7 +359,7 @@ export class WASMModuleManager {
         wasmComputeTime: endTime - startTime,
         memoryTransferTime: 0.02,
         batchSize: gridSize * gridSize,
-        throughputPerSecond: ((gridSize * gridSize) / ((endTime - startTime) / 1000))
+        throughputPerSecond: ((gridSize * gridSize) / ((endTime - startTime) / 1000)),
       });
       
     } catch (error) {
@@ -415,7 +415,7 @@ export class WASMModuleManager {
     return {
       totalSize,
       usedSize,
-      efficiency: usedSize / totalSize
+      efficiency: usedSize / totalSize,
     };
   }
 

@@ -53,11 +53,11 @@ export class AdaptiveLODController {
       [LODLevel.FULL_DETAIL]: 0,
       [LODLevel.SIMPLIFIED]: 0,
       [LODLevel.STATISTICAL]: 0,
-      [LODLevel.AGGREGATE]: 0
+      [LODLevel.AGGREGATE]: 0,
     },
     adaptationHistory: [],
     webgpuUtilization: 0,
-    memoryPressure: 0
+    memoryPressure: 0,
   };
   
   // Adaptive control state
@@ -68,7 +68,7 @@ export class AdaptiveLODController {
   constructor(
     lodController: LODController,
     webgpuPipeline: WebGPUComputePipelineManager,
-    performanceSystem: PerformanceOptimizationIntegrationV3
+    performanceSystem: PerformanceOptimizationIntegrationV3,
   ) {
     this.lodController = lodController;
     this.webgpuPipeline = webgpuPipeline;
@@ -83,9 +83,9 @@ export class AdaptiveLODController {
         low: 0.3,
         medium: 0.6,
         high: 0.8,
-        ultra: 1.0
+        ultra: 1.0,
       },
-      adaptationRate: 0.1
+      adaptationRate: 0.1,
     };
   }
 
@@ -143,7 +143,7 @@ export class AdaptiveLODController {
       gpuUtilization: 0,
       lastComputeTime: 0,
       averageComputeTime: 0,
-      memoryUsage: 0
+      memoryUsage: 0,
     };
     
     const systemMetrics = this.performanceSystem.getPerformanceStatus();
@@ -156,7 +156,7 @@ export class AdaptiveLODController {
       gpuUtilization: webgpuMetrics.gpuUtilization,
       computeTime: webgpuMetrics.lastComputeTime,
       memoryBandwidth: webgpuMetrics.averageComputeTime, // Use averageComputeTime as bandwidth proxy
-      thermalState: systemMetrics.systemLoad || 0.5 // Use systemLoad as thermal proxy
+      thermalState: systemMetrics.systemLoad || 0.5, // Use systemLoad as thermal proxy
     };
   }
 
@@ -306,7 +306,7 @@ export class AdaptiveLODController {
       fullDetailRatio,
       simplifiedRatio,
       statisticalRatio,
-      aggregateRatio
+      aggregateRatio,
     });
     
     // Update metrics
@@ -314,7 +314,7 @@ export class AdaptiveLODController {
       [LODLevel.FULL_DETAIL]: assignments.fullDetail,
       [LODLevel.SIMPLIFIED]: assignments.simplified,
       [LODLevel.STATISTICAL]: assignments.statistical,
-      [LODLevel.AGGREGATE]: assignments.aggregate
+      [LODLevel.AGGREGATE]: assignments.aggregate,
     };
     
     // Apply assignments to simulation system
@@ -348,8 +348,8 @@ export class AdaptiveLODController {
         fullDetail: sortedAnts.slice(0, fullDetailCount),
         simplified: sortedAnts.slice(fullDetailCount, fullDetailCount + simplifiedCount),
         statistical: sortedAnts.slice(fullDetailCount + simplifiedCount, fullDetailCount + simplifiedCount + statisticalCount),
-        aggregate: sortedAnts.slice(fullDetailCount + simplifiedCount + statisticalCount)
-      }
+        aggregate: sortedAnts.slice(fullDetailCount + simplifiedCount + statisticalCount),
+      },
     };
   }
 

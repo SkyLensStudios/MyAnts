@@ -60,7 +60,7 @@ const ThreeJSRenderer: React.FC<ThreeJSRendererProps> = ({
     enableParticleSystems: true,
     maxRenderDistance: 500,
     lodDistances: [50, 150, 300],
-    antInstanceLimit: 50000
+    antInstanceLimit: 50000,
   });
   
   const [performanceMetrics, setPerformanceMetrics] = useState<PerformanceMetrics>({
@@ -68,7 +68,7 @@ const ThreeJSRenderer: React.FC<ThreeJSRendererProps> = ({
     trianglesRendered: 0,
     drawCalls: 0,
     instancesRendered: 0,
-    gpuMemoryUsage: 0
+    gpuMemoryUsage: 0,
   });
 
   // Performance monitoring
@@ -88,7 +88,7 @@ const ThreeJSRenderer: React.FC<ThreeJSRendererProps> = ({
         alpha: true,
         powerPreference: 'high-performance',
         stencil: false,
-        depth: true
+        depth: true,
       });
       
       // Enable advanced rendering features
@@ -120,7 +120,7 @@ const ThreeJSRenderer: React.FC<ThreeJSRendererProps> = ({
         75,
         mountRef.current.clientWidth / mountRef.current.clientHeight,
         0.1,
-        2000
+        2000,
       );
       camera.position.set(50, 50, 50);
       camera.lookAt(0, 0, 0);
@@ -168,14 +168,14 @@ const ThreeJSRenderer: React.FC<ThreeJSRendererProps> = ({
     const antMaterial = new THREE.MeshLambertMaterial({
       color: 0x8B4513,
       transparent: true,
-      opacity: 0.9
+      opacity: 0.9,
     });
 
     // Create instanced mesh for 50,000 ants
     const instancedMesh = new THREE.InstancedMesh(
       antGeometry,
       antMaterial,
-      renderingConfig.antInstanceLimit
+      renderingConfig.antInstanceLimit,
     );
     
     instancedMesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
@@ -188,7 +188,7 @@ const ThreeJSRenderer: React.FC<ThreeJSRendererProps> = ({
       dummy.position.set(
         (Math.random() - 0.5) * 200,
         0,
-        (Math.random() - 0.5) * 200
+        (Math.random() - 0.5) * 200,
       );
       dummy.updateMatrix();
       instancedMesh.setMatrixAt(i, dummy.matrix);
@@ -232,7 +232,7 @@ const ThreeJSRenderer: React.FC<ThreeJSRendererProps> = ({
       const legPosition = new THREE.Vector3(
         0.2 + Math.cos(angle) * 0.1,
         -0.3,
-        Math.sin(angle) * 0.3
+        Math.sin(angle) * 0.3,
       );
       addCylinder(vertices, indices, normals, uvs, legPosition, 0.05, 0.4, 6);
     }
@@ -286,7 +286,7 @@ const ThreeJSRenderer: React.FC<ThreeJSRendererProps> = ({
     const material = new THREE.ShaderMaterial({
       uniforms: {
         time: { value: 0 },
-        pointTexture: { value: createCircleTexture() }
+        pointTexture: { value: createCircleTexture() },
       },
       vertexShader: `
         attribute float size;
@@ -313,7 +313,7 @@ const ThreeJSRenderer: React.FC<ThreeJSRendererProps> = ({
       blending: THREE.AdditiveBlending,
       depthTest: false,
       transparent: true,
-      vertexColors: true
+      vertexColors: true,
     });
     
     const points = new THREE.Points(geometry, material);
@@ -334,7 +334,7 @@ const ThreeJSRenderer: React.FC<ThreeJSRendererProps> = ({
     const groundMaterial = new THREE.MeshLambertMaterial({
       color: 0x2d1810,
       transparent: true,
-      opacity: 0.8
+      opacity: 0.8,
     });
     
     const ground = new THREE.Mesh(groundGeometry, groundMaterial);
@@ -426,7 +426,7 @@ const ThreeJSRenderer: React.FC<ThreeJSRendererProps> = ({
     // Update performance metrics
     setPerformanceMetrics(prev => ({
       ...prev,
-      instancesRendered: instanceCount
+      instancesRendered: instanceCount,
     }));
   }, [antData, renderingConfig.antInstanceLimit]);
 
@@ -553,7 +553,7 @@ const ThreeJSRenderer: React.FC<ThreeJSRendererProps> = ({
         trianglesRendered: rendererRef.current?.info.render.triangles || 0,
         drawCalls: rendererRef.current?.info.render.calls || 0,
         gpuMemoryUsage: (rendererRef.current?.info.memory.geometries || 0) + 
-                       (rendererRef.current?.info.memory.textures || 0)
+                       (rendererRef.current?.info.memory.textures || 0),
       }));
       
       frameCount.current = 0;
@@ -670,7 +670,7 @@ const ThreeJSRenderer: React.FC<ThreeJSRendererProps> = ({
       rock.position.set(
         (Math.random() - 0.5) * 180,
         0,
-        (Math.random() - 0.5) * 180
+        (Math.random() - 0.5) * 180,
       );
       rock.castShadow = true;
       rock.receiveShadow = true;
@@ -775,7 +775,7 @@ const ThreeJSRenderer: React.FC<ThreeJSRendererProps> = ({
         padding: '10px',
         borderRadius: '5px',
         fontFamily: 'monospace',
-        fontSize: '12px'
+        fontSize: '12px',
       }}>
         <div>FPS: {performanceMetrics.fps}</div>
         <div>Instances: {performanceMetrics.instancesRendered}</div>
@@ -793,7 +793,7 @@ const ThreeJSRenderer: React.FC<ThreeJSRendererProps> = ({
           background: 'rgba(0,0,0,0.8)',
           color: 'white',
           padding: '20px',
-          borderRadius: '10px'
+          borderRadius: '10px',
         }}>
           Initializing Advanced 3D Renderer...
         </div>

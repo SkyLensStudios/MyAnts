@@ -13,7 +13,7 @@ import {
   BiomeType, 
   AAType, 
   TextureQuality, 
-  AntCaste 
+  AntCaste, 
 } from '../types-enhanced';
 import { typeValidator } from '../type-validation';
 
@@ -77,7 +77,7 @@ export const PERFORMANCE_PRESETS: Record<string, ConfigurationTemplate> = {
         timeScale: 1.0,
         maxAnts: 50000,
         seed: 12345,
-        biome: BiomeType.TEMPERATE_FOREST
+        biome: BiomeType.TEMPERATE_FOREST,
       },
       ants: {
         initialCount: 5000,
@@ -87,7 +87,7 @@ export const PERFORMANCE_PRESETS: Record<string, ConfigurationTemplate> = {
           [AntCaste.QUEEN]: 0.02,
           [AntCaste.SCOUT]: 0.05,
           [AntCaste.NURSE]: 0.025,
-          [AntCaste.MALE]: 0.005
+          [AntCaste.MALE]: 0.005,
         },
         geneticsVariation: 0.3,
         lifespanMultiplier: 1.0,
@@ -95,8 +95,8 @@ export const PERFORMANCE_PRESETS: Record<string, ConfigurationTemplate> = {
         physicalTraitsRange: {
           strength: [0.1, 0.9] as const,
           speed: [0.2, 0.95] as const,
-          endurance: [0.3, 0.85] as const
-        }
+          endurance: [0.3, 0.85] as const,
+        },
       },
       environment: {
         weatherEnabled: true,
@@ -105,7 +105,7 @@ export const PERFORMANCE_PRESETS: Record<string, ConfigurationTemplate> = {
         predatorsEnabled: true,
         diseasesEnabled: true,
         foodScarcity: 0.4,
-        territorialConflicts: true
+        territorialConflicts: true,
       },
       performance: {
         targetFPS: 60,
@@ -114,7 +114,7 @@ export const PERFORMANCE_PRESETS: Record<string, ConfigurationTemplate> = {
         multiThreading: true,
         gpuAcceleration: true,
         memoryLimit: 8192,
-        cullingDistance: 1000
+        cullingDistance: 1000,
       },
       rendering: {
         maxRenderDistance: 1000,
@@ -124,7 +124,7 @@ export const PERFORMANCE_PRESETS: Record<string, ConfigurationTemplate> = {
         particleEffects: true,
         postProcessing: true,
         antiAliasing: AAType.TAA,
-        textureQuality: TextureQuality.ULTRA
+        textureQuality: TextureQuality.ULTRA,
       },
       ai: {
         decisionTreeDepth: 8,
@@ -133,9 +133,9 @@ export const PERFORMANCE_PRESETS: Record<string, ConfigurationTemplate> = {
         communicationRange: 75,
         pheromoneStrength: 0.9,
         explorationBonus: 0.15,
-        socialInfluence: 0.8
-      }
-    }
+        socialInfluence: 0.8,
+      },
+    },
   },
 
   'balanced': {
@@ -150,7 +150,7 @@ export const PERFORMANCE_PRESETS: Record<string, ConfigurationTemplate> = {
         timeScale: 1.0,
         maxAnts: 10000,
         seed: 12345,
-        biome: BiomeType.TEMPERATE_FOREST
+        biome: BiomeType.TEMPERATE_FOREST,
       },
       ants: {
         initialCount: 1000,
@@ -160,7 +160,7 @@ export const PERFORMANCE_PRESETS: Record<string, ConfigurationTemplate> = {
           [AntCaste.QUEEN]: 0.02,
           [AntCaste.SCOUT]: 0.02,
           [AntCaste.NURSE]: 0.005,
-          [AntCaste.MALE]: 0.005
+          [AntCaste.MALE]: 0.005,
         },
         geneticsVariation: 0.2,
         lifespanMultiplier: 1.0,
@@ -168,8 +168,8 @@ export const PERFORMANCE_PRESETS: Record<string, ConfigurationTemplate> = {
         physicalTraitsRange: {
           strength: [0.2, 0.8] as const,
           speed: [0.3, 0.85] as const,
-          endurance: [0.4, 0.8] as const
-        }
+          endurance: [0.4, 0.8] as const,
+        },
       },
       environment: {
         weatherEnabled: true,
@@ -178,7 +178,7 @@ export const PERFORMANCE_PRESETS: Record<string, ConfigurationTemplate> = {
         predatorsEnabled: false,
         diseasesEnabled: false,
         foodScarcity: 0.3,
-        territorialConflicts: false
+        territorialConflicts: false,
       },
       performance: {
         targetFPS: 60,
@@ -187,7 +187,7 @@ export const PERFORMANCE_PRESETS: Record<string, ConfigurationTemplate> = {
         multiThreading: true,
         gpuAcceleration: true,
         memoryLimit: 4096,
-        cullingDistance: 500
+        cullingDistance: 500,
       },
       rendering: {
         maxRenderDistance: 500,
@@ -197,7 +197,7 @@ export const PERFORMANCE_PRESETS: Record<string, ConfigurationTemplate> = {
         particleEffects: true,
         postProcessing: true,
         antiAliasing: AAType.MSAA,
-        textureQuality: TextureQuality.HIGH
+        textureQuality: TextureQuality.HIGH,
       },
       ai: {
         decisionTreeDepth: 5,
@@ -206,9 +206,9 @@ export const PERFORMANCE_PRESETS: Record<string, ConfigurationTemplate> = {
         communicationRange: 50,
         pheromoneStrength: 0.8,
         explorationBonus: 0.1,
-        socialInfluence: 0.6
-      }
-    }
+        socialInfluence: 0.6,
+      },
+    },
   },
 
   'low-end': {
@@ -223,7 +223,7 @@ export const PERFORMANCE_PRESETS: Record<string, ConfigurationTemplate> = {
         timeScale: 1.0,
         maxAnts: 1000,
         seed: 12345,
-        biome: BiomeType.GRASSLAND
+        biome: BiomeType.GRASSLAND,
       },
       ants: {
         initialCount: 100,
@@ -233,7 +233,7 @@ export const PERFORMANCE_PRESETS: Record<string, ConfigurationTemplate> = {
           [AntCaste.QUEEN]: 0.02,
           [AntCaste.SCOUT]: 0.02,
           [AntCaste.NURSE]: 0.005,
-          [AntCaste.MALE]: 0.005
+          [AntCaste.MALE]: 0.005,
         },
         geneticsVariation: 0.1,
         lifespanMultiplier: 1.0,
@@ -241,8 +241,8 @@ export const PERFORMANCE_PRESETS: Record<string, ConfigurationTemplate> = {
         physicalTraitsRange: {
           strength: [0.3, 0.7] as const,
           speed: [0.4, 0.7] as const,
-          endurance: [0.4, 0.7] as const
-        }
+          endurance: [0.4, 0.7] as const,
+        },
       },
       environment: {
         weatherEnabled: false,
@@ -251,7 +251,7 @@ export const PERFORMANCE_PRESETS: Record<string, ConfigurationTemplate> = {
         predatorsEnabled: false,
         diseasesEnabled: false,
         foodScarcity: 0.2,
-        territorialConflicts: false
+        territorialConflicts: false,
       },
       performance: {
         targetFPS: 30,
@@ -260,7 +260,7 @@ export const PERFORMANCE_PRESETS: Record<string, ConfigurationTemplate> = {
         multiThreading: false,
         gpuAcceleration: false,
         memoryLimit: 1024,
-        cullingDistance: 200
+        cullingDistance: 200,
       },
       rendering: {
         maxRenderDistance: 200,
@@ -270,7 +270,7 @@ export const PERFORMANCE_PRESETS: Record<string, ConfigurationTemplate> = {
         particleEffects: false,
         postProcessing: false,
         antiAliasing: AAType.NONE,
-        textureQuality: TextureQuality.LOW
+        textureQuality: TextureQuality.LOW,
       },
       ai: {
         decisionTreeDepth: 3,
@@ -279,9 +279,9 @@ export const PERFORMANCE_PRESETS: Record<string, ConfigurationTemplate> = {
         communicationRange: 25,
         pheromoneStrength: 0.6,
         explorationBonus: 0.05,
-        socialInfluence: 0.4
-      }
-    }
+        socialInfluence: 0.4,
+      },
+    },
   },
 
   'research': {
@@ -296,7 +296,7 @@ export const PERFORMANCE_PRESETS: Record<string, ConfigurationTemplate> = {
         timeScale: 0.5,
         maxAnts: 25000,
         seed: 12345,
-        biome: BiomeType.TROPICAL_RAINFOREST
+        biome: BiomeType.TROPICAL_RAINFOREST,
       },
       ants: {
         initialCount: 2000,
@@ -306,7 +306,7 @@ export const PERFORMANCE_PRESETS: Record<string, ConfigurationTemplate> = {
           [AntCaste.QUEEN]: 0.03,
           [AntCaste.SCOUT]: 0.08,
           [AntCaste.NURSE]: 0.05,
-          [AntCaste.MALE]: 0.02
+          [AntCaste.MALE]: 0.02,
         },
         geneticsVariation: 0.4,
         lifespanMultiplier: 1.2,
@@ -314,8 +314,8 @@ export const PERFORMANCE_PRESETS: Record<string, ConfigurationTemplate> = {
         physicalTraitsRange: {
           strength: [0.05, 0.95] as const,
           speed: [0.1, 0.99] as const,
-          endurance: [0.2, 0.9] as const
-        }
+          endurance: [0.2, 0.9] as const,
+        },
       },
       environment: {
         weatherEnabled: true,
@@ -324,7 +324,7 @@ export const PERFORMANCE_PRESETS: Record<string, ConfigurationTemplate> = {
         predatorsEnabled: true,
         diseasesEnabled: true,
         foodScarcity: 0.5,
-        territorialConflicts: true
+        territorialConflicts: true,
       },
       performance: {
         targetFPS: 30,
@@ -333,7 +333,7 @@ export const PERFORMANCE_PRESETS: Record<string, ConfigurationTemplate> = {
         multiThreading: true,
         gpuAcceleration: true,
         memoryLimit: 16384,
-        cullingDistance: 2000
+        cullingDistance: 2000,
       },
       rendering: {
         maxRenderDistance: 2000,
@@ -343,7 +343,7 @@ export const PERFORMANCE_PRESETS: Record<string, ConfigurationTemplate> = {
         particleEffects: true,
         postProcessing: true,
         antiAliasing: AAType.TAA,
-        textureQuality: TextureQuality.ULTRA
+        textureQuality: TextureQuality.ULTRA,
       },
       ai: {
         decisionTreeDepth: 10,
@@ -352,10 +352,10 @@ export const PERFORMANCE_PRESETS: Record<string, ConfigurationTemplate> = {
         communicationRange: 100,
         pheromoneStrength: 0.95,
         explorationBonus: 0.2,
-        socialInfluence: 0.9
-      }
-    }
-  }
+        socialInfluence: 0.9,
+      },
+    },
+  },
 };
 
 // ============================================================================
@@ -392,7 +392,7 @@ export class ConfigurationManager {
       path: 'presets://built-in',
       priority: 100,
       dynamic: false,
-      watchForChanges: false
+      watchForChanges: false,
     });
 
     // User preferences in localStorage
@@ -401,7 +401,7 @@ export class ConfigurationManager {
       path: 'localStorage://myants-config',
       priority: 50,
       dynamic: true,
-      watchForChanges: false
+      watchForChanges: false,
     });
 
     // Environment-specific config file
@@ -411,7 +411,7 @@ export class ConfigurationManager {
       path: `/config/environments/${environment}.json`,
       priority: 75,
       dynamic: true,
-      watchForChanges: true
+      watchForChanges: true,
     });
   }
 
@@ -438,9 +438,9 @@ export class ConfigurationManager {
         errors: [{
           code: 'PRESET_NOT_FOUND',
           message: `Preset '${presetId}' not found`,
-          path: 'preset'
+          path: 'preset',
         }],
-        warnings: []
+        warnings: [],
       };
     }
 
@@ -467,7 +467,7 @@ export class ConfigurationManager {
     return {
       isValid: true,
       errors: [],
-      warnings: []
+      warnings: [],
     };
   }
 
@@ -482,7 +482,7 @@ export class ConfigurationManager {
    * Get specific configuration section
    */
   public getSection<K extends keyof SimulationConfiguration>(
-    section: K
+    section: K,
   ): SimulationConfiguration[K] {
     return JSON.parse(JSON.stringify(this.currentConfig[section]));
   }
@@ -515,9 +515,9 @@ export class ConfigurationManager {
           errors: [{
             code: 'FILE_LOAD_ERROR',
             message: `Failed to load configuration from ${filePath}: ${response.statusText}`,
-            path: 'file'
+            path: 'file',
           }],
-          warnings: []
+          warnings: [],
         };
       }
 
@@ -529,9 +529,9 @@ export class ConfigurationManager {
         errors: [{
           code: 'FILE_PARSE_ERROR',
           message: `Failed to parse configuration file: ${error instanceof Error ? error.message : 'Unknown error'}`,
-          path: 'file'
+          path: 'file',
         }],
-        warnings: []
+        warnings: [],
       };
     }
   }
@@ -580,9 +580,9 @@ export class ConfigurationManager {
         errors: [{
           code: 'IMPORT_PARSE_ERROR',
           message: `Failed to parse configuration JSON: ${error instanceof Error ? error.message : 'Unknown error'}`,
-          path: 'import'
+          path: 'import',
         }],
-        warnings: []
+        warnings: [],
       };
     }
   }
@@ -616,21 +616,21 @@ export class ConfigurationManager {
         if (!capabilities.webgpu) {
           optimizations.performance = {
             ...this.currentConfig.performance,
-            gpuAcceleration: false
+            gpuAcceleration: false,
           };
         }
         
         if (capabilities.memoryGB < 4) {
           optimizations.performance = {
             ...this.currentConfig.performance,
-            memoryLimit: Math.max(1024, capabilities.memoryGB * 256)
+            memoryLimit: Math.max(1024, capabilities.memoryGB * 256),
           };
         }
         
         if (capabilities.cpuCores < 4) {
           optimizations.performance = {
             ...this.currentConfig.performance,
-            multiThreading: false
+            multiThreading: false,
           };
         }
 
@@ -657,7 +657,7 @@ export class ConfigurationManager {
   public getAvailablePresets(): Array<{ id: string; template: ConfigurationTemplate }> {
     return Object.entries(PERFORMANCE_PRESETS).map(([id, template]) => ({
       id,
-      template
+      template,
     }));
   }
 
@@ -671,7 +671,7 @@ export class ConfigurationManager {
       description,
       category: 'custom',
       targetHardware: 'medium',
-      configuration: this.getConfiguration()
+      configuration: this.getConfiguration(),
     };
 
     // Store in localStorage for persistence
@@ -718,7 +718,7 @@ export class ConfigurationManager {
         warnings.push({
           code: 'PERFORMANCE_WARNING',
           message: 'Large ant populations without GPU acceleration may cause performance issues',
-          suggestion: 'Enable GPU acceleration or reduce max ants'
+          suggestion: 'Enable GPU acceleration or reduce max ants',
         });
       }
       
@@ -726,7 +726,7 @@ export class ConfigurationManager {
         warnings.push({
           code: 'POPULATION_WARNING',
           message: 'Initial ant count exceeds maximum world capacity',
-          suggestion: 'Reduce initial count or increase world max ants'
+          suggestion: 'Reduce initial count or increase world max ants',
         });
       }
 
@@ -738,7 +738,7 @@ export class ConfigurationManager {
 
   private mergeConfiguration(
     base: SimulationConfiguration, 
-    updates: Partial<SimulationConfiguration>
+    updates: Partial<SimulationConfiguration>,
   ): SimulationConfiguration {
     const merged = JSON.parse(JSON.stringify(base));
     
@@ -783,7 +783,7 @@ export class ConfigurationManager {
       webgl2: false,
       memoryGB: 4,
       cpuCores: 4,
-      score: 50
+      score: 50,
     };
 
     try {
@@ -864,7 +864,7 @@ export async function autoConfigureForHardware(): Promise<SimulationConfiguratio
  * Load configuration from multiple sources with priorities
  */
 export async function loadConfigurationFromSources(
-  sources: ConfigurationSource[]
+  sources: ConfigurationSource[],
 ): Promise<SimulationConfiguration> {
   const manager = ConfigurationManager.getInstance();
   
@@ -949,7 +949,7 @@ export function useConfiguration(): {
   import: (json: string) => ValidationResult;
 } {
   const [config, setConfig] = React.useState(
-    configurationManager.getConfiguration()
+    configurationManager.getConfiguration(),
   );
 
   React.useEffect(() => {
@@ -963,6 +963,6 @@ export function useConfiguration(): {
     loadPreset: (presetId) => configurationManager.loadPreset(presetId),
     resetToDefaults: () => configurationManager.resetToDefaults(),
     export: () => configurationManager.exportConfiguration(),
-    import: (json) => configurationManager.importConfiguration(json)
+    import: (json) => configurationManager.importConfiguration(json),
   };
 }

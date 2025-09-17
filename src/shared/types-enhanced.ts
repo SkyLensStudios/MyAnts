@@ -427,7 +427,7 @@ export const ANT_CASTE_SIZES: ReadonlyRecord<AntCaste, number> = Object.freeze({
   [AntCaste.QUEEN]: 2.0,
   [AntCaste.SCOUT]: 0.9,
   [AntCaste.NURSE]: 1.1,
-  [AntCaste.MALE]: 0.8
+  [AntCaste.MALE]: 0.8,
 });
 
 export const PERFORMANCE_THRESHOLDS: ReadonlyRecord<string, number> = Object.freeze({
@@ -437,7 +437,7 @@ export const PERFORMANCE_THRESHOLDS: ReadonlyRecord<string, number> = Object.fre
   POOR_FPS: 15,
   MAX_FRAME_TIME: 33.33, // milliseconds for 30 FPS
   MAX_MEMORY_USAGE: 512,  // MB
-  MAX_CPU_USAGE: 80       // percentage
+  MAX_CPU_USAGE: 80,       // percentage
 });
 
 // Export all commonly used constants
@@ -445,5 +445,5 @@ export const COMMON_CONSTANTS = Object.freeze({
   DEFAULT_VECTOR3D,
   DEFAULT_QUATERNION,
   ANT_CASTE_SIZES,
-  PERFORMANCE_THRESHOLDS
+  PERFORMANCE_THRESHOLDS,
 });

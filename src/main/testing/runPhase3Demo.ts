@@ -20,10 +20,10 @@ async function runPhase3Demo(): Promise<void> {
     compressionTarget: 20, // 95% compression (20x ratio)
     spatialQueryCount: 100,
     memoryBudget: 256 * 1024 * 1024, // 256MB
-    performanceThreshold: 10 // 10ms threshold
+    performanceThreshold: 10, // 10ms threshold
   };
   
-  console.log(`🔬 Test configuration:`);
+  console.log('🔬 Test configuration:');
   console.log(`   Ant count: ${testConfig.antCount.toLocaleString()}`);
   console.log(`   Memory budget: ${(testConfig.memoryBudget / 1024 / 1024).toFixed(0)}MB`);
   console.log(`   Compression target: ${testConfig.compressionTarget}x`);

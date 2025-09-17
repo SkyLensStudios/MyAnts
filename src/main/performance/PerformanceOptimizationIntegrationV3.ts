@@ -70,7 +70,7 @@ export class PerformanceOptimizationIntegrationV3 {
     peakMemoryUsage: 0,
     webgpuUtilization: 0,
     lodDistribution: new Map<LODLevel, number>(),
-    massiveScaleActive: false
+    massiveScaleActive: false,
   };
 
   constructor(config: PerformanceIntegrationConfig) {
@@ -89,13 +89,13 @@ export class PerformanceOptimizationIntegrationV3 {
       maxFPS: config.targetFPS * 1.3,
       targetFrameTime: 1000 / config.targetFPS,
       maxMemoryUsage: config.massiveScaleMode ? 8 * 1024 * 1024 * 1024 : 4 * 1024 * 1024 * 1024, // 8GB for massive scale
-      maxCPUUsage: config.massiveScaleMode ? 95 : 80 // Higher CPU usage for massive scale
+      maxCPUUsage: config.massiveScaleMode ? 95 : 80, // Higher CPU usage for massive scale
     };
     
     this.performanceManager = new AdaptivePerformanceManager(
       targets,
       this.lodController,
-      this.computeCoordinator
+      this.computeCoordinator,
     );
     
     // Initialize v3 enhanced features
@@ -190,7 +190,7 @@ export class PerformanceOptimizationIntegrationV3 {
       isSupported: true,
       computePipelines: new Map(),
       bindGroups: new Map(),
-      commandEncoder: null
+      commandEncoder: null,
     };
     
     console.log('🔥 WebGPU device initialized with compute capabilities');
@@ -214,7 +214,7 @@ export class PerformanceOptimizationIntegrationV3 {
       diffusionRate: 0.1,
       evaporationRate: 0.01,
       sparseThreshold: 0.001,
-      activeRegionSize: 64
+      activeRegionSize: 64,
     });
     
     await this.gpuPheromones.initialize();
@@ -264,7 +264,7 @@ export class PerformanceOptimizationIntegrationV3 {
     if (this.memoryArena) {
       this.performanceMetrics.peakMemoryUsage = Math.max(
         this.performanceMetrics.peakMemoryUsage,
-        this.memoryArena.byteLength
+        this.memoryArena.byteLength,
       );
     }
     
@@ -279,7 +279,7 @@ export class PerformanceOptimizationIntegrationV3 {
   public processAntLOD(
     ants: Array<{ id: string; position: any; caste: string; lastActivity: number; isSelected: boolean; groupSize: number }>,
     camera: { position: any; direction: any; fov: number; farClip: number },
-    deltaTime: number
+    deltaTime: number,
   ): Map<LODLevel, string[]> {
     this.lodController.updateCamera(camera);
     return this.lodController.processLODAssignments(ants, deltaTime);
@@ -325,7 +325,7 @@ export class PerformanceOptimizationIntegrationV3 {
       lodDistribution: this.performanceMetrics.lodDistribution,
       webgpuActive: this.webgpuSystem?.isSupported || false,
       massiveScaleActive: this.performanceMetrics.massiveScaleActive,
-      systemLoad: perfStatus.currentMetrics?.cpuUsage || 0 // Get CPU usage from metrics
+      systemLoad: perfStatus.currentMetrics?.cpuUsage || 0, // Get CPU usage from metrics
     };
   }
 
@@ -358,25 +358,25 @@ export class PerformanceOptimizationIntegrationV3 {
       return {
         recommendedPreset: 'ultra_scientific',
         maxAnts: 10000,
-        reason: 'System can handle high-detail simulation'
+        reason: 'System can handle high-detail simulation',
       };
     } else if (status.fps >= 30 && status.memoryUsage < 4 * 1024 * 1024 * 1024) {
       return {
         recommendedPreset: 'high_performance',
         maxAnts: 25000,
-        reason: 'Good performance with balanced quality'
+        reason: 'Good performance with balanced quality',
       };
     } else if (status.fps >= 20) {
       return {
         recommendedPreset: 'balanced_scale',
         maxAnts: 40000,
-        reason: 'Focus on scale with acceptable performance'
+        reason: 'Focus on scale with acceptable performance',
       };
     } else {
       return {
         recommendedPreset: 'extreme_scale',
         maxAnts: 50000,
-        reason: 'Maximum scale with statistical models'
+        reason: 'Maximum scale with statistical models',
       };
     }
   }

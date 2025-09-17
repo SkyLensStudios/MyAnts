@@ -36,7 +36,7 @@ export const PHEROMONE_SPECIES: { [key: string]: ChemicalSpecies } = {
     reactionRate: 0.0,
     molecularWeight: 200,
     color: [0.0, 1.0, 0.0, 0.8],
-    volatility: 0.001
+    volatility: 0.001,
   },
   ALARM: {
     id: 'alarm',
@@ -46,7 +46,7 @@ export const PHEROMONE_SPECIES: { [key: string]: ChemicalSpecies } = {
     reactionRate: 0.0,
     molecularWeight: 150,
     color: [1.0, 0.0, 0.0, 0.9],
-    volatility: 0.003
+    volatility: 0.003,
   },
   FOOD: {
     id: 'food',
@@ -56,7 +56,7 @@ export const PHEROMONE_SPECIES: { [key: string]: ChemicalSpecies } = {
     reactionRate: 0.0,
     molecularWeight: 300,
     color: [0.0, 0.0, 1.0, 0.7],
-    volatility: 0.0005
+    volatility: 0.0005,
   },
   RECRUITMENT: {
     id: 'recruitment',
@@ -66,7 +66,7 @@ export const PHEROMONE_SPECIES: { [key: string]: ChemicalSpecies } = {
     reactionRate: 0.0,
     molecularWeight: 180,
     color: [1.0, 1.0, 0.0, 0.6],
-    volatility: 0.002
+    volatility: 0.002,
   },
   TERRITORY: {
     id: 'territory',
@@ -76,8 +76,8 @@ export const PHEROMONE_SPECIES: { [key: string]: ChemicalSpecies } = {
     reactionRate: 0.0,
     molecularWeight: 400,
     color: [0.5, 0.0, 0.5, 0.5],
-    volatility: 0.0001
-  }
+    volatility: 0.0001,
+  },
 };
 
 // CNN architecture configuration
@@ -152,13 +152,13 @@ export class CNNAcceleratedDiffusion {
     totalSimulationTime: 0,
     speedupFactor: 1.0,
     memoryUsage: 0,
-    throughput: 0 // reactions per second
+    throughput: 0, // reactions per second
   };
 
   constructor(
     gridConfig: SpatialGridConfig,
     cnnConfig: CNNConfig,
-    performanceSystem: PerformanceOptimizationIntegrationV3
+    performanceSystem: PerformanceOptimizationIntegrationV3,
   ) {
     this.gridConfig = gridConfig;
     this.cnnConfig = cnnConfig;
@@ -275,15 +275,15 @@ export class CNNAcceleratedDiffusion {
 
     // Create convolution pipeline
     const convolutionModule = this.webgpuDevice.createShaderModule({
-      code: convolutionShader
+      code: convolutionShader,
     });
 
     this.convolutionPipeline = this.webgpuDevice.createComputePipeline({
       layout: 'auto',
       compute: {
         module: convolutionModule,
-        entryPoint: 'main'
-      }
+        entryPoint: 'main',
+      },
     });
 
     // Activation function shader for neural network layers
@@ -304,15 +304,15 @@ export class CNNAcceleratedDiffusion {
     `;
 
     const activationModule = this.webgpuDevice.createShaderModule({
-      code: activationShader
+      code: activationShader,
     });
 
     this.activationPipeline = this.webgpuDevice.createComputePipeline({
       layout: 'auto',
       compute: {
         module: activationModule,
-        entryPoint: 'main'
-      }
+        entryPoint: 'main',
+      },
     });
   }
 
@@ -483,29 +483,29 @@ export class CNNAcceleratedDiffusion {
       // Create buffers
       const inputBuffer = this.webgpuDevice.createBuffer({
         size: inputGrid.byteLength,
-        usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST
+        usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST,
       });
       
       const outputBuffer = this.webgpuDevice.createBuffer({
         size: outputGrid.byteLength,
-        usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC
+        usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC,
       });
       
       const weightsBuffer = this.webgpuDevice.createBuffer({
         size: this.cnnWeights.get('layer_0')!.byteLength,
-        usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST
+        usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST,
       });
       
       const paramsBuffer = this.webgpuDevice.createBuffer({
         size: 3 * 4, // 3 float32 parameters
-        usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST
+        usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST,
       });
       
       // Upload data
       this.webgpuDevice.queue.writeBuffer(inputBuffer, 0, inputGrid);
       this.webgpuDevice.queue.writeBuffer(weightsBuffer, 0, this.cnnWeights.get('layer_0')!);
       this.webgpuDevice.queue.writeBuffer(paramsBuffer, 0, new Float32Array([
-        species.diffusionRate, species.decayRate, deltaTime
+        species.diffusionRate, species.decayRate, deltaTime,
       ]));
       
       // Create bind group
@@ -515,8 +515,8 @@ export class CNNAcceleratedDiffusion {
           { binding: 0, resource: { buffer: inputBuffer } },
           { binding: 1, resource: { buffer: outputBuffer } },
           { binding: 2, resource: { buffer: weightsBuffer } },
-          { binding: 3, resource: { buffer: paramsBuffer } }
-        ]
+          { binding: 3, resource: { buffer: paramsBuffer } },
+        ],
       });
       
       // Dispatch compute
@@ -525,14 +525,14 @@ export class CNNAcceleratedDiffusion {
       computePass.setBindGroup(0, bindGroup);
       computePass.dispatchWorkgroups(
         Math.ceil(this.gridConfig.width / 8),
-        Math.ceil(this.gridConfig.height / 8)
+        Math.ceil(this.gridConfig.height / 8),
       );
       computePass.end();
       
       // Read back results
       const readBuffer = this.webgpuDevice.createBuffer({
         size: outputGrid.byteLength,
-        usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ
+        usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ,
       });
       
       commandEncoder.copyBufferToBuffer(outputBuffer, 0, readBuffer, 0, outputGrid.byteLength);

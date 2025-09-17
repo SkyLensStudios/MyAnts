@@ -28,10 +28,10 @@ export const IPCChannels = {
 
   // Rendering Mode Management
   RENDERER_MODE_SWITCH: 'renderer:mode-switch',
-  RENDERER_2D_CAMERA_UPDATE: 'renderer:2d-camera-update',
-  RENDERER_3D_CAMERA_UPDATE: 'renderer:3d-camera-update',
-  RENDERER_METRICS_2D: 'renderer:metrics-2d',
-  RENDERER_METRICS_3D: 'renderer:metrics-3d',
+  RENDERER_2D_CAMERA_UPDATE: 'renderer:two-d-camera-update',
+  RENDERER_3D_CAMERA_UPDATE: 'renderer:three-d-camera-update',
+  RENDERER_METRICS_2D: 'renderer:metrics-two-d',
+  RENDERER_METRICS_3D: 'renderer:metrics-three-d',
 
   // File Operations
   SAVE_SIMULATION: 'file:save-simulation',

@@ -51,7 +51,7 @@ export class AdaptiveAntFactory {
         hasPhysiology: true,
         updateFrequency: 60,
         pathfindingComplexity: 'complex',
-        socialInteractions: true
+        socialInteractions: true,
       }],
       [LODLevel.SIMPLIFIED, {
         hasMemory: false,
@@ -61,7 +61,7 @@ export class AdaptiveAntFactory {
         hasPhysiology: false,
         updateFrequency: 30,
         pathfindingComplexity: 'simple',
-        socialInteractions: true
+        socialInteractions: true,
       }],
       [LODLevel.STATISTICAL, {
         hasMemory: false,
@@ -71,7 +71,7 @@ export class AdaptiveAntFactory {
         hasPhysiology: false,
         updateFrequency: 10,
         pathfindingComplexity: 'statistical',
-        socialInteractions: false
+        socialInteractions: false,
       }],
       [LODLevel.AGGREGATE, {
         hasMemory: false,
@@ -81,8 +81,8 @@ export class AdaptiveAntFactory {
         hasPhysiology: false,
         updateFrequency: 1,
         pathfindingComplexity: 'statistical',
-        socialInteractions: false
-      }]
+        socialInteractions: false,
+      }],
     ]);
   }
 
@@ -121,7 +121,7 @@ export class AdaptiveAntFactory {
     const ant = new AntEntity(
       Math.random().toString(36).substring(7),
       { x: 0, y: 0, z: 0 },
-      AntCaste.WORKER
+      AntCaste.WORKER,
     );
 
     return ant;
@@ -141,7 +141,7 @@ export class AdaptiveAntFactory {
     const ant = new AntEntity(
       Math.random().toString(36).substring(7),
       { x: 0, y: 0, z: 0 },
-      AntCaste.WORKER
+      AntCaste.WORKER,
     );
 
     return ant;
@@ -158,7 +158,7 @@ export class AdaptiveAntFactory {
           groupId: this.calculateGroupId(existingAnt.position),
           flowVector: { x: 0, y: 0, z: 0 },
           density: 1.0,
-          lastUpdate: Date.now()
+          lastUpdate: Date.now(),
         }
       : existingAnt || {
           id: Math.random().toString(36).substring(7),
@@ -166,12 +166,12 @@ export class AdaptiveAntFactory {
           groupId: 'default',
           flowVector: { x: 0, y: 0, z: 0 },
           density: 1.0,
-          lastUpdate: Date.now()
+          lastUpdate: Date.now(),
         };
 
     return {
       ...baseData,
-      lastUpdate: Date.now()
+      lastUpdate: Date.now(),
     };
   }
 
@@ -213,7 +213,7 @@ export class AdaptiveAntFactory {
       [LODLevel.FULL_DETAIL, 512],   // Full AntEntity with all systems
       [LODLevel.SIMPLIFIED, 128],    // Reduced AntEntity
       [LODLevel.STATISTICAL, 32],    // Statistical data only
-      [LODLevel.AGGREGATE, 8]        // Minimal statistical data
+      [LODLevel.AGGREGATE, 8],        // Minimal statistical data
     ]);
 
     return memoryMap.get(level) || 512;
@@ -228,7 +228,7 @@ export class AdaptiveAntFactory {
       [LODLevel.FULL_DETAIL, 1.0],
       [LODLevel.SIMPLIFIED, 0.3],
       [LODLevel.STATISTICAL, 0.1],
-      [LODLevel.AGGREGATE, 0.01]
+      [LODLevel.AGGREGATE, 0.01],
     ]);
 
     return complexityMap.get(level) || 1.0;

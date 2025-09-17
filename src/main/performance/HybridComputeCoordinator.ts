@@ -104,7 +104,7 @@ export class HybridComputeCoordinator {
       hasWebGPU,
       hasSharedArrayBuffer,
       maxTextureSize,
-      maxComputeUnits: navigator.hardwareConcurrency || 4
+      maxComputeUnits: navigator.hardwareConcurrency || 4,
     };
   }
 
@@ -215,7 +215,7 @@ export class HybridComputeCoordinator {
         processingTime: performance.now() - startTime,
         computeMethod: 'javascript',
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: error instanceof Error ? error.message : 'Unknown error',
       };
       
       if ((task as any).onError) {
@@ -290,7 +290,7 @@ export class HybridComputeCoordinator {
       processingTime: 0, // Will be set by caller
       computeMethod: 'webassembly',
       success: true,
-      data
+      data,
     };
   }
 
@@ -307,7 +307,7 @@ export class HybridComputeCoordinator {
         processingTime: 0,
         computeMethod: 'gpu', 
         success: true,
-        data
+        data,
       };
     }
     
@@ -326,7 +326,7 @@ export class HybridComputeCoordinator {
       processingTime: 0,
       computeMethod: 'javascript',
       success: true,
-      data: { result: 'mock_js_result' }
+      data: { result: 'mock_js_result' },
     };
   }
 
@@ -357,7 +357,7 @@ export class HybridComputeCoordinator {
   private updatePerformanceHistory(
     taskType: string, 
     computeMethod: string, 
-    processingTime: number
+    processingTime: number,
   ): void {
     const key = `${taskType}_${computeMethod}`;
     const history = this.performanceHistory.get(key) || [];
@@ -383,7 +383,7 @@ export class HybridComputeCoordinator {
     return {
       javascript: this.performanceHistory.get(`${taskType}_javascript`),
       webassembly: this.performanceHistory.get(`${taskType}_webassembly`),
-      gpu: this.performanceHistory.get(`${taskType}_gpu`)
+      gpu: this.performanceHistory.get(`${taskType}_gpu`),
     };
   }
 
@@ -405,7 +405,7 @@ export class HybridComputeCoordinator {
     return {
       queuedTasks: this.taskQueue.length,
       processingTasks: this.processingTasks.size,
-      totalCapacity: this.capabilities.maxComputeUnits
+      totalCapacity: this.capabilities.maxComputeUnits,
     };
   }
 

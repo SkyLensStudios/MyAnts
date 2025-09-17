@@ -109,6 +109,11 @@ performance.now = jest.fn(() => mockTime);
   mockTime = 0;
 };
 
+// Mock Date.now to stay in sync with performance.now mock so code using
+// Date.now() (the SimulationEngine) sees consistent advancing time during tests.
+const originalDateNow = Date.now.bind(Date);
+Date.now = jest.fn(() => Math.floor(originalDateNow() + mockTime));
+
 // Mock console methods to reduce test noise
 global.console = {
   ...console,

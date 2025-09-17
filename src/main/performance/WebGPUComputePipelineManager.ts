@@ -18,29 +18,29 @@ export class WebGPUComputePipelineManager {
     gpuUtilization: 0,
     lastComputeTime: 0,
     averageComputeTime: 0,
-    memoryUsage: 0
+    memoryUsage: 0,
   };
 
   /**
    * Initialize WebGPU device and resources
    */
   public async initialize(): Promise<boolean> {
-    console.log("Initializing WebGPU Compute Pipeline Manager...");
+    console.log('Initializing WebGPU Compute Pipeline Manager...');
     
     try {
       // Check if WebGPU is supported
       if (!navigator.gpu) {
-        console.warn("WebGPU not supported in this browser");
+        console.warn('WebGPU not supported in this browser');
         return false;
       }
 
       // Request adapter
       const adapter = await navigator.gpu.requestAdapter({
-        powerPreference: "high-performance"
+        powerPreference: 'high-performance',
       });
       
       if (!adapter) {
-        console.warn("No suitable GPU adapter found");
+        console.warn('No suitable GPU adapter found');
         return false;
       }
 
@@ -48,15 +48,15 @@ export class WebGPUComputePipelineManager {
       this.device = await adapter.requestDevice();
       this.initialized = true;
       
-      console.log("WebGPU initialized successfully:", {
+      console.log('WebGPU initialized successfully:', {
         vendor: await adapter.requestAdapterInfo().then(info => info.vendor),
         architecture: await adapter.requestAdapterInfo().then(info => info.architecture),
-        device: adapter.features
+        device: adapter.features,
       });
       
       return true;
     } catch (error) {
-      console.error("Failed to initialize WebGPU:", error);
+      console.error('Failed to initialize WebGPU:', error);
       return false;
     }
   }
@@ -96,7 +96,7 @@ export class WebGPUComputePipelineManager {
       this.performanceMetrics.gpuUtilization = 
         Math.min(1.0, computeTime / (deltaTime * 1000)) * 100;
     } catch (error) {
-      console.error("Error in WebGPU compute step:", error);
+      console.error('Error in WebGPU compute step:', error);
     }
   }
 
@@ -117,7 +117,7 @@ export class WebGPUComputePipelineManager {
       const buffer = this.device.createBuffer({
         size,
         usage,
-        mappedAtCreation: false
+        mappedAtCreation: false,
       });
       
       this.buffers.set(name, buffer);
@@ -169,6 +169,6 @@ export class WebGPUComputePipelineManager {
     this.bindGroupLayouts.clear();
     
     this.initialized = false;
-    console.log("WebGPU Compute Pipeline Manager destroyed");
+    console.log('WebGPU Compute Pipeline Manager destroyed');
   }
 }

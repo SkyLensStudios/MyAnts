@@ -68,7 +68,7 @@ export class SpatialGillespieAlgorithm {
     spatialCorrelation: 0,
     convergenceRate: 0,
     memoryUsage: 0,
-    computeTime: 0
+    computeTime: 0,
   };
 
   // Random number generator (for reproducibility)
@@ -77,12 +77,12 @@ export class SpatialGillespieAlgorithm {
   constructor(
     gridWidth: number,
     gridHeight: number,
-    config: GillespieConfig
+    config: GillespieConfig,
   ) {
     this.config = config;
     this.partitionSize = {
       x: Math.ceil(gridWidth / config.spatialPartitions.x),
-      y: Math.ceil(gridHeight / config.spatialPartitions.y)
+      y: Math.ceil(gridHeight / config.spatialPartitions.y),
     };
 
     // Initialize random number generator with seed
@@ -113,7 +113,7 @@ export class SpatialGillespieAlgorithm {
           concentrations: new Map(),
           propensities: new Map(),
           lastUpdateTime: 0,
-          active: false
+          active: false,
         };
 
         this.cellGrid[y][x] = cell;
@@ -135,7 +135,7 @@ export class SpatialGillespieAlgorithm {
       products: [],
       rateConstant: 0.002,
       activationEnergy: 25000, // J/mol
-      temperature: 298 // 25°C in Kelvin
+      temperature: 298, // 25°C in Kelvin
     };
 
     const alarmDecay: ChemicalReaction = {
@@ -144,7 +144,7 @@ export class SpatialGillespieAlgorithm {
       products: [],
       rateConstant: 0.005,
       activationEnergy: 20000,
-      temperature: 298
+      temperature: 298,
     };
 
     // Cross-reaction: alarm inhibits trail following
@@ -152,12 +152,12 @@ export class SpatialGillespieAlgorithm {
       id: 'alarm_trail_inhibition',
       reactants: [
         { species: 'alarm', stoichiometry: 1 },
-        { species: 'trail', stoichiometry: 1 }
+        { species: 'trail', stoichiometry: 1 },
       ],
       products: [{ species: 'alarm', stoichiometry: 1 }], // Alarm is preserved
       rateConstant: 0.1,
       activationEnergy: 15000,
-      temperature: 298
+      temperature: 298,
     };
 
     // Recruitment amplification
@@ -165,16 +165,16 @@ export class SpatialGillespieAlgorithm {
       id: 'recruitment_amplification',
       reactants: [
         { species: 'trail', stoichiometry: 2 },
-        { species: 'food', stoichiometry: 1 }
+        { species: 'food', stoichiometry: 1 },
       ],
       products: [
         { species: 'trail', stoichiometry: 2 },
         { species: 'recruitment', stoichiometry: 1 },
-        { species: 'food', stoichiometry: 1 }
+        { species: 'food', stoichiometry: 1 },
       ],
       rateConstant: 0.05,
       activationEnergy: 30000,
-      temperature: 298
+      temperature: 298,
     };
 
     // Add reactions to network
@@ -429,13 +429,13 @@ export class SpatialGillespieAlgorithm {
             location: { x: cell.position.x, y: cell.position.y },
             reactants: reaction.reactants.map(r => ({ 
               species: r.species, 
-              amount: r.stoichiometry 
+              amount: r.stoichiometry, 
             })),
             products: reaction.products.map(p => ({ 
               species: p.species, 
-              amount: p.stoichiometry 
+              amount: p.stoichiometry, 
             })),
-            propensity
+            propensity,
           };
         }
       }
@@ -616,7 +616,7 @@ export class SpatialGillespieAlgorithm {
       currentTime: this.currentTime,
       totalEvents: this.totalEvents,
       activeCells,
-      metrics: { ...this.algorithmMetrics }
+      metrics: { ...this.algorithmMetrics },
     };
   }
 

@@ -20,7 +20,7 @@ import {
   Collision,
   AI,
   Pheromone,
-  Renderable
+  Renderable,
 } from './ECSCore';
 
 import { SimulationConfiguration, AntCaste } from '../types-enhanced';
@@ -68,9 +68,9 @@ export class EntityFactory {
         0.5, // intelligence
         0.2, // aggressiveness
         0.7, // curiosity
-        0.8  // social tendency
+        0.8,  // social tendency
       ),
-      new Renderable('ant_worker', 'ant_material', true, true, true, 1.0)
+      new Renderable('ant_worker', 'ant_material', true, true, true, 1.0),
     );
   }
 
@@ -92,9 +92,9 @@ export class EntityFactory {
         0.8, // High intelligence for navigation
         0.3, // Moderate aggressiveness
         0.9, // Very curious
-        0.6  // Moderate social tendency
+        0.6,  // Moderate social tendency
       ),
-      new Renderable('ant_scout', 'ant_material', true, true, true, 0.9)
+      new Renderable('ant_scout', 'ant_material', true, true, true, 0.9),
     );
   }
 
@@ -116,9 +116,9 @@ export class EntityFactory {
         0.6, // Moderate intelligence
         0.9, // Very aggressive
         0.3, // Low curiosity
-        0.7  // Loyal to colony
+        0.7,  // Loyal to colony
       ),
-      new Renderable('ant_soldier', 'ant_material', true, true, true, 1.2)
+      new Renderable('ant_soldier', 'ant_material', true, true, true, 1.2),
     );
   }
 
@@ -140,9 +140,9 @@ export class EntityFactory {
         0.7, // High intelligence for care tasks
         0.1, // Very low aggression
         0.5, // Moderate curiosity
-        0.9  // Very social
+        0.9,  // Very social
       ),
-      new Renderable('ant_nurse', 'ant_material', true, true, true, 1.0)
+      new Renderable('ant_nurse', 'ant_material', true, true, true, 1.0),
     );
   }
 
@@ -164,9 +164,9 @@ export class EntityFactory {
         1.0, // Maximum intelligence
         0.0, // No aggression
         0.2, // Low curiosity
-        1.0  // Maximum social influence
+        1.0,  // Maximum social influence
       ),
-      new Renderable('ant_queen', 'ant_material_special', true, true, true, 2.0)
+      new Renderable('ant_queen', 'ant_material_special', true, true, true, 2.0),
     );
   }
 
@@ -183,7 +183,7 @@ export class EntityFactory {
       new Inventory(amount), // Food amount
       new Physics(1.0, 1.0, 0.0, true, 0.0), // Static object
       new Collision('sphere', 1.0, 1.0, 1.0, 1.0, true), // Trigger collision
-      new Renderable('food_source', 'food_material', true, true, true, 1.0)
+      new Renderable('food_source', 'food_material', true, true, true, 1.0),
     );
   }
 
@@ -193,12 +193,12 @@ export class EntityFactory {
   createPheromoneTrail(
     position: { x: number; y: number; z: number },
     type: string,
-    strength: number = 1.0
+    strength: number = 1.0,
   ): EntityId {
     return this.world.createEntity(
       new Transform(position.x, position.y, position.z),
       new Pheromone(type, strength, 0.01, 5.0), // Decays slowly, 5.0 radius
-      new Renderable('pheromone_trail', 'pheromone_material', true, false, false, 0.5)
+      new Renderable('pheromone_trail', 'pheromone_material', true, false, false, 0.5),
     );
   }
 
@@ -207,13 +207,13 @@ export class EntityFactory {
    */
   createObstacle(
     position: { x: number; y: number; z: number },
-    size: { width: number; height: number; depth: number }
+    size: { width: number; height: number; depth: number },
   ): EntityId {
     return this.world.createEntity(
       new Transform(position.x, position.y, position.z),
       new Physics(100.0, 0.9, 0.1, true, 0.0), // Heavy static object
       new Collision('box', 0, size.width, size.height, size.depth, false),
-      new Renderable('obstacle', 'obstacle_material', true, true, true, 1.0)
+      new Renderable('obstacle', 'obstacle_material', true, true, true, 1.0),
     );
   }
 
@@ -230,7 +230,7 @@ export class EntityFactory {
       new Physics(1000.0, 1.0, 0.0, true, 0.0), // Very heavy static
       new Collision('cylinder', 3.0, 6.0, 2.0, 6.0, true), // Large trigger area
       new Inventory(1000), // Large storage capacity
-      new Renderable('colony_nest', 'nest_material', true, true, true, 2.0)
+      new Renderable('colony_nest', 'nest_material', true, true, true, 2.0),
     );
   }
 
@@ -249,7 +249,7 @@ export class EntityFactory {
       soldiers?: number;
       nurses?: number;
       queens?: number;
-    }
+    },
   ): { colonyId: EntityId; ants: EntityId[] } {
     const config = configuration || this.getDefaultColonyConfiguration();
     
@@ -295,7 +295,7 @@ export class EntityFactory {
       scouts: config.scouts,
       soldiers: config.soldiers,
       nurses: config.nurses,
-      queens: config.queens
+      queens: config.queens,
     });
 
     return { colonyId, ants };
@@ -306,7 +306,7 @@ export class EntityFactory {
    */
   createFoodSources(
     count: number,
-    area: { x: number; z: number; width: number; height: number }
+    area: { x: number; z: number; width: number; height: number },
   ): EntityId[] {
     const foodSources: EntityId[] = [];
 
@@ -314,7 +314,7 @@ export class EntityFactory {
       const position = {
         x: area.x + (Math.random() - 0.5) * area.width,
         y: 0,
-        z: area.z + (Math.random() - 0.5) * area.height
+        z: area.z + (Math.random() - 0.5) * area.height,
       };
 
       const amount = Math.floor(Math.random() * 150) + 50; // 50-200 food units
@@ -337,13 +337,13 @@ export class EntityFactory {
       scouts: Math.floor(totalAnts * (distribution[AntCaste.SCOUT] || 0.15)),
       soldiers: Math.floor(totalAnts * (distribution[AntCaste.SOLDIER] || 0.1)),
       nurses: Math.floor(totalAnts * (distribution[AntCaste.NURSE] || 0.04)),
-      queens: Math.floor(totalAnts * (distribution[AntCaste.QUEEN] || 0.01)) || 1
+      queens: Math.floor(totalAnts * (distribution[AntCaste.QUEEN] || 0.01)) || 1,
     };
   }
 
   private getRandomPositionAround(
     center: { x: number; y: number; z: number },
-    radius: number
+    radius: number,
   ): { x: number; y: number; z: number } {
     const angle = Math.random() * Math.PI * 2;
     const distance = Math.random() * radius;
@@ -351,7 +351,7 @@ export class EntityFactory {
     return {
       x: center.x + Math.cos(angle) * distance,
       y: center.y,
-      z: center.z + Math.sin(angle) * distance
+      z: center.z + Math.sin(angle) * distance,
     };
   }
 
@@ -399,7 +399,7 @@ export function createSimulationEnvironment(world: World): {
     x: 0,
     z: 0,
     width: 200,
-    height: 200
+    height: 200,
   });
 
   // Create some obstacles
@@ -407,20 +407,20 @@ export function createSimulationEnvironment(world: World): {
     const position = {
       x: (Math.random() - 0.5) * 150,
       y: 0,
-      z: (Math.random() - 0.5) * 150
+      z: (Math.random() - 0.5) * 150,
     };
     
     factory.createObstacle(position, {
       width: Math.random() * 3 + 1,
       height: Math.random() * 2 + 1,
-      depth: Math.random() * 3 + 1
+      depth: Math.random() * 3 + 1,
     });
   }
 
   console.log('🌍 Simulation environment created:', {
     ants: colony.ants.length,
     foodSources: foodSources.length,
-    obstacles: 5
+    obstacles: 5,
   });
 
   return { factory, colony, foodSources };

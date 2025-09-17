@@ -54,7 +54,7 @@ export class ColonyEntity {
   constructor(
     id: string,
     name: string,
-    location: { x: number; y: number; z: number }
+    location: { x: number; y: number; z: number },
   ) {
     this.id = id;
     this.name = name;
@@ -65,7 +65,7 @@ export class ColonyEntity {
     this.managementSystem = new ColonyManagementSystem(
       this.id,
       100, // Initial population
-      this.location
+      this.location,
     );
 
     console.log(`Colony "${name}" established at ${location.x}, ${location.y}`);
@@ -221,7 +221,7 @@ export class ColonyEntity {
     for (const ant of ants) {
       const renderData = ant.toRenderData();
       const distance = Math.sqrt(
-        Math.pow(renderData.position.x - centerX, 2) + Math.pow(renderData.position.y - centerY, 2)
+        Math.pow(renderData.position.x - centerX, 2) + Math.pow(renderData.position.y - centerY, 2),
       );
       maxRadius = Math.max(maxRadius, distance);
     }

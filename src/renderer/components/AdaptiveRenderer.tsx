@@ -25,7 +25,7 @@ interface RendererState {
 export const AdaptiveRenderer: React.FC<AdaptiveRendererProps> = ({
   children,
   onRendererInitialized,
-  onError
+  onError,
 }) => {
   const mountRef = useRef<HTMLDivElement>(null);
   const fallbackManagerRef = useRef<RendererFallbackManager | null>(null);
@@ -33,7 +33,7 @@ export const AdaptiveRenderer: React.FC<AdaptiveRendererProps> = ({
     isInitialized: false,
     isInitializing: false,
     fallbackResult: null,
-    error: null
+    error: null,
   });
 
   const initializeRenderer = useCallback(async () => {
@@ -64,7 +64,7 @@ export const AdaptiveRenderer: React.FC<AdaptiveRendererProps> = ({
         canvas,
         antialias: true,
         alpha: true,
-        powerPreference: 'high-performance'
+        powerPreference: 'high-performance',
       });
 
       if (!fallbackResult.renderer) {
@@ -96,7 +96,7 @@ export const AdaptiveRenderer: React.FC<AdaptiveRendererProps> = ({
         isInitialized: true,
         isInitializing: false,
         fallbackResult,
-        error: null
+        error: null,
       });
 
       // Notify parent component
@@ -115,7 +115,7 @@ export const AdaptiveRenderer: React.FC<AdaptiveRendererProps> = ({
         isInitialized: false,
         isInitializing: false,
         fallbackResult: null,
-        error: err
+        error: err,
       });
 
       onError?.(err);
@@ -151,7 +151,7 @@ export const AdaptiveRenderer: React.FC<AdaptiveRendererProps> = ({
           alignItems: 'center',
           justifyContent: 'center',
           backgroundColor: '#f0f0f0',
-          fontFamily: 'Arial, sans-serif'
+          fontFamily: 'Arial, sans-serif',
         }}
       >
         <div style={{ textAlign: 'center' }}>
@@ -178,7 +178,7 @@ export const AdaptiveRenderer: React.FC<AdaptiveRendererProps> = ({
           justifyContent: 'center',
           backgroundColor: '#ffe5e5',
           fontFamily: 'Arial, sans-serif',
-          padding: '20px'
+          padding: '20px',
         }}
       >
         <div style={{ textAlign: 'center', maxWidth: '400px' }}>
@@ -205,7 +205,7 @@ export const AdaptiveRenderer: React.FC<AdaptiveRendererProps> = ({
               padding: '8px 16px',
               borderRadius: '4px',
               cursor: 'pointer',
-              fontSize: '14px'
+              fontSize: '14px',
             }}
           >
             Retry Initialization
@@ -233,7 +233,7 @@ export const AdaptiveRenderer: React.FC<AdaptiveRendererProps> = ({
             borderRadius: '4px',
             fontSize: '12px',
             fontFamily: 'monospace',
-            zIndex: 1000
+            zIndex: 1000,
           }}>
             <div>Renderer: {state.fallbackResult.actualRenderer.toUpperCase()}</div>
             <div>Quality: {state.fallbackResult.renderingConfig.qualityLevel}</div>
@@ -269,6 +269,6 @@ export const useRenderer = () => {
   return {
     capabilities,
     fallbackResult,
-    setFallbackResult
+    setFallbackResult,
   };
 };

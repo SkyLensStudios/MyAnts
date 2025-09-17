@@ -64,46 +64,46 @@ export class LODSystem {
         features: [
           'full_ai', 'learning', 'memory', 'pathfinding',
           'genetics', 'physiology', 'spatial_memory',
-          'individual_behaviors', 'complex_interactions'
+          'individual_behaviors', 'complex_interactions',
         ],
         updateRate: 60,
         cpuCost: 1.0,
         memoryFootprint: 512,    // 512KB per ant
-        qualityLevel: 1.0
+        qualityLevel: 1.0,
       }],
       [LODLevel.SIMPLIFIED, {
         maxAnts: 1000, 
         features: [
           'basic_ai', 'simple_pathfinding', 'basic_genetics',
-          'reduced_memory', 'simple_behaviors'
+          'reduced_memory', 'simple_behaviors',
         ],
         updateRate: 30,
         cpuCost: 0.3,
         memoryFootprint: 128,    // 128KB per ant
-        qualityLevel: 0.7
+        qualityLevel: 0.7,
       }],
       [LODLevel.STATISTICAL, {
         maxAnts: 5000,
         features: [
           'group_behavior', 'flow_fields', 'population_genetics',
-          'statistical_ai', 'collective_pathfinding'
+          'statistical_ai', 'collective_pathfinding',
         ],
         updateRate: 10,
         cpuCost: 0.1,
         memoryFootprint: 32,     // 32KB per ant
-        qualityLevel: 0.4
+        qualityLevel: 0.4,
       }],
       [LODLevel.AGGREGATE, {
         maxAnts: 50000,
         features: [
           'population_statistics', 'macro_behaviors',
-          'density_maps', 'aggregate_flows'
+          'density_maps', 'aggregate_flows',
         ],
         updateRate: 1,
         cpuCost: 0.01,
         memoryFootprint: 8,      // 8KB per ant
-        qualityLevel: 0.2
-      }]
+        qualityLevel: 0.2,
+      }],
     ]);
   }
 
@@ -117,7 +117,7 @@ export class LODSystem {
       activity: 0.2,
       focus: 0.25,
       importance: 0.15,
-      systemLoad: 0.1
+      systemLoad: 0.1,
     };
 
     const score = (
@@ -148,7 +148,7 @@ export class LODSystem {
       [LODLevel.FULL_DETAIL, 0.05],    // Slightly favor staying in full detail
       [LODLevel.SIMPLIFIED, 0.02],
       [LODLevel.STATISTICAL, 0.02],
-      [LODLevel.AGGREGATE, -0.02]      // Slightly discourage staying in aggregate
+      [LODLevel.AGGREGATE, -0.02],      // Slightly discourage staying in aggregate
     ]);
     
     return hysteresisMap.get(currentLevel) || 0;
@@ -160,7 +160,7 @@ export class LODSystem {
   public updateLODAssignments(
     antIds: string[], 
     factorsProvider: (antId: string) => LODFactors,
-    deltaTime: number
+    deltaTime: number,
   ): Map<LODLevel, string[]> {
     this.updatePerformanceMetrics(deltaTime);
     
@@ -192,7 +192,7 @@ export class LODSystem {
    */
   private enforceLODLimits(
     targetLOD: LODLevel, 
-    currentAssignments: Map<LODLevel, string[]>
+    currentAssignments: Map<LODLevel, string[]>,
   ): LODLevel {
     const config = this.configurations.get(targetLOD)!;
     const currentCount = currentAssignments.get(targetLOD)!.length;
@@ -203,7 +203,7 @@ export class LODSystem {
         LODLevel.FULL_DETAIL,
         LODLevel.SIMPLIFIED, 
         LODLevel.STATISTICAL,
-        LODLevel.AGGREGATE
+        LODLevel.AGGREGATE,
       ];
       
       const currentIndex = downgradePath.indexOf(targetLOD);
@@ -228,7 +228,7 @@ export class LODSystem {
       lastUpdate: now,
       nextUpdate: now + (1000 / config.updateRate),
       score: this.calculateScore(factors),
-      factors
+      factors,
     });
   }
 
@@ -337,7 +337,7 @@ export class LODSystem {
       currentFPS,
       systemLoad,
       totalAnts: this.assignments.size,
-      memoryUsage: totalMemory
+      memoryUsage: totalMemory,
     };
   }
 

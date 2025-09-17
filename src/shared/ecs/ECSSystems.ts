@@ -21,7 +21,7 @@ import {
   Collision,
   AI,
   Pheromone,
-  Renderable
+  Renderable,
 } from './ECSCore';
 
 // ============================================================================
@@ -194,7 +194,7 @@ export class AIDecisionSystem implements System {
     identity: AntIdentity,
     energy: Energy | undefined,
     health: Health | undefined,
-    world: World
+    world: World,
   ): string | null {
     // Critical needs first
     if (health && health.getHealthPercentage() < 0.3) {
@@ -285,7 +285,7 @@ export class AIDecisionSystem implements System {
       worker: ['forage', 'build', 'maintain'],
       scout: ['explore', 'patrol', 'report'],
       soldier: ['guard', 'patrol_territory', 'defend'],
-      nurse: ['tend_larvae', 'clean_colony', 'maintain_colony']
+      nurse: ['tend_larvae', 'clean_colony', 'maintain_colony'],
     };
 
     const tasks = baseTasks[caste as keyof typeof baseTasks] || ['idle'];
@@ -347,7 +347,7 @@ export class TaskExecutionSystem implements System {
     velocity: Velocity | undefined,
     energy: Energy | undefined,
     world: World,
-    deltaTime: number
+    deltaTime: number,
   ): void {
     switch (task.currentTask) {
       case 'forage':
@@ -378,7 +378,7 @@ export class TaskExecutionSystem implements System {
     transform: Transform,
     velocity: Velocity | undefined,
     world: World,
-    deltaTime: number
+    deltaTime: number,
   ): void {
     // Move to food source or search pattern
     if (task.targetPosition) {
@@ -406,7 +406,7 @@ export class TaskExecutionSystem implements System {
     transform: Transform,
     velocity: Velocity | undefined,
     world: World,
-    deltaTime: number
+    deltaTime: number,
   ): void {
     // Move towards colony (assuming colony is at origin for now)
     const colonyPosition = { x: 0, y: 0, z: 0 };
@@ -429,7 +429,7 @@ export class TaskExecutionSystem implements System {
     transform: Transform,
     velocity: Velocity | undefined,
     world: World,
-    deltaTime: number
+    deltaTime: number,
   ): void {
     // Random exploration movement
     this.randomMovement(velocity, deltaTime);
@@ -448,7 +448,7 @@ export class TaskExecutionSystem implements System {
     entityId: EntityId,
     task: Task,
     energy: Energy | undefined,
-    deltaTime: number
+    deltaTime: number,
   ): void {
     if (energy) {
       energy.restore(50 * deltaTime); // Faster energy restoration while resting
@@ -464,7 +464,7 @@ export class TaskExecutionSystem implements System {
     entityId: EntityId,
     task: Task,
     transform: Transform,
-    deltaTime: number
+    deltaTime: number,
   ): void {
     // Building requires being stationary and progresses over time
     task.updateProgress(deltaTime * 0.2);
@@ -474,7 +474,7 @@ export class TaskExecutionSystem implements System {
     transform: Transform,
     velocity: Velocity | undefined,
     target: { x: number; y: number; z: number },
-    deltaTime: number
+    deltaTime: number,
   ): void {
     if (!velocity) return;
 
@@ -509,7 +509,7 @@ export class TaskExecutionSystem implements System {
 
   private getDistance(
     transform: Transform,
-    target: { x: number; y: number; z: number }
+    target: { x: number; y: number; z: number },
   ): number {
     const dx = target.x - transform.x;
     const dy = target.y - transform.y;
@@ -584,7 +584,7 @@ export class CollisionSystem implements System {
     const distance = Math.sqrt(
       Math.pow(transformA.x - transformB.x, 2) +
       Math.pow(transformA.y - transformB.y, 2) +
-      Math.pow(transformA.z - transformB.z, 2)
+      Math.pow(transformA.z - transformB.z, 2),
     );
 
     const combinedRadius = collisionA.radius + collisionB.radius;
@@ -599,7 +599,7 @@ export class CollisionSystem implements System {
     entityB: EntityId,
     transformA: Transform,
     transformB: Transform,
-    world: World
+    world: World,
   ): void {
     const velocityA = world.entityManager.getComponent<Velocity>(entityA, Velocity.type);
     const velocityB = world.entityManager.getComponent<Velocity>(entityB, Velocity.type);
@@ -711,7 +711,7 @@ export class AgingSystem implements System {
       scout: 240,  // 4 minutes
       soldier: 300, // 5 minutes
       nurse: 360,   // 6 minutes
-      queen: 1800   // 30 minutes
+      queen: 1800,   // 30 minutes
     };
 
     return maxAges[caste as keyof typeof maxAges] || 180;
@@ -727,5 +727,5 @@ export const ecsSystems = {
   TaskExecutionSystem,
   PheromoneSystem,
   CollisionSystem,
-  AgingSystem
+  AgingSystem,
 };

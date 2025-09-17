@@ -39,7 +39,7 @@ class Phase2ChemicalTest {
       webgpuPreferred: true,
       threadGroupSwizzling: true,
       memoryArenaSize: 268435456, // 256MB
-      temporalCompression: true
+      temporalCompression: true,
     };
 
     this.performanceSystem = new PerformanceOptimizationIntegrationV3(performanceConfig);
@@ -66,7 +66,7 @@ class Phase2ChemicalTest {
         enableTemporalCompression: true,
         qualityPreset: 'high',
         enableVisualization: true,
-        visualizationChannels: ['trail', 'alarm', 'food']
+        visualizationChannels: ['trail', 'alarm', 'food'],
       };
 
       // Initialize performance and chemical systems
@@ -133,8 +133,8 @@ class Phase2ChemicalTest {
           speedupFactor: speedupAchieved,
           accuracy: systemMetrics.accuracy,
           memoryUsage: systemMetrics.memoryUsage,
-          reactionEvents: systemMetrics.reactionEvents
-        }
+          reactionEvents: systemMetrics.reactionEvents,
+        },
       };
 
     } catch (error) {
@@ -142,7 +142,7 @@ class Phase2ChemicalTest {
         testName: 'CNN Diffusion Performance',
         passed: false,
         metrics: { speedupFactor: 0, accuracy: 0, memoryUsage: 0, reactionEvents: 0 },
-        error: error instanceof Error ? error.message : String(error)
+        error: error instanceof Error ? error.message : String(error),
       };
     }
   }
@@ -168,7 +168,7 @@ class Phase2ChemicalTest {
         enableTemporalCompression: false,
         qualityPreset: 'medium',
         enableVisualization: false,
-        visualizationChannels: []
+        visualizationChannels: [],
       };
 
       this.chemicalSystem = new EnhancedChemicalSystemV3(config, this.performanceSystem);
@@ -214,8 +214,8 @@ class Phase2ChemicalTest {
           speedupFactor: 1.0, // Gillespie is exact, not about speedup
           accuracy: totalReactionEvents > 50 ? 0.99 : 0.5,
           memoryUsage: systemMetrics.memoryUsage,
-          reactionEvents: totalReactionEvents
-        }
+          reactionEvents: totalReactionEvents,
+        },
       };
 
     } catch (error) {
@@ -223,7 +223,7 @@ class Phase2ChemicalTest {
         testName: 'Gillespie Algorithm Accuracy',
         passed: false,
         metrics: { speedupFactor: 0, accuracy: 0, memoryUsage: 0, reactionEvents: 0 },
-        error: error instanceof Error ? error.message : String(error)
+        error: error instanceof Error ? error.message : String(error),
       };
     }
   }
@@ -249,7 +249,7 @@ class Phase2ChemicalTest {
         enableTemporalCompression: true,
         qualityPreset: 'high',
         enableVisualization: true,
-        visualizationChannels: ['trail', 'alarm', 'recruitment']
+        visualizationChannels: ['trail', 'alarm', 'recruitment'],
       };
 
       this.chemicalSystem = new EnhancedChemicalSystemV3(config, this.performanceSystem);
@@ -308,8 +308,8 @@ class Phase2ChemicalTest {
           speedupFactor: systemMetrics.speedupFactor,
           accuracy: systemMetrics.accuracy,
           memoryUsage: systemMetrics.memoryUsage,
-          reactionEvents: reactionEvents
-        }
+          reactionEvents: reactionEvents,
+        },
       };
 
     } catch (error) {
@@ -317,7 +317,7 @@ class Phase2ChemicalTest {
         testName: 'Hybrid CNN-Gillespie Integration',
         passed: false,
         metrics: { speedupFactor: 0, accuracy: 0, memoryUsage: 0, reactionEvents: 0 },
-        error: error instanceof Error ? error.message : String(error)
+        error: error instanceof Error ? error.message : String(error),
       };
     }
   }
@@ -343,7 +343,7 @@ class Phase2ChemicalTest {
         enableTemporalCompression: true,
         qualityPreset: 'ultra',
         enableVisualization: false, // Disable for performance
-        visualizationChannels: []
+        visualizationChannels: [],
       };
 
       // Enable massive scale mode
@@ -359,7 +359,7 @@ class Phase2ChemicalTest {
         { x: 256, y: 256 },
         { x: 768, y: 768 },
         { x: 256, y: 768 },
-        { x: 768, y: 256 }
+        { x: 768, y: 256 },
       ];
 
       // Deposit nest pheromones
@@ -424,8 +424,8 @@ class Phase2ChemicalTest {
           speedupFactor: systemMetrics.speedupFactor,
           accuracy: systemMetrics.accuracy,
           memoryUsage: systemMetrics.memoryUsage,
-          reactionEvents: systemMetrics.reactionEvents
-        }
+          reactionEvents: systemMetrics.reactionEvents,
+        },
       };
 
     } catch (error) {
@@ -433,7 +433,7 @@ class Phase2ChemicalTest {
         testName: 'Massive Scale Chemical Simulation',
         passed: false,
         metrics: { speedupFactor: 0, accuracy: 0, memoryUsage: 0, reactionEvents: 0 },
-        error: error instanceof Error ? error.message : String(error)
+        error: error instanceof Error ? error.message : String(error),
       };
     }
   }
@@ -449,7 +449,7 @@ class Phase2ChemicalTest {
       { name: 'CNN Diffusion Performance', test: () => this.testCNNDiffusionPerformance() },
       { name: 'Gillespie Algorithm Accuracy', test: () => this.testGillespieAccuracy() },
       { name: 'Hybrid Integration', test: () => this.testHybridIntegration() },
-      { name: 'Massive Scale Performance', test: () => this.testMassiveScaleChemical() }
+      { name: 'Massive Scale Performance', test: () => this.testMassiveScaleChemical() },
     ];
 
     const results: ChemicalTestResult[] = [];
@@ -478,7 +478,7 @@ class Phase2ChemicalTest {
           testName: name,
           passed: false,
           metrics: { speedupFactor: 0, accuracy: 0, memoryUsage: 0, reactionEvents: 0 },
-          error: error instanceof Error ? error.message : String(error)
+          error: error instanceof Error ? error.message : String(error),
         };
         results.push(failedResult);
         console.log(`❌ FAILED - ${name}: ${failedResult.error}`);
@@ -512,7 +512,7 @@ class Phase2ChemicalTest {
     const avgAccuracy = results.reduce((sum, r) => sum + r.metrics.accuracy, 0) / results.length;
     const totalMemory = Math.max(...results.map(r => r.metrics.memoryUsage));
 
-    console.log(`\n📈 Performance Summary:`);
+    console.log('\n📈 Performance Summary:');
     console.log(`   Average Speedup: ${avgSpeedup.toFixed(1)}× (target: 300×)`);
     console.log(`   Average Accuracy: ${(avgAccuracy * 100).toFixed(1)}%`);
     console.log(`   Peak Memory Usage: ${totalMemory.toFixed(1)}MB`);

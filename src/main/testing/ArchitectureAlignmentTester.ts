@@ -86,7 +86,7 @@ export class ArchitectureAlignmentTester {
       enableSpikingNetworks: true,
       enableAdaptiveLOD: true,
       performanceThreshold: 30, // 30 FPS minimum
-      ...config
+      ...config,
     };
     
     this.testResults = {
@@ -94,34 +94,34 @@ export class ArchitectureAlignmentTester {
         supported: false,
         computeTime: 0,
         memoryBandwidth: 0,
-        threadEfficiency: 0
+        threadEfficiency: 0,
       },
       cnnAcceleration: {
         active: false,
         speedupAchieved: 0,
         errorRate: 0,
-        trainingTime: 0
+        trainingTime: 0,
       },
       spikingNetworks: {
         initialized: false,
         neuronCount: 0,
         synapseCount: 0,
         averageStepTime: 0,
-        spikeRate: 0
+        spikeRate: 0,
       },
       adaptiveLOD: {
         functional: false,
         qualityLevel: 0,
         performanceRatio: 0,
-        lodDistribution: {}
+        lodDistribution: {},
       },
       overallPerformance: {
         targetAchieved: false,
         maxAntsSupported: 0,
         averageFPS: 0,
         memoryUsage: 0,
-        scalabilityScore: 0
-      }
+        scalabilityScore: 0,
+      },
     };
   }
 
@@ -182,7 +182,7 @@ export class ArchitectureAlignmentTester {
         webgpuPreferred: true,
         threadGroupSwizzling: true,
         memoryArenaSize: 128 * 1024 * 1024,
-        temporalCompression: true
+        temporalCompression: true,
       });
       
       await this.performanceSystem.initialize();
@@ -206,7 +206,7 @@ export class ArchitectureAlignmentTester {
             timestep: 0.016,
             enableL2CacheOptimization: true,
             enableMemoryCoalescing: true,
-            computeGroupSize: [64, 1, 1] as [number, number, number]
+            computeGroupSize: [64, 1, 1] as [number, number, number],
           };
           
           this.webgpuPipeline = new WebGPUComputePipelineManager();
@@ -225,7 +225,7 @@ export class ArchitectureAlignmentTester {
         this.adaptiveLOD = new AdaptiveLODController(
           lodController,
           this.webgpuPipeline!,
-          this.performanceSystem
+          this.performanceSystem,
         );
         await this.adaptiveLOD.initialize();
         this.testResults.adaptiveLOD.functional = true;
@@ -248,7 +248,7 @@ export class ArchitectureAlignmentTester {
             learningRate: 0.001,
             enableTraining: true,
             epochs: 10,
-            validationSplit: 0.2
+            validationSplit: 0.2,
           };
           this.cnnModel = new CNNDiffusionModel(cnnConfig);
           await this.cnnModel.initialize();
@@ -308,7 +308,7 @@ export class ArchitectureAlignmentTester {
       supported: true,
       computeTime: avgComputeTime,
       memoryBandwidth: metrics.lastComputeTime || 0,
-      threadEfficiency: metrics.averageComputeTime || 0
+      threadEfficiency: metrics.averageComputeTime || 0,
     };
     
     console.log(`✅ WebGPU Performance: ${avgComputeTime.toFixed(2)}ms avg compute time`);
@@ -350,7 +350,7 @@ export class ArchitectureAlignmentTester {
         temperature: 25.0,
         humidity: 0.6,
         windSpeed: 2.0,
-        pressure: 1013.25
+        pressure: 1013.25,
       });
       const cnnTime = performance.now() - cnnStart;
       
@@ -361,7 +361,7 @@ export class ArchitectureAlignmentTester {
         active: true,
         speedupAchieved: speedup,
         errorRate: errorRate,
-        trainingTime: cnnTime
+        trainingTime: cnnTime,
       };
       
       console.log(`✅ CNN Acceleration: ${speedup.toFixed(1)}× speedup, ${(errorRate * 100).toFixed(2)}% error`);
@@ -410,7 +410,7 @@ export class ArchitectureAlignmentTester {
       neuronCount: networkState.membraneVoltages.length,
       synapseCount: networkState.synapticWeights.length,
       averageStepTime: avgStepTime,
-      spikeRate: avgSpikeRate
+      spikeRate: avgSpikeRate,
     };
     
     console.log(`✅ Spiking Networks: ${avgStepTime.toFixed(2)}ms avg step, ${avgSpikeRate.toFixed(1)} spikes/step`);
@@ -445,8 +445,8 @@ export class ArchitectureAlignmentTester {
         fullDetail: Object.values(metrics.lodDistribution)[0] || 0,
         simplified: Object.values(metrics.lodDistribution)[1] || 0,
         statistical: Object.values(metrics.lodDistribution)[2] || 0,
-        aggregate: Object.values(metrics.lodDistribution)[3] || 0
-      }
+        aggregate: Object.values(metrics.lodDistribution)[3] || 0,
+      },
     };
     
     console.log(`✅ Adaptive LOD: ${(qualityLevel * 100).toFixed(0)}% quality, ${metrics.performanceRatio.toFixed(2)} performance ratio`);
@@ -527,7 +527,7 @@ export class ArchitectureAlignmentTester {
         temperature: 25.0,
         humidity: 0.6,
         windSpeed: 2.0,
-        pressure: 1013.25
+        pressure: 1013.25,
       });
     }
     
@@ -567,7 +567,7 @@ export class ArchitectureAlignmentTester {
       maxAntsSupported: maxAntsSupported,
       averageFPS: avgFPS,
       memoryUsage: this.estimateMemoryUsage(),
-      scalabilityScore: Math.min(100, Math.max(0, scalabilityScore))
+      scalabilityScore: Math.min(100, Math.max(0, scalabilityScore)),
     };
   }
 
@@ -661,7 +661,7 @@ export class ArchitectureAlignmentTester {
         lodLevel: Math.floor(Math.random() * 4),
         isSelected: i < 10, // First 10 ants are "selected"
         lastActivity: Date.now() - Math.random() * 10000,
-        caste: i === 0 ? 'queen' : i < 100 ? 'worker' : 'soldier'
+        caste: i === 0 ? 'queen' : i < 100 ? 'worker' : 'soldier',
       });
     }
     return ants;
@@ -754,7 +754,7 @@ export async function runArchitectureAlignmentTest(): Promise<void> {
   const tester = new ArchitectureAlignmentTester({
     targetAntCount: 50000,
     testDuration: 10, // Short test for development
-    performanceThreshold: 30
+    performanceThreshold: 30,
   });
   
   try {
@@ -783,7 +783,7 @@ export async function runScalabilityBenchmark(): Promise<void> {
     const tester = new ArchitectureAlignmentTester({
       targetAntCount: antCount,
       testDuration: 5, // Short test for each scale
-      performanceThreshold: 30
+      performanceThreshold: 30,
     });
     
     try {

@@ -81,7 +81,7 @@ export class GraphicsCapabilityDetector {
       vendor: '',
       renderer: '',
       version: '',
-      shaderVersion: ''
+      shaderVersion: '',
     };
 
     // Test WebGPU first (best option)
@@ -193,7 +193,7 @@ export class GraphicsCapabilityDetector {
         enableInstancing: true,
         antialias: true,
         particleCount: 10000,
-        qualityLevel: 'ultra'
+        qualityLevel: 'ultra',
       };
     }
 
@@ -206,7 +206,7 @@ export class GraphicsCapabilityDetector {
         enableInstancing: true,
         antialias: true,
         particleCount: 5000,
-        qualityLevel: 'high'
+        qualityLevel: 'high',
       };
     }
 
@@ -219,7 +219,7 @@ export class GraphicsCapabilityDetector {
         enableInstancing: false,
         antialias: false,
         particleCount: 1000,
-        qualityLevel: 'medium'
+        qualityLevel: 'medium',
       };
     }
 
@@ -232,7 +232,7 @@ export class GraphicsCapabilityDetector {
         enableInstancing: capabilities.extensions.instancedArrays,
         antialias: false,
         particleCount: 500,
-        qualityLevel: 'low'
+        qualityLevel: 'low',
       };
     }
 
@@ -244,7 +244,7 @@ export class GraphicsCapabilityDetector {
       enableInstancing: false,
       antialias: false,
       particleCount: 0,
-      qualityLevel: 'low'
+      qualityLevel: 'low',
     };
   }
 

@@ -3,12 +3,12 @@
  * Integrates all biological, AI, and behavioral systems for individual ants
  */
 
-import { AntGenetics } from '../../../engine/biological/genetics';
-import { PhysiologicalSystem } from '../../../engine/biological/physiology';
 import { BehaviorDecisionTree } from '../../../engine/ai/decisionTree';
 import { SpatialMemory } from '../../../engine/ai/spatialMemory';
-import { AntCaste } from '../../../engine/colony/casteSystem';
+import { AntGenetics } from '../../../engine/biological/genetics';
+import { PhysiologicalSystem } from '../../../engine/biological/physiology';
 import { PheromoneSystem, PheromoneType } from '../../../engine/chemical/pheromones';
+import { AntCaste } from '../../../engine/colony/casteSystem';
 
 export interface Vector3 {
   x: number;
@@ -87,7 +87,7 @@ export class AntEntity {
     this.decisionTree = new BehaviorDecisionTree(this.getSimpleCasteString(caste), this.genetics);
     this.spatialMemory = new SpatialMemory(
       { x: position.x, y: position.y, z: position.z }, 
-      this.genetics
+      this.genetics,
     );
     
     // Set physical properties based on genetics and caste
@@ -293,15 +293,17 @@ export class AntEntity {
     
     if (!this.carryingFood) {
       // Phase 1: Search for food
-      const nearbyFood = foodSourceSystem.findNearbyFoodSources(this.position, 5.0);
-      
-      if (nearbyFood.length > 0) {
+      const nearbyFood = typeof foodSourceSystem.findNearbyFoodSources === 'function'
+        ? foodSourceSystem.findNearbyFoodSources(this.position, 5.0)
+        : [];
+
+      if (Array.isArray(nearbyFood) && nearbyFood.length > 0) {
         // Found food! Try to collect it
         const collectionResult = foodSourceSystem.collectFood(
           this.id,
           this.position,
           1.0, // Try to collect 1 unit
-          deltaTime
+          deltaTime,
         );
         
         if (collectionResult.success && collectionResult.actualAmount > 0) {
@@ -370,7 +372,7 @@ export class AntEntity {
     // Restore energy while resting - simple implementation
     this.physiology.metabolic.energy = Math.min(
       this.physiology.metabolic.maxEnergy, 
-      this.physiology.metabolic.energy + 0.1 * deltaTime
+      this.physiology.metabolic.energy + 0.1 * deltaTime,
     );
   }
 
@@ -547,7 +549,7 @@ export class AntEntity {
       offspringId, 
       offspringPosition, 
       this.determineCaste(offspringGenetics),
-      Math.max(this.generation, partner.generation) + 1
+      Math.max(this.generation, partner.generation) + 1,
     );
     
     offspring.genetics = offspringGenetics;

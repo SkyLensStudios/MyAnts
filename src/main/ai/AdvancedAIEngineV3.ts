@@ -168,7 +168,7 @@ export class AdvancedAIEngineV3 {
     decisionAccuracy: 0,
     memoryEfficiency: 0,
     cooperationRate: 0,
-    learningProgress: 0
+    learningProgress: 0,
   };
 
   constructor() {
@@ -187,7 +187,7 @@ export class AdvancedAIEngineV3 {
       consensusThreshold: 1e-8,
       maxIterations: 1000,
       convergenceRate: 0.95,
-      communicationMatrix: new Map()
+      communicationMatrix: new Map(),
     };
   }
 
@@ -203,8 +203,8 @@ export class AdvancedAIEngineV3 {
         availableTasks: [],
         assignments: new Map(),
         capabilities: new Map(),
-        workload: new Map()
-      }
+        workload: new Map(),
+      },
     };
   }
 
@@ -242,29 +242,29 @@ export class AdvancedAIEngineV3 {
         qValues: new Map(),
         lastUpdate: Date.now(),
         explorationRate: baseExploration,
-        learningRate: baseLearning
+        learningRate: baseLearning,
       },
       pheromone: {
         actions: ['deposit_trail', 'deposit_alarm', 'follow_trail', 'ignore'],
         qValues: new Map(),
         lastUpdate: Date.now(),
         explorationRate: baseExploration * 0.5,
-        learningRate: baseLearning
+        learningRate: baseLearning,
       },
       interaction: {
         actions: ['ignore', 'assist', 'communicate', 'exchange', 'follow'],
         qValues: new Map(),
         lastUpdate: Date.now(),
         explorationRate: baseExploration * 0.3,
-        learningRate: baseLearning
+        learningRate: baseLearning,
       },
       task: {
         actions: ['continue', 'switch', 'delegate', 'collaborate'],
         qValues: new Map(),
         lastUpdate: Date.now(),
         explorationRate: baseExploration * 0.2,
-        learningRate: baseLearning
-      }
+        learningRate: baseLearning,
+      },
     };
   }
 
@@ -280,24 +280,24 @@ export class AdvancedAIEngineV3 {
         episodes: [],
         hiddenState: new Float32Array(256),
         cellState: new Float32Array(256),
-        weights: new Map()
+        weights: new Map(),
       },
       workingMemory: {
         capacity: 64,
         attentionWeights: new Map(),
         focusHistory: [],
-        currentFocus: null
+        currentFocus: null,
       },
       spatialMemory: {
         spatialHash: new Map(),
         locationMemory: new Map(),
-        pathMemory: new Map()
+        pathMemory: new Map(),
       },
       associativeMemory: {
         associations: new Map(),
         strengthThreshold: 0.3,
-        decayRate: 0.001
-      }
+        decayRate: 0.001,
+      },
     };
   }
 
@@ -311,12 +311,12 @@ export class AdvancedAIEngineV3 {
         position: { x: 0, y: 0, z: 0 },
         energy: 1.0,
         task: 'idle',
-        caste
+        caste,
       },
       neighbors: new Set(),
       contributionWeights: new Map(),
       consensusValue: 0,
-      lastUpdate: Date.now()
+      lastUpdate: Date.now(),
     };
     
     this.masterSystem.agents.set(antId, agent);
@@ -334,11 +334,11 @@ export class AdvancedAIEngineV3 {
         ['construction', caste === 'worker' ? 0.8 : 0.3],
         ['defense', caste === 'soldier' ? 0.9 : 0.2],
         ['leadership', caste === 'queen' ? 1.0 : 0.1],
-        ['communication', genetics.traits?.communicationSkill || 0.5]
+        ['communication', genetics.traits?.communicationSkill || 0.5],
       ]),
       experience: new Map(),
       availability: 1.0,
-      efficiency: 0.7
+      efficiency: 0.7,
     };
     
     this.contributionSystem.taskAllocation.capabilities.set(antId, capabilities);
@@ -352,7 +352,7 @@ export class AdvancedAIEngineV3 {
   public makeDecision(
     antId: string, 
     context: any, 
-    decisionType: 'movement' | 'pheromone' | 'interaction' | 'task'
+    decisionType: 'movement' | 'pheromone' | 'interaction' | 'task',
   ): string {
     const qNet = this.branchingQNetworks.get(antId);
     if (!qNet) {
@@ -515,7 +515,7 @@ export class AdvancedAIEngineV3 {
       action,
       outcome: reward,
       importance: Math.abs(reward) + Math.random() * 0.1,
-      decayRate: 0.001
+      decayRate: 0.001,
     };
     
     memoryNet.episodicMemory.episodes.push(episode);
@@ -552,7 +552,7 @@ export class AdvancedAIEngineV3 {
             to: action,
             strength: 0,
             type: 'causal',
-            confidence: 0.5
+            confidence: 0.5,
           };
           associations.push(association);
         }
@@ -583,7 +583,7 @@ export class AdvancedAIEngineV3 {
         contributions: new Map([[antId, Math.abs(reward)]]),
         success: reward > 0,
         timestamp: Date.now(),
-        efficiency: reward / (context.duration || 1)
+        efficiency: reward / (context.duration || 1),
       };
       
       this.contributionSystem.cooperationHistory.push(event);

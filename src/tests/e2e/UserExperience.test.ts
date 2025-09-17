@@ -12,25 +12,25 @@ const mockUserWorkflow = {
   saveSimulation: jest.fn().mockResolvedValue({ 
     filename: 'colony_save_001.json',
     timestamp: Date.now(),
-    size: 245760 
+    size: 245760,
   }),
   loadSimulation: jest.fn().mockResolvedValue({
     ants: 1000,
     environment: { temperature: 25, humidity: 0.7 },
-    timestamp: Date.now() - 86400000 // 1 day ago
+    timestamp: Date.now() - 86400000, // 1 day ago
   }),
   exportData: jest.fn().mockResolvedValue({
     format: 'csv',
     filename: 'colony_data_export.csv',
-    records: 5000
+    records: 5000,
   }),
   getSimulationState: jest.fn().mockReturnValue({
     running: true,
     paused: false,
     speed: 1.0,
     time: 86400, // 1 day simulated
-    population: 1000
-  })
+    population: 1000,
+  }),
 };
 
 // Mock user interaction system
@@ -42,7 +42,7 @@ const mockUserInteraction = {
     energy: 85,
     position: { x: 150, y: 200 },
     currentTask: 'foraging',
-    traits: { strength: 0.8, speed: 0.6, intelligence: 0.7 }
+    traits: { strength: 0.8, speed: 0.6, intelligence: 0.7 },
   }),
   followAnt: jest.fn(),
   highlightAnt: jest.fn(),
@@ -51,7 +51,7 @@ const mockUserInteraction = {
     foodStores: 2500,
     broodChambers: 5,
     expansion: 'moderate',
-    health: 'good'
+    health: 'good',
   }),
   placeFood: jest.fn(),
   createObstacle: jest.fn(),
@@ -59,14 +59,14 @@ const mockUserInteraction = {
   takeScreenshot: jest.fn().mockResolvedValue({
     filename: 'colony_screenshot_001.png',
     dimensions: { width: 1920, height: 1080 },
-    timestamp: Date.now()
+    timestamp: Date.now(),
   }),
   startRecording: jest.fn().mockResolvedValue(true),
   stopRecording: jest.fn().mockResolvedValue({
     filename: 'colony_timelapse_001.webm',
-    duration: 120, // seconds
-    size: 15728640 // bytes
-  })
+    duration: 300, // seconds (ensure > 250 for experienced workflow test)
+    size: 15728640, // bytes
+  }),
 };
 
 // Mock settings and configuration
@@ -119,19 +119,19 @@ const mockUXPerformanceMonitor = {
     slowActions: ['load_simulation', 'export_data'],
     fastActions: ['select_ant', 'pause_simulation'],
     uiFrameRate: 60,
-    userSatisfactionScore: 0.85
+    userSatisfactionScore: 0.85,
   }),
   detectPerformanceIssues: jest.fn().mockReturnValue([
-    { type: 'slow_response', action: 'load_simulation', time: 2500 },
-    { type: 'frame_drop', frequency: 'occasional', severity: 'low' }
+    { type: 'slow_response', action: 'load_simulation', time: 2500, severity: 'medium' },
+    { type: 'frame_drop', frequency: 'occasional', severity: 'low' },
   ]),
   getUserBehaviorMetrics: jest.fn().mockReturnValue({
     sessionsCount: 15,
     averageSessionDuration: 1800, // 30 minutes
     mostUsedFeatures: ['start_simulation', 'select_ant', 'adjust_settings'],
     leastUsedFeatures: ['export_data', 'create_obstacle'],
-    userRetentionRate: 0.78
-  })
+    userRetentionRate: 0.78,
+  }),
 };
 
 // Mock accessibility features

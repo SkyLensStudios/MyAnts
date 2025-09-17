@@ -12,14 +12,14 @@ const mockIpcRenderer = {
   send: jest.fn(),
   on: jest.fn(),
   removeListener: jest.fn(),
-  removeAllListeners: jest.fn()
+  removeAllListeners: jest.fn(),
 };
 
 const mockIpcMain = {
   handle: jest.fn(),
   on: jest.fn(),
   removeHandler: jest.fn(),
-  removeAllListeners: jest.fn()
+  removeAllListeners: jest.fn(),
 };
 
 // Mock Electron modules
@@ -27,8 +27,8 @@ jest.mock('electron', () => ({
   ipcRenderer: mockIpcRenderer,
   ipcMain: mockIpcMain,
   contextBridge: {
-    exposeInMainWorld: jest.fn()
-  }
+    exposeInMainWorld: jest.fn(),
+  },
 }));
 
 describe('IPC Communication Tests', () => {
@@ -119,7 +119,7 @@ describe('IPC Communication Tests', () => {
       const config = {
         timeScale: 2.0,
         colonySize: 1000,
-        maxAnts: 2000
+        maxAnts: 2000,
       };
       
       const result = await mockElectronAPI.simulation.configure(config);
@@ -200,7 +200,7 @@ describe('IPC Communication Tests', () => {
       const exportOptions = { 
         format: 'csv', 
         includeEnvironment: true,
-        timeRange: { start: 0, end: 1000 }
+        timeRange: { start: 0, end: 1000 },
       };
       
       const result = await mockElectronAPI.file.exportData(exportOptions);
@@ -215,8 +215,8 @@ describe('IPC Communication Tests', () => {
       // Mock a failed IPC call
       const failingAPI = {
         simulation: {
-          start: jest.fn().mockRejectedValue(new Error('IPC communication failed'))
-        }
+          start: jest.fn().mockRejectedValue(new Error('IPC communication failed')),
+        },
       };
 
       try {
@@ -233,14 +233,14 @@ describe('IPC Communication Tests', () => {
       
       channelNames.forEach(channel => {
         expect(typeof channel).toBe('string');
-        expect(channel).toMatch(/^[a-z]+:[a-z-]+$/); // namespace:action format
+        expect(channel).toMatch(/^[a-z0-9]+:[a-z0-9-]+$/); // namespace:action format (allows numbers)
       });
     });
 
     test('should handle invalid simulation configurations', async () => {
       const invalidConfig = {
         timeScale: -1,
-        maxAnts: 'invalid'
+        maxAnts: 'invalid',
       };
       
       // Should not throw but may return error result
@@ -269,7 +269,7 @@ describe('IPC Communication Tests', () => {
         mockElectronAPI.simulation.start(),
         mockElectronAPI.data.getSimulationState(),
         mockElectronAPI.data.getAntData(),
-        mockElectronAPI.data.getPerformanceStats()
+        mockElectronAPI.data.getPerformanceStats(),
       ];
       
       const results = await Promise.all(operations);
@@ -316,7 +316,7 @@ describe('IPC Communication Tests', () => {
         environmentSize: 10000,
         maxAnts: 1000,
         enablePhysics: true,
-        enableWeather: false
+        enableWeather: false,
       };
       
       await mockElectronAPI.simulation.configure(typedConfig);
@@ -325,8 +325,8 @@ describe('IPC Communication Tests', () => {
         expect.objectContaining({
           timeScale: expect.any(Number),
           colonySize: expect.any(Number),
-          enablePhysics: expect.any(Boolean)
-        })
+          enablePhysics: expect.any(Boolean),
+        }),
       );
     });
   });

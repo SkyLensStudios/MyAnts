@@ -17,7 +17,7 @@ import {
   SimulationConfiguration,
   BiomeType,
   AAType,
-  TextureQuality
+  TextureQuality,
 } from '../types-enhanced';
 
 // ============================================================================
@@ -267,16 +267,16 @@ const DEFAULT_ENVIRONMENT: EnvironmentState = {
     temperature: 22,
     humidity: 65,
     windSpeed: 5,
-    season: 'spring'
+    season: 'spring',
   },
   terrain: {
     obstacles: [],
     vegetation: [],
-    waterSources: []
+    waterSources: [],
   },
   timeOfDay: 12,
   dayCount: 0,
-  pheromoneMap: new Map()
+  pheromoneMap: new Map(),
 };
 
 const DEFAULT_CAMERA: CameraState = {
@@ -285,7 +285,7 @@ const DEFAULT_CAMERA: CameraState = {
   zoom: 1,
   rotation: { x: -0.5, y: 0 },
   mode: 'free',
-  smoothTransition: true
+  smoothTransition: true,
 };
 
 const DEFAULT_UI: UIState = {
@@ -311,8 +311,8 @@ const DEFAULT_SIMULATION: SimulationState = {
     enabled: true,
     currentLevel: 2,
     targetLevel: 2,
-    performanceThreshold: 45
-  }
+    performanceThreshold: 45,
+  },
 };
 
 const DEFAULT_PERFORMANCE: PerformanceState = {
@@ -324,14 +324,14 @@ const DEFAULT_PERFORMANCE: PerformanceState = {
     triangleCount: 0,
     drawCalls: 0,
     shaderSwitches: 0,
-    textureBindings: 0
+    textureBindings: 0,
   },
   history: [],
   alerts: [],
   profiling: {
     enabled: false,
-    samples: []
-  }
+    samples: [],
+  },
 };
 
 const DEFAULT_CONFIGURATION: SimulationConfiguration = {
@@ -341,7 +341,7 @@ const DEFAULT_CONFIGURATION: SimulationConfiguration = {
     timeScale: 1.0,
     maxAnts: 10000,
     seed: 12345,
-    biome: BiomeType.TEMPERATE_FOREST
+    biome: BiomeType.TEMPERATE_FOREST,
   },
   ants: {
     initialCount: 100,
@@ -351,7 +351,7 @@ const DEFAULT_CONFIGURATION: SimulationConfiguration = {
       [AntCaste.QUEEN]: 0.04,
       [AntCaste.SCOUT]: 0.005,
       [AntCaste.NURSE]: 0.04,
-      [AntCaste.MALE]: 0.005
+      [AntCaste.MALE]: 0.005,
     },
     geneticsVariation: 0.2,
     lifespanMultiplier: 1.0,
@@ -359,8 +359,8 @@ const DEFAULT_CONFIGURATION: SimulationConfiguration = {
     physicalTraitsRange: {
       strength: [0.2, 0.8] as const,
       speed: [0.3, 0.9] as const,
-      endurance: [0.4, 0.8] as const
-    }
+      endurance: [0.4, 0.8] as const,
+    },
   },
   environment: {
     weatherEnabled: true,
@@ -369,7 +369,7 @@ const DEFAULT_CONFIGURATION: SimulationConfiguration = {
     predatorsEnabled: false,
     diseasesEnabled: false,
     foodScarcity: 0.3,
-    territorialConflicts: false
+    territorialConflicts: false,
   },
   performance: {
     targetFPS: 60,
@@ -378,7 +378,7 @@ const DEFAULT_CONFIGURATION: SimulationConfiguration = {
     multiThreading: true,
     gpuAcceleration: true,
     memoryLimit: 2048,
-    cullingDistance: 500
+    cullingDistance: 500,
   },
   rendering: {
     maxRenderDistance: 500,
@@ -388,7 +388,7 @@ const DEFAULT_CONFIGURATION: SimulationConfiguration = {
     particleEffects: true,
     postProcessing: true,
     antiAliasing: AAType.MSAA,
-    textureQuality: TextureQuality.HIGH
+    textureQuality: TextureQuality.HIGH,
   },
   ai: {
     decisionTreeDepth: 5,
@@ -397,8 +397,8 @@ const DEFAULT_CONFIGURATION: SimulationConfiguration = {
     communicationRange: 50,
     pheromoneStrength: 0.8,
     explorationBonus: 0.1,
-    socialInfluence: 0.6
-  }
+    socialInfluence: 0.6,
+  },
 };
 
 // ============================================================================
@@ -428,7 +428,7 @@ export const useMyAntsStore = create<MyAntsStore>()(
               ...antData,
               lodLevel: 0,
               behaviors: [],
-              memory: {}
+              memory: {},
             };
 
             set((state) => {
@@ -534,7 +534,7 @@ export const useMyAntsStore = create<MyAntsStore>()(
                   id: `food_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
                   position,
                   amount,
-                  discoveredAt: Date.now()
+                  discoveredAt: Date.now(),
                 };
                 colony.territory.foodSources.push(foodSource);
               }
@@ -656,7 +656,7 @@ export const useMyAntsStore = create<MyAntsStore>()(
               state.ui.notifications.push({
                 id,
                 timestamp: Date.now(),
-                ...notification
+                ...notification,
               });
             });
           },
@@ -735,7 +735,7 @@ export const useMyAntsStore = create<MyAntsStore>()(
               state.performance.current = metrics;
               state.performance.history.push({
                 timestamp: Date.now(),
-                metrics: { ...metrics }
+                metrics: { ...metrics },
               });
 
               // Keep only last 1000 samples
@@ -750,7 +750,7 @@ export const useMyAntsStore = create<MyAntsStore>()(
               state.performance.alerts.push({
                 ...alert,
                 timestamp: Date.now(),
-                resolved: false
+                resolved: false,
               });
             });
           },
@@ -781,7 +781,7 @@ export const useMyAntsStore = create<MyAntsStore>()(
               if (state.performance.profiling.enabled) {
                 state.performance.profiling.samples.push({
                   timestamp: Date.now(),
-                  ...sample
+                  ...sample,
                 });
 
                 // Keep only last 10000 samples
@@ -827,9 +827,9 @@ export const useMyAntsStore = create<MyAntsStore>()(
               colonies: Array.from(state.colonies.entries()),
               environment: {
                 ...state.environment,
-                pheromoneMap: Array.from(state.environment.pheromoneMap.entries())
+                pheromoneMap: Array.from(state.environment.pheromoneMap.entries()),
               },
-              configuration: state.configuration
+              configuration: state.configuration,
             }, null, 2);
           },
 
@@ -914,10 +914,10 @@ export const useMyAntsStore = create<MyAntsStore>()(
             state.addNotification({
               type: 'info',
               message: 'Memory optimization completed',
-              duration: 3000
+              duration: 3000,
             });
-          }
-        }))
+          },
+        })),
       ),
       {
         name: 'myants-simulation-store',
@@ -926,20 +926,20 @@ export const useMyAntsStore = create<MyAntsStore>()(
           configuration: state.configuration,
           environment: {
             ...state.environment,
-            pheromoneMap: new Map() // Don't persist pheromones
+            pheromoneMap: new Map(), // Don't persist pheromones
           },
           ui: {
             ...state.ui,
             notifications: [], // Don't persist notifications
-            modal: undefined
-          }
-        })
-      }
+            modal: undefined,
+          },
+        }),
+      },
     ),
     {
-      name: 'MyAnts Simulation Store'
-    }
-  )
+      name: 'MyAnts Simulation Store',
+    },
+  ),
 );
 
 // ============================================================================
@@ -982,7 +982,7 @@ export const usePerformanceStats = () => {
       avgMemory: Math.round(avgMemory),
       minFPS: Math.round(minFPS),
       maxFPS: Math.round(maxFPS),
-      sampleCount: recent.length
+      sampleCount: recent.length,
     };
   });
 };

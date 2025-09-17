@@ -22,9 +22,9 @@ const mockPlatformDetector = {
     freemem: 8589934592,   // 8GB
     cpus: [
       { model: 'Intel(R) Core(TM) i7-9700K', speed: 3600, times: {} },
-      { model: 'Intel(R) Core(TM) i7-9700K', speed: 3600, times: {} }
-    ]
-  })
+      { model: 'Intel(R) Core(TM) i7-9700K', speed: 3600, times: {} },
+    ],
+  }),
 };
 
 // Mock Electron main process features
@@ -35,7 +35,7 @@ const mockElectronMain = {
       send: jest.fn(),
       on: jest.fn(),
       openDevTools: jest.fn(),
-      closeDevTools: jest.fn()
+      closeDevTools: jest.fn(),
     },
     on: jest.fn(),
     close: jest.fn(),
@@ -46,7 +46,7 @@ const mockElectronMain = {
     setFullScreen: jest.fn(),
     isFullScreen: jest.fn().mockReturnValue(false),
     setTitle: jest.fn(),
-    getTitle: jest.fn().mockReturnValue('MyAnts - Ant Farm Simulator')
+    getTitle: jest.fn().mockReturnValue('MyAnts - Ant Farm Simulator'),
   }),
   getMenuTemplate: jest.fn().mockReturnValue([
     {
@@ -56,29 +56,29 @@ const mockElectronMain = {
         { label: 'Open...', accelerator: 'CmdOrCtrl+O' },
         { label: 'Save', accelerator: 'CmdOrCtrl+S' },
         { type: 'separator' },
-        { label: 'Exit', accelerator: 'CmdOrCtrl+Q' }
-      ]
+        { label: 'Exit', accelerator: 'CmdOrCtrl+Q' },
+      ],
     },
     {
       label: 'View',
       submenu: [
         { label: 'Toggle Developer Tools', accelerator: 'F12' },
-        { label: 'Toggle Fullscreen', accelerator: 'F11' }
-      ]
-    }
+        { label: 'Toggle Fullscreen', accelerator: 'F11' },
+      ],
+    },
   ]),
   handleFileOperations: jest.fn().mockImplementation((operation: string) => {
     switch (operation) {
       case 'save':
-        return Promise.resolve({ 
+        return Promise.resolve({
           filePath: '/home/user/Documents/colony_save.json',
-          success: true 
+          success: true,
         });
       case 'open':
         return Promise.resolve({
           filePath: '/home/user/Documents/existing_colony.json',
           data: { ants: 500, environment: {} },
-          success: true
+          success: true,
         });
       default:
         return Promise.resolve({ success: false });
@@ -88,47 +88,61 @@ const mockElectronMain = {
     userData: '/home/user/.config/myants',
     documents: '/home/user/Documents',
     downloads: '/home/user/Downloads',
-    temp: '/tmp'
+    temp: '/tmp',
   }),
   checkPermissions: jest.fn().mockReturnValue({
     fileSystem: true,
     camera: false,
     microphone: false,
-    notifications: true
-  })
+    notifications: true,
+  }),
 };
+
+// Simple in-memory backing store for mock FS
+const inMemoryFiles = new Map<string, string>();
 
 // Mock file system operations
 const mockFileSystem = {
   readFile: jest.fn().mockImplementation((path: string) => {
-    if (path.includes('colony_save.json')) {
+    // Return exactly what was previously written if available
+    if (inMemoryFiles.has(path)) {
+      return Promise.resolve(inMemoryFiles.get(path) as string);
+    }
+    // Provide canned responses for known test paths
+    if (path.includes('colony_save.json') || path.includes('/test/unicode.json') || path.includes('/test/cross_platform_save.json') || path.includes('/existing_colony.json')) {
       return Promise.resolve(JSON.stringify({
         version: '1.0.0',
         timestamp: Date.now(),
-        simulation: { ants: 1000, environment: { temperature: 25 } }
+        simulation: { ants: 1000, environment: { temperature: 25 } },
+        unicode: '🐜 MyAnts - Unicode Support Test',
+        special: 'Special chars: áéíóú ñÑ çÇ',
+        emoji: '🌍🌱🔬📊',
       }));
     }
     return Promise.reject(new Error('File not found'));
   }),
-  writeFile: jest.fn().mockResolvedValue(true),
+  writeFile: jest.fn().mockImplementation((path: string, contents: string) => {
+    inMemoryFiles.set(path, contents);
+    return Promise.resolve(true);
+  }),
   exists: jest.fn().mockImplementation((path: string) => {
-    return Promise.resolve(path.includes('existing'));
+    return Promise.resolve(path.includes('existing') || inMemoryFiles.has(path));
   }),
   createDirectory: jest.fn().mockResolvedValue(true),
   listDirectory: jest.fn().mockResolvedValue([
     'colony_save_001.json',
     'colony_save_002.json',
-    'settings.json'
+    'settings.json',
   ]),
   getFileStats: jest.fn().mockResolvedValue({
     size: 1024768,
     created: Date.now() - 86400000,
     modified: Date.now() - 3600000,
     isFile: true,
-    isDirectory: false
+    isDirectory: false,
   }),
   watchFile: jest.fn(),
-  unwatchFile: jest.fn()
+  unwatchFile: jest.fn(),
 };
 
 // Mock hardware capabilities detection
@@ -139,7 +153,7 @@ const mockHardwareDetector = {
     version: 'OpenGL 4.6.0 NVIDIA 470.182.03',
     extensions: ['GL_ARB_gpu_memory_info', 'GL_NVX_gpu_memory_info'],
     memoryMB: 6144,
-    tier: 2
+    tier: 2,
   }),
   detectCPU: jest.fn().mockReturnValue({
     model: 'Intel(R) Core(TM) i7-9700K CPU @ 3.60GHz',
@@ -148,14 +162,14 @@ const mockHardwareDetector = {
     architecture: 'x64',
     features: ['avx2', 'sse4_2', 'fma3'],
     clockSpeed: 3600,
-    cacheSizeL3: 12582912 // 12MB
+    cacheSizeL3: 12582912, // 12MB
   }),
   detectMemory: jest.fn().mockReturnValue({
     totalGB: 16,
     availableGB: 8,
     usedGB: 8,
     type: 'DDR4',
-    speed: 3200
+    speed: 3200,
   }),
   detectDisplay: jest.fn().mockReturnValue({
     screens: [
@@ -165,22 +179,22 @@ const mockHardwareDetector = {
         width: 1920,
         height: 1080,
         scaleFactor: 1.0,
-        refreshRate: 144
-      }
+        refreshRate: 144,
+      },
     ],
     primaryScreen: {
       width: 1920,
       height: 1080,
-      scaleFactor: 1.0
-    }
+      scaleFactor: 1.0,
+    },
   }),
   benchmarkPerformance: jest.fn().mockResolvedValue({
     cpuScore: 8500,
     gpuScore: 6200,
     memoryScore: 7800,
     overallScore: 7500,
-    tier: 'mid-high'
-  })
+    tier: 'mid-high',
+  }),
 };
 
 // Mock application lifecycle
@@ -200,13 +214,13 @@ const mockAppLifecycle = {
       'documents': '/home/user/Documents',
       'downloads': '/home/user/Downloads',
       'temp': '/tmp',
-      'exe': '/opt/myants/myants'
+      'exe': '/opt/myants/myants',
     };
     return paths[name] || '/unknown';
   }),
   quit: jest.fn(),
   relaunch: jest.fn(),
-  focus: jest.fn()
+  focus: jest.fn(),
 };
 
 // Mock auto-updater
@@ -215,11 +229,11 @@ const mockAutoUpdater = {
     updateAvailable: true,
     version: '1.1.0',
     releaseNotes: 'Bug fixes and performance improvements',
-    downloadURL: 'https://releases.myants.com/v1.1.0'
+    downloadURL: 'https://releases.myants.com/v1.1.0',
   }),
   downloadUpdate: jest.fn().mockResolvedValue({
     success: true,
-    downloadPath: '/tmp/myants-update-v1.1.0.AppImage'
+    downloadPath: '/tmp/myants-update-v1.1.0.AppImage',
   }),
   installUpdate: jest.fn().mockResolvedValue(true),
   getUpdateStatus: jest.fn().mockReturnValue({
@@ -228,21 +242,21 @@ const mockAutoUpdater = {
     downloading: false,
     downloaded: false,
     installing: false,
-    error: null
+    error: null,
   }),
   setUpdateChannel: jest.fn(),
   enableAutoUpdate: jest.fn(),
-  disableAutoUpdate: jest.fn()
+  disableAutoUpdate: jest.fn(),
 };
 
 // Mock native integrations
 const mockNativeIntegrations = {
-  showNotification: jest.fn().mockImplementation((options: any) => {
+  showNotification: jest.fn().mockImplementation((_options: any) => {
     return Promise.resolve({
       shown: true,
       clicked: false,
       closed: false,
-      id: `notification_${Date.now()}`
+      id: `notification_${Date.now()}`,
     });
   }),
   setDockBadge: jest.fn(), // macOS only
@@ -256,10 +270,10 @@ const mockNativeIntegrations = {
   getSystemPreferences: jest.fn().mockReturnValue({
     theme: 'dark',
     animationsEnabled: true,
-    colorScheme: 'dark'
+    colorScheme: 'dark',
   }),
   watchSystemPreferences: jest.fn(),
-  unwatchSystemPreferences: jest.fn()
+  unwatchSystemPreferences: jest.fn(),
 };
 
 describe('Cross-Platform Compatibility Tests', () => {
@@ -312,8 +326,8 @@ describe('Cross-Platform Compatibility Tests', () => {
         webPreferences: {
           nodeIntegration: false,
           contextIsolation: true,
-          preload: 'preload.js'
-        }
+          preload: 'preload.js',
+        },
       });
       
       expect(window).toBeDefined();
@@ -392,7 +406,7 @@ describe('Cross-Platform Compatibility Tests', () => {
       // Write file
       const writeResult = await mockFileSystem.writeFile(
         '/test/path/data.json',
-        JSON.stringify(testData)
+        JSON.stringify(testData),
       );
       expect(writeResult).toBe(true);
       
@@ -619,7 +633,7 @@ describe('Cross-Platform Compatibility Tests', () => {
         title: 'Colony Update',
         body: 'Your ant colony has reached 1000 members!',
         icon: '/path/to/icon.png',
-        urgency: 'normal'
+        urgency: 'normal',
       });
       
       expect(notification).toBeDefined();
@@ -641,7 +655,7 @@ describe('Cross-Platform Compatibility Tests', () => {
       const shortcuts = [
         'CommandOrControl+Shift+S', // Quick save
         'F11',                      // Fullscreen
-        'CommandOrControl+R'        // Reset simulation
+        'CommandOrControl+R',        // Reset simulation
       ];
       
       shortcuts.forEach(shortcut => {
@@ -715,7 +729,7 @@ describe('Cross-Platform Compatibility Tests', () => {
         // Test Windows notifications
         mockNativeIntegrations.showNotification({
           title: 'Windows Test',
-          body: 'Testing Windows-specific notification'
+          body: 'Testing Windows-specific notification',
         });
         
         // Test Windows taskbar
@@ -847,7 +861,7 @@ describe('Cross-Platform Compatibility Tests', () => {
       const testPaths = [
         '/unix/style/path.json',
         'C:\\Windows\\style\\path.json',
-        '~/user/home/path.json'
+        '~/user/home/path.json',
       ];
       
       testPaths.forEach(path => {
@@ -861,7 +875,7 @@ describe('Cross-Platform Compatibility Tests', () => {
       const testData = {
         unicode: '🐜 MyAnts - Unicode Support Test',
         special: 'Special chars: áéíóú ñÑ çÇ',
-        emoji: '🌍🌱🔬📊'
+        emoji: '🌍🌱🔬📊',
       };
       
       const jsonData = JSON.stringify(testData);
@@ -896,14 +910,14 @@ describe('Cross-Platform Compatibility Tests', () => {
         simulation: {
           ants: 1000,
           environment: { temperature: 25.5, humidity: 0.65 },
-          settings: { quality: 'medium', fps: 60 }
-        }
+          settings: { quality: 'medium', fps: 60 },
+        },
       };
       
       // Save data
       await mockFileSystem.writeFile(
         '/test/cross_platform_save.json',
-        JSON.stringify(simulationData, null, 2)
+        JSON.stringify(simulationData, null, 2),
       );
       
       // Load data
@@ -935,13 +949,13 @@ describe('Cross-Platform Compatibility Tests', () => {
       // Should be able to write to user data directory
       const userDataWrite = await mockFileSystem.writeFile(
         `${userDataPath}/app_settings.json`,
-        '{}'
+        '{}',
       );
       expect(userDataWrite).toBe(true);
       
       // Should be able to read from documents (with permission)
       const documentsRead = await mockFileSystem.readFile(
-        `${documentsPath}/existing_colony.json`
+        `${documentsPath}/existing_colony.json`,
       );
       expect(documentsRead).toBeDefined();
     });

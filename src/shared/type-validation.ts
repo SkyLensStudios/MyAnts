@@ -16,7 +16,7 @@ import {
   ValidationWarning,
   isVector3D,
   isAntCaste,
-  isPerformanceMetrics
+  isPerformanceMetrics,
 } from './types-enhanced';
 
 /**
@@ -44,7 +44,7 @@ export class TypeValidator {
         code: 'INVALID_VECTOR3D',
         message: `${fieldName} must be a valid Vector3D with x, y, z numeric properties`,
         path: fieldName,
-        value
+        value,
       });
       return { isValid: false, errors, warnings };
     }
@@ -57,7 +57,7 @@ export class TypeValidator {
         code: 'INVALID_NUMERIC_VALUES',
         message: `${fieldName} contains NaN or infinite values`,
         path: fieldName,
-        value: { x, y, z }
+        value: { x, y, z },
       });
     }
 
@@ -67,7 +67,7 @@ export class TypeValidator {
       warnings.push({
         code: 'LARGE_COORDINATE_VALUES',
         message: `${fieldName} contains very large coordinate values`,
-        suggestion: 'Consider using smaller coordinate values for better performance'
+        suggestion: 'Consider using smaller coordinate values for better performance',
       });
     }
 
@@ -86,7 +86,7 @@ export class TypeValidator {
         code: 'INVALID_QUATERNION',
         message: `${fieldName} must be a valid Quaternion with x, y, z, w numeric properties`,
         path: fieldName,
-        value
+        value,
       });
       return { isValid: false, errors, warnings };
     }
@@ -99,7 +99,7 @@ export class TypeValidator {
         code: 'INVALID_NUMERIC_VALUES',
         message: `${fieldName} contains NaN or infinite values`,
         path: fieldName,
-        value: { x, y, z, w }
+        value: { x, y, z, w },
       });
     }
 
@@ -109,7 +109,7 @@ export class TypeValidator {
       warnings.push({
         code: 'QUATERNION_NOT_NORMALIZED',
         message: `${fieldName} is not normalized (magnitude: ${magnitude.toFixed(4)})`,
-        suggestion: 'Normalize quaternion for proper rotation representation'
+        suggestion: 'Normalize quaternion for proper rotation representation',
       });
     }
 
@@ -128,7 +128,7 @@ export class TypeValidator {
         code: 'INVALID_PERFORMANCE_METRICS',
         message: `${fieldName} must be a valid PerformanceMetrics object`,
         path: fieldName,
-        value
+        value,
       });
       return { isValid: false, errors, warnings };
     }
@@ -142,13 +142,13 @@ export class TypeValidator {
           code: 'INVALID_FPS_NEGATIVE',
           message: `FPS cannot be negative: ${metrics.fps}`,
           path: `${fieldName}.fps`,
-          value: metrics.fps
+          value: metrics.fps,
         });
       } else {
         warnings.push({
           code: 'UNUSUALLY_HIGH_FPS',
           message: `FPS is unusually high: ${metrics.fps}`,
-          suggestion: 'Verify FPS calculation accuracy'
+          suggestion: 'Verify FPS calculation accuracy',
         });
       }
     }
@@ -159,7 +159,7 @@ export class TypeValidator {
         code: 'INVALID_FRAME_TIME',
         message: `Frame time out of reasonable bounds: ${metrics.frameTime}ms`,
         path: `${fieldName}.frameTime`,
-        value: metrics.frameTime
+        value: metrics.frameTime,
       });
     }
 
@@ -169,7 +169,7 @@ export class TypeValidator {
         code: 'INVALID_CPU_USAGE',
         message: `CPU usage must be between 0-100%: ${metrics.cpuUsage}`,
         path: `${fieldName}.cpuUsage`,
-        value: metrics.cpuUsage
+        value: metrics.cpuUsage,
       });
     }
 
@@ -179,7 +179,7 @@ export class TypeValidator {
         code: 'INVALID_MEMORY_USAGE',
         message: `Memory usage out of reasonable bounds: ${metrics.memoryUsage}MB`,
         path: `${fieldName}.memoryUsage`,
-        value: metrics.memoryUsage
+        value: metrics.memoryUsage,
       });
     }
 
@@ -198,7 +198,7 @@ export class TypeValidator {
         code: 'INVALID_SIMULATION_CONFIG',
         message: 'Value is not a valid SimulationConfiguration',
         path: 'root',
-        value
+        value,
       });
       return { isValid: false, errors, warnings };
     }
@@ -281,7 +281,7 @@ export class TypeValidator {
         code: 'INVALID_TIME_SCALE',
         message: `Time scale must be between 0 and 100: ${world.timeScale}`,
         path: 'timeScale',
-        value: world.timeScale
+        value: world.timeScale,
       });
     }
 
@@ -291,7 +291,7 @@ export class TypeValidator {
         code: 'INVALID_MAX_ANTS',
         message: `Max ants must be between 1 and 100,000: ${world.maxAnts}`,
         path: 'maxAnts',
-        value: world.maxAnts
+        value: world.maxAnts,
       });
     }
 
@@ -308,7 +308,7 @@ export class TypeValidator {
         code: 'INVALID_TARGET_FPS',
         message: `Target FPS must be between 15 and 240: ${performance.targetFPS}`,
         path: 'targetFPS',
-        value: performance.targetFPS
+        value: performance.targetFPS,
       });
     }
 
@@ -318,7 +318,7 @@ export class TypeValidator {
         code: 'INVALID_MEMORY_LIMIT',
         message: `Memory limit must be between 256MB and 16GB: ${performance.memoryLimit}MB`,
         path: 'memoryLimit',
-        value: performance.memoryLimit
+        value: performance.memoryLimit,
       });
     }
 
@@ -365,8 +365,8 @@ export class TypedObjectBuilder<T> {
         errors: [{ 
           code: 'BUILD_FAILED', 
           message: error instanceof Error ? error.message : 'Unknown error',
-          path: 'root'
-        }] 
+          path: 'root',
+        }], 
       };
     }
   }
@@ -417,7 +417,7 @@ export class FastTypeChecker {
   public static validateWithCache<T>(
     value: unknown, 
     validator: (val: unknown) => val is T,
-    cacheKey: string
+    cacheKey: string,
   ): value is T {
     if (this.typeCache.has(cacheKey)) {
       return this.typeCache.get(cacheKey)!;

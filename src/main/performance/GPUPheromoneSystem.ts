@@ -54,7 +54,7 @@ export class GPUPheromoneSystem {
     averageFrameTime: 0,
     activeTexels: 0,
     totalTexels: 0,
-    gpuMemoryUsage: 0
+    gpuMemoryUsage: 0,
   };
 
   constructor(gl: WebGL2RenderingContext, config: PheromoneGPUConfig) {
@@ -87,20 +87,20 @@ export class GPUPheromoneSystem {
     const shaderSources = {
       diffusion: {
         vertex: this.getDiffusionVertexShader(),
-        fragment: this.getDiffusionFragmentShader()
+        fragment: this.getDiffusionFragmentShader(),
       },
       evaporation: {
         vertex: this.getEvaporationVertexShader(),
-        fragment: this.getEvaporationFragmentShader()
+        fragment: this.getEvaporationFragmentShader(),
       },
       injection: {
         vertex: this.getInjectionVertexShader(),
-        fragment: this.getInjectionFragmentShader()
+        fragment: this.getInjectionFragmentShader(),
       },
       sparse: {
         vertex: this.getSparseVertexShader(),
-        fragment: this.getSparseFragmentShader()
-      }
+        fragment: this.getSparseFragmentShader(),
+      },
     };
 
     for (const [name, sources] of Object.entries(shaderSources)) {
@@ -247,7 +247,7 @@ export class GPUPheromoneSystem {
       -1, -1,  0, 0,  // bottom-left
        1, -1,  1, 0,  // bottom-right
       -1,  1,  0, 1,  // top-left
-       1,  1,  1, 1   // top-right
+       1,  1,  1, 1,   // top-right
     ]);
     
     const vertexBuffer = gl.createBuffer()!;
@@ -273,7 +273,7 @@ export class GPUPheromoneSystem {
           width: Math.min(regionSize, this.config.gridWidth - x * regionSize),
           height: Math.min(regionSize, this.config.gridHeight - y * regionSize),
           antCount: 0,
-          lastActivity: 0
+          lastActivity: 0,
         });
       }
     }

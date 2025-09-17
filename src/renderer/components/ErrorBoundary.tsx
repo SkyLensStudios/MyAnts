@@ -31,7 +31,7 @@ class ErrorBoundary extends Component<Props, State> {
       errorInfo: null,
       isWebGLError: false,
       retryCount: 0,
-      capabilityDetector: null
+      capabilityDetector: null,
     };
   }
 
@@ -111,7 +111,7 @@ class ErrorBoundary extends Component<Props, State> {
         hasError: false, 
         error: null, 
         errorInfo: null,
-        retryCount: newRetryCount
+        retryCount: newRetryCount,
       });
     } else {
       console.warn('Maximum retry attempts reached');
@@ -137,7 +137,7 @@ class ErrorBoundary extends Component<Props, State> {
           alignItems: 'center',
           justifyContent: 'center',
           backgroundColor: '#f8f9fa',
-          fontFamily: 'Arial, sans-serif'
+          fontFamily: 'Arial, sans-serif',
         }}>
           <div style={{
             maxWidth: '600px',
@@ -145,13 +145,13 @@ class ErrorBoundary extends Component<Props, State> {
             backgroundColor: 'white',
             borderRadius: '12px',
             boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-            border: this.state.isWebGLError ? '2px solid #ff6b6b' : '2px solid #ffa502'
+            border: this.state.isWebGLError ? '2px solid #ff6b6b' : '2px solid #ffa502',
           }}>
             <div style={{ textAlign: 'center', marginBottom: '20px' }}>
               <h1 style={{ 
                 color: this.state.isWebGLError ? '#d63031' : '#e17055',
                 margin: '0 0 10px 0',
-                fontSize: '24px'
+                fontSize: '24px',
               }}>
                 {this.state.isWebGLError ? '🎮 Graphics Error' : '⚠️ Application Error'}
               </h1>
@@ -169,7 +169,7 @@ class ErrorBoundary extends Component<Props, State> {
                 padding: '15px',
                 borderRadius: '8px',
                 marginBottom: '20px',
-                border: '1px solid #ffcdd2'
+                border: '1px solid #ffcdd2',
               }}>
                 <h3 style={{ margin: '0 0 10px 0', color: '#d32f2f' }}>WebGL/Graphics Issue</h3>
                 <p style={{ margin: '0 0 10px 0', fontSize: '14px' }}>
@@ -216,7 +216,7 @@ class ErrorBoundary extends Component<Props, State> {
               padding: '15px',
               borderRadius: '8px',
               marginBottom: '20px',
-              border: '1px solid #e9ecef'
+              border: '1px solid #e9ecef',
             }}>
               <h3 style={{ margin: '0 0 10px 0', color: '#495057' }}>Quick Solutions</h3>
               <ul style={{ margin: 0, fontSize: '14px' }}>
@@ -239,7 +239,7 @@ class ErrorBoundary extends Component<Props, State> {
                     borderRadius: '6px',
                     cursor: 'pointer',
                     fontSize: '14px',
-                    fontWeight: 'bold'
+                    fontWeight: 'bold',
                   }}
                 >
                   Try Again ({3 - this.state.retryCount} attempts left)
@@ -256,7 +256,7 @@ class ErrorBoundary extends Component<Props, State> {
                   borderRadius: '6px',
                   cursor: 'pointer',
                   fontSize: '14px',
-                  fontWeight: 'bold'
+                  fontWeight: 'bold',
                 }}
               >
                 Refresh Page
@@ -270,7 +270,7 @@ class ErrorBoundary extends Component<Props, State> {
                   cursor: 'pointer', 
                   fontWeight: 'bold',
                   color: '#6c5ce7',
-                  marginBottom: '10px'
+                  marginBottom: '10px',
                 }}>
                   🔍 Developer Details
                 </summary>
@@ -282,7 +282,7 @@ class ErrorBoundary extends Component<Props, State> {
                   fontSize: '12px',
                   fontFamily: 'monospace',
                   overflow: 'auto',
-                  maxHeight: '200px'
+                  maxHeight: '200px',
                 }}>
                   <div style={{ marginBottom: '10px' }}>
                     <strong>Error:</strong> {this.state.error.message}

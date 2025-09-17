@@ -184,14 +184,14 @@ export class Vector2DUtils {
     const sin = Math.sin(angle);
     return {
       x: v.x * cos - v.y * sin,
-      y: v.x * sin + v.y * cos
+      y: v.x * sin + v.y * cos,
     };
   }
 
   static lerp(a: Vector2D, b: Vector2D, t: number): Vector2D {
     return {
       x: a.x + (b.x - a.x) * t,
-      y: a.y + (b.y - a.y) * t
+      y: a.y + (b.y - a.y) * t,
     };
   }
 
@@ -213,7 +213,7 @@ export class AABB2DUtils {
     const halfY = size.y / 2;
     return {
       min: { x: center.x - halfX, y: center.y - halfY },
-      max: { x: center.x + halfX, y: center.y + halfY }
+      max: { x: center.x + halfX, y: center.y + halfY },
     };
   }
 
@@ -230,14 +230,14 @@ export class AABB2DUtils {
   static union(a: AABB2D, b: AABB2D): AABB2D {
     return {
       min: { x: Math.min(a.min.x, b.min.x), y: Math.min(a.min.y, b.min.y) },
-      max: { x: Math.max(a.max.x, b.max.x), y: Math.max(a.max.y, b.max.y) }
+      max: { x: Math.max(a.max.x, b.max.x), y: Math.max(a.max.y, b.max.y) },
     };
   }
 
   static expand(aabb: AABB2D, amount: number): AABB2D {
     return {
       min: { x: aabb.min.x - amount, y: aabb.min.y - amount },
-      max: { x: aabb.max.x + amount, y: aabb.max.y + amount }
+      max: { x: aabb.max.x + amount, y: aabb.max.y + amount },
     };
   }
 
@@ -248,14 +248,14 @@ export class AABB2DUtils {
   static center(aabb: AABB2D): Vector2D {
     return {
       x: (aabb.min.x + aabb.max.x) / 2,
-      y: (aabb.min.y + aabb.max.y) / 2
+      y: (aabb.min.y + aabb.max.y) / 2,
     };
   }
 
   static size(aabb: AABB2D): Vector2D {
     return {
       x: aabb.max.x - aabb.min.x,
-      y: aabb.max.y - aabb.min.y
+      y: aabb.max.y - aabb.min.y,
     };
   }
 }

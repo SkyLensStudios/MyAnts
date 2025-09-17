@@ -3,17 +3,16 @@
  * Handles the entire simulation interface and WebGL rendering
  */
 
-import React, { useEffect, useState, useCallback } from 'react';
-import { SimulationState, AntRenderData, PerformanceStats, SimulationConfig, PheromoneRenderData, EnvironmentRenderData } from '../shared/types';
-import { AntSpecies } from '../shared/types';
-import { SimulationMode, ModeConversionUtils } from '../shared/types-unified';
-import SimulationControls from './components/SimulationControls';
-import DataPanel from './components/DataPanel';
-import Canvas2DRendererComponent from './components/Canvas2DRenderer';
-import AdvancedThreeJSRenderer from './components/AdvancedThreeJSRenderer';
-import PerformanceMonitor from './components/PerformanceMonitor';
-import ErrorBoundary from './components/ErrorBoundary';
+import React, { useCallback, useEffect, useState } from 'react';
+import { AntRenderData, EnvironmentRenderData, PerformanceStats, PheromoneRenderData, SimulationConfig, SimulationState } from '../shared/types';
+import { SimulationMode } from '../shared/types-unified';
 import './App.css';
+import AdvancedThreeJSRenderer from './components/AdvancedThreeJSRenderer';
+import Canvas2DRendererComponent from './components/Canvas2DRenderer';
+import DataPanel from './components/DataPanel';
+import ErrorBoundary from './components/ErrorBoundary';
+import PerformanceMonitor from './components/PerformanceMonitor';
+import SimulationControls from './components/SimulationControls';
 
 const App: React.FC = () => {
   // Simulation state
@@ -241,7 +240,7 @@ const App: React.FC = () => {
             right: (showDataPanel || showPerformanceMonitor) ? '320px' : '1rem',
             zIndex: 1001,
             transition: 'right 0.3s ease',
-            pointerEvents: 'none'
+            pointerEvents: 'none',
           }}
         >
           <div style={{ pointerEvents: 'auto', display: 'inline-block' }}>
@@ -264,7 +263,7 @@ const App: React.FC = () => {
               borderRadius: '5px',
               display: 'flex',
               gap: '10px',
-              alignItems: 'center'
+              alignItems: 'center',
             }}>
               <span style={{ color: 'white', fontSize: '12px' }}>Render Mode:</span>
               <button
@@ -276,7 +275,7 @@ const App: React.FC = () => {
                   color: 'white',
                   border: 'none',
                   borderRadius: '3px',
-                  cursor: 'pointer'
+                  cursor: 'pointer',
                 }}
               >
                 2D
@@ -290,7 +289,7 @@ const App: React.FC = () => {
                   color: 'white',
                   border: 'none',
                   borderRadius: '3px',
-                  cursor: 'pointer'
+                  cursor: 'pointer',
                 }}
               >
                 3D
@@ -304,7 +303,7 @@ const App: React.FC = () => {
           className="visualization-container" 
           style={{
             marginRight: (showDataPanel || showPerformanceMonitor) ? '300px' : '0',
-            transition: 'margin-right 0.3s ease'
+            transition: 'margin-right 0.3s ease',
           }}
         >
           <ErrorBoundary fallback={
@@ -337,21 +336,21 @@ const App: React.FC = () => {
                     visible: true,
                     generation: ant.generation || 1,
                     animationState: 0,
-                    lodLevel: 0
+                    lodLevel: 0,
                   })),
                   pheromoneData: [], // Simplified for now - will convert pheromone grid data later
                   environmentData: [{
                     position: { x: 0, y: 0 },
                     size: { x: 1000, y: 1000 },
                     type: 'nest',
-                    properties: {}
+                    properties: {},
                   }],
                   deltaTime: 16.67,
                   performanceMetrics: performanceStats ? {
                     fps: performanceStats.fps,
                     frameTime: performanceStats.frameTime,
-                    antCount: antData.length
-                  } : undefined
+                    antCount: antData.length,
+                  } : undefined,
                 }}
                 config={{
                   enableBackgroundGrid: true,
@@ -365,7 +364,7 @@ const App: React.FC = () => {
                   enablePheromoneVisualizations: true,
                   enableEnvironmentObjects: true,
                   backgroundColor: '#2a2a2a',
-                  gridColor: '#444444'
+                  gridColor: '#444444',
                 }}
                 onCameraChange={(camera) => console.log('Camera changed:', camera)}
                 onMetricsUpdate={(metrics) => console.log('2D Metrics:', metrics)}
@@ -394,7 +393,7 @@ const App: React.FC = () => {
             zIndex: 900,
             backgroundColor: '#2a2a2a',
             borderLeft: '2px solid #444',
-            overflowY: 'auto'
+            overflowY: 'auto',
           }}>
             {showDataPanel && (
               <ErrorBoundary>

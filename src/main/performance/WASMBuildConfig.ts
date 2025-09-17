@@ -38,13 +38,13 @@ export const physicsModuleConfig: WASMModuleBuildConfig = {
     'processBatch',
     'setGravity',
     'addCollider',
-    'removeCollider'
+    'removeCollider',
   ],
   importedFunctions: [
     'log',
     'getTime',
-    'random'
-  ]
+    'random',
+  ],
 };
 
 /**
@@ -66,15 +66,15 @@ export const aiModuleConfig: WASMModuleBuildConfig = {
     'batchAIUpdate',
     'initializeNeuralNet',
     'trainNetwork',
-    'getDecisionProbabilities'
+    'getDecisionProbabilities',
   ],
   importedFunctions: [
     'log',
     'getTime',
     'random',
     'sigmoid',
-    'tanh'
-  ]
+    'tanh',
+  ],
 };
 
 /**
@@ -96,14 +96,14 @@ export const pathfindingModuleConfig: WASMModuleBuildConfig = {
     'batchPathfinding',
     'createNavMesh',
     'queryRadius',
-    'getShortestPath'
+    'getShortestPath',
   ],
   importedFunctions: [
     'log',
     'getTime',
     'sqrt',
-    'abs'
-  ]
+    'abs',
+  ],
 };
 
 /**
@@ -124,14 +124,14 @@ export const pheromonesModuleConfig: WASMModuleBuildConfig = {
     'calculateGradient',
     'batchDiffusion',
     'addPheromoneSource',
-    'evaporateChemicals'
+    'evaporateChemicals',
   ],
   importedFunctions: [
     'log',
     'getTime',
     'exp',
-    'pow'
-  ]
+    'pow',
+  ],
 };
 
 /**
@@ -148,7 +148,7 @@ export function generateEmscriptenBuildScript(config: WASMModuleBuildConfig): st
     '-s MODULARIZE=1',
     '-s EXPORT_NAME="createModule"',
     `-s EXPORTED_FUNCTIONS="[${config.exportedFunctions.map(f => `'_${f}'`).join(',')}]"`,
-    '-s EXPORTED_RUNTIME_METHODS="[\'cwrap\',\'ccall\']"'
+    '-s EXPORTED_RUNTIME_METHODS="[\'cwrap\',\'ccall\']"',
   ];
 
   if (config.sharedMemory) {
@@ -320,17 +320,17 @@ done
 
   const packageJson = {
     scripts: {
-      "build:wasm": "./scripts/build-wasm.sh",
-      "build:wasm:physics": "./scripts/build-physics.sh",
-      "build:wasm:ai": "./scripts/build-ai.sh", 
-      "build:wasm:pathfinding": "./scripts/build-pathfinding.sh",
-      "build:wasm:pheromones": "./scripts/build-pheromones.sh",
-      "clean:wasm": "rm -rf public/wasm/*.wasm",
-      "dev": "npm run build:wasm && npm run electron:dev"
+      'build:wasm': './scripts/build-wasm.sh',
+      'build:wasm:physics': './scripts/build-physics.sh',
+      'build:wasm:ai': './scripts/build-ai.sh', 
+      'build:wasm:pathfinding': './scripts/build-pathfinding.sh',
+      'build:wasm:pheromones': './scripts/build-pheromones.sh',
+      'clean:wasm': 'rm -rf public/wasm/*.wasm',
+      'dev': 'npm run build:wasm && npm run electron:dev',
     },
     devDependencies: {
-      "emscripten": "^3.1.0"
-    }
+      'emscripten': '^3.1.0',
+    },
   };
 
   const dockerFile = `# WebAssembly Build Environment
@@ -366,7 +366,7 @@ CMD ["./scripts/build-wasm.sh"]
   return {
     buildAllScript,
     packageJson,
-    dockerFile
+    dockerFile,
   };
 }
 

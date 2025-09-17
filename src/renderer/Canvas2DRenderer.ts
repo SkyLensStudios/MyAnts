@@ -4,14 +4,13 @@
  * Replaces Three.js WebGPU system with simpler, more efficient 2D rendering
  */
 
-import { 
-  Vector2D, 
-  AntRenderInstance2D, 
-  PheromoneRenderData2D, 
-  EnvironmentRenderData2D,
-  Vector2DUtils,
-  AABB2D,
-  AABB2DUtils
+import {
+    AABB2D,
+    AntRenderInstance2D,
+    EnvironmentRenderData2D,
+    PheromoneRenderData2D,
+    Vector2D,
+    Vector2DUtils,
 } from '../shared/types-2d';
 
 export interface Canvas2DRendererConfig {
@@ -53,17 +52,17 @@ export interface Camera2D {
  * Optimized for rendering thousands of ants with smooth performance
  */
 export class Canvas2DRenderer {
-  private canvas: HTMLCanvasElement;
-  private ctx: CanvasRenderingContext2D;
+  private readonly canvas: HTMLCanvasElement;
+  private readonly ctx: CanvasRenderingContext2D;
   private config: Canvas2DRendererConfig;
   private camera: Camera2D;
-  private metrics: RenderMetrics2D;
+  private readonly metrics: RenderMetrics2D;
   
   // Performance optimization
   private offscreenCanvas: HTMLCanvasElement | null = null;
   private offscreenCtx: CanvasRenderingContext2D | null = null;
-  private antSpriteCache: Map<string, ImageData> = new Map();
-  private lastFrameTime = 0;
+  private readonly antSpriteCache: Map<string, ImageData> = new Map();
+  private readonly lastFrameTime = 0;
   private frameCount = 0;
   private fpsUpdateTime = 0;
   
@@ -71,8 +70,8 @@ export class Canvas2DRenderer {
   private viewBounds: AABB2D = { min: { x: 0, y: 0 }, max: { x: 0, y: 0 } };
   
   // Animation
-  private animationId: number | null = null;
-  private isRunning = false;
+  private readonly animationId: number | null = null;
+  private readonly isRunning = false;
 
   constructor(canvas: HTMLCanvasElement, config: Partial<Canvas2DRendererConfig> = {}) {
     this.canvas = canvas;
@@ -95,7 +94,7 @@ export class Canvas2DRenderer {
       enablePerformanceOptimizations: true,
       cullingEnabled: true,
       batchSize: 1000,
-      ...config
+      ...config,
     };
 
     this.camera = {
@@ -103,7 +102,7 @@ export class Canvas2DRenderer {
       zoom: 1.0,
       rotation: 0,
       viewportWidth: canvas.width,
-      viewportHeight: canvas.height
+      viewportHeight: canvas.height,
     };
 
     this.metrics = {
@@ -114,7 +113,7 @@ export class Canvas2DRenderer {
       environmentObjectsRendered: 0,
       totalDrawCalls: 0,
       culledObjects: 0,
-      lastFrameTime: 0
+      lastFrameTime: 0,
     };
 
     this.initialize();
@@ -267,12 +266,12 @@ export class Canvas2DRenderer {
     this.viewBounds = {
       min: {
         x: this.camera.position.x - halfWidth,
-        y: this.camera.position.y - halfHeight
+        y: this.camera.position.y - halfHeight,
       },
       max: {
         x: this.camera.position.x + halfWidth,
-        y: this.camera.position.y + halfHeight
-      }
+        y: this.camera.position.y + halfHeight,
+      },
     };
   }
 
@@ -346,9 +345,14 @@ export class Canvas2DRenderer {
       }
       
       // Color based on pheromone type
-      const hue = pheromone.type === 'food' ? 120 : // Green for food
-                  pheromone.type === 'home' ? 240 :  // Blue for home
-                  60; // Yellow for others
+      let hue: number;
+      if (pheromone.type === 'food') {
+        hue = 120; // Green for food
+      } else if (pheromone.type === 'home') {
+        hue = 240; // Blue for home
+      } else {
+        hue = 60; // Yellow for others
+      }
       
       const saturation = Math.min(100, pheromone.strength * 100);
       const lightness = 50;
@@ -381,16 +385,23 @@ export class Canvas2DRenderer {
       }
       
       // Color based on object type
-      this.ctx.fillStyle = obj.type === 'food' ? '#8B4513' :  // Brown for food
-                          obj.type === 'obstacle' ? '#666666' : // Gray for obstacles
-                          obj.type === 'nest' ? '#DAA520' :     // Gold for nest
-                          '#999999'; // Default gray
+      let objectColor: string;
+      if (obj.type === 'food') {
+        objectColor = '#8B4513'; // Brown for food
+      } else if (obj.type === 'obstacle') {
+        objectColor = '#666666'; // Gray for obstacles
+      } else if (obj.type === 'nest') {
+        objectColor = '#DAA520'; // Gold for nest
+      } else {
+        objectColor = '#999999'; // Default gray
+      }
+      this.ctx.fillStyle = objectColor;
       
       this.ctx.fillRect(
         obj.position.x - obj.size.x / 2,
         obj.position.y - obj.size.y / 2,
         obj.size.x,
-        obj.size.y
+        obj.size.y,
       );
       
       rendered++;
@@ -435,17 +446,10 @@ export class Canvas2DRenderer {
       this.ctx.rotate(ant.rotation);
       this.ctx.scale(ant.scale.x, ant.scale.y);
       
-      // Use sprite cache if available, otherwise draw simple circle
-      const sprite = this.antSpriteCache.get('worker');
-      if (sprite && this.config.enablePerformanceOptimizations) {
-        // Use cached sprite (more complex implementation needed for ImageData rendering)
-        this.ctx.fillStyle = `rgba(${ant.color.r * 255}, ${ant.color.g * 255}, ${ant.color.b * 255}, ${ant.color.a})`;
-      } else {
-        // Simple circle representation
-        this.ctx.fillStyle = `rgba(${ant.color.r * 255}, ${ant.color.g * 255}, ${ant.color.b * 255}, ${ant.color.a})`;
-      }
+      // Set ant color and draw simple circle representation
+      this.ctx.fillStyle = `rgba(${ant.color.r * 255}, ${ant.color.g * 255}, ${ant.color.b * 255}, ${ant.color.a})`;
       
-      // Draw ant as circle (simplified)
+      // Draw ant as circle
       this.ctx.beginPath();
       this.ctx.arc(0, 0, this.config.antSize, 0, Math.PI * 2);
       this.ctx.fill();
@@ -466,7 +470,7 @@ export class Canvas2DRenderer {
   public render(
     ants: AntRenderInstance2D[],
     pheromones: PheromoneRenderData2D[] = [],
-    environment: EnvironmentRenderData2D[] = []
+    environment: EnvironmentRenderData2D[] = [],
   ): void {
     const frameStart = performance.now();
     
@@ -519,7 +523,7 @@ export class Canvas2DRenderer {
     this.updateViewTransform();
   }
 
-  public zoomCamera(factor: number, center?: Vector2D): void {
+  public zoomCamera(factor: number, _center?: Vector2D): void {
     this.camera.zoom *= factor;
     this.camera.zoom = Math.max(0.1, Math.min(10, this.camera.zoom));
     this.updateViewTransform();

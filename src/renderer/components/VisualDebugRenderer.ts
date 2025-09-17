@@ -62,7 +62,7 @@ export class VisualDebugRenderer {
       color: this.getTaskColor(ant.task),
       transparent: true,
       opacity: 0.6,
-      linewidth: 2
+      linewidth: 2,
     });
 
     const line = new THREE.Line(geometry, material);
@@ -77,7 +77,7 @@ export class VisualDebugRenderer {
       color: this.getTaskColor(ant.task),
       transparent: true,
       opacity: 0.2,
-      wireframe: true
+      wireframe: true,
     });
 
     const cone = new THREE.Mesh(coneGeometry, coneMaterial);
@@ -98,7 +98,7 @@ export class VisualDebugRenderer {
       color: ant.task === 'forage' ? 0x00ff00 : 0x666666,
       transparent: true,
       opacity: 0.3,
-      side: THREE.DoubleSide
+      side: THREE.DoubleSide,
     });
 
     const circle = new THREE.Mesh(circleGeometry, circleMaterial);
@@ -204,7 +204,7 @@ export class VisualDebugRenderer {
       color: 0xff0000,
       transparent: true,
       opacity: 0.8,
-      side: THREE.DoubleSide
+      side: THREE.DoubleSide,
     });
 
     const highlight = new THREE.Mesh(highlightGeometry, highlightMaterial);
@@ -291,7 +291,7 @@ export class VisualDebugRenderer {
             vertexColors: true,
             transparent: true,
             opacity: 0.8,
-            sizeAttenuation: false
+            sizeAttenuation: false,
           });
 
           const pheromonePoints = new THREE.Points(geometry, material);

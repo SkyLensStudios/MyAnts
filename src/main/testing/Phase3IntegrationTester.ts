@@ -98,7 +98,7 @@ export class Phase3IntegrationTester {
       blockSize: 1024,
       quantizationBits: 12,
       enableWASMAcceleration: true,
-      targetCompressionRatio: this.config.compressionTarget
+      targetCompressionRatio: this.config.compressionTarget,
     };
     
     this.compressionEngine = new ISABELACompressionEngine(compressionConfig);
@@ -113,7 +113,7 @@ export class Phase3IntegrationTester {
       enableMemoryOptimization: true,
       enableSIMDOptimization: true,
       spatialHashBuckets: 1024,
-      temporalCoherence: true
+      temporalCoherence: true,
     };
     
     this.spatialStructure = new MEBVHSpatialStructure(spatialConfig);
@@ -129,13 +129,13 @@ export class Phase3IntegrationTester {
       defragmentationInterval: 10000,
       accessDecayRate: 0.1,
       enablePredictiveAllocation: true,
-      enableAdaptiveCompression: true
+      enableAdaptiveCompression: true,
     };
     
     this.memoryManager = new AdvancedMemoryManager(
       memoryConfig,
       compressionConfig,
-      spatialConfig
+      spatialConfig,
     );
     
     console.log('✅ Test systems initialized');
@@ -160,17 +160,17 @@ export class Phase3IntegrationTester {
         position: {
           x: Math.random() * worldSize - worldSize / 2,
           y: Math.random() * worldSize - worldSize / 2,
-          z: Math.random() * 5 // Mostly ground level
+          z: Math.random() * 5, // Mostly ground level
         },
         velocity: {
           x: (Math.random() - 0.5) * 2,
           y: (Math.random() - 0.5) * 2,
-          z: (Math.random() - 0.5) * 0.1
+          z: (Math.random() - 0.5) * 0.1,
         },
         radius: 0.1 + Math.random() * 0.05,
         bounds: { min: { x: 0, y: 0, z: 0 }, max: { x: 0, y: 0, z: 0 } },
         type: 'ant',
-        lastUpdate: performance.now()
+        lastUpdate: performance.now(),
       };
       
       // Calculate bounds
@@ -178,13 +178,13 @@ export class Phase3IntegrationTester {
         min: {
           x: ant.position.x - ant.radius,
           y: ant.position.y - ant.radius,
-          z: ant.position.z - ant.radius
+          z: ant.position.z - ant.radius,
         },
         max: {
           x: ant.position.x + ant.radius,
           y: ant.position.y + ant.radius,
-          z: ant.position.z + ant.radius
-        }
+          z: ant.position.z + ant.radius,
+        },
       };
       
       this.testAnts.push(ant);
@@ -218,7 +218,7 @@ export class Phase3IntegrationTester {
     // Test compression on sample of test data
     const sampleSize = Math.min(1000, this.testData.length);
     const sampleIndices = Array.from({ length: sampleSize }, () => 
-      Math.floor(Math.random() * this.testData.length)
+      Math.floor(Math.random() * this.testData.length),
     );
     
     for (const index of sampleIndices) {
@@ -229,7 +229,7 @@ export class Phase3IntegrationTester {
         // Compress data
         const compressed = await this.compressionEngine.compressChunk(
           originalData,
-          'ant_positions'
+          'ant_positions',
         );
         const compressTime = performance.now() - compressStart;
         compressionTimes.push(compressTime);
@@ -277,7 +277,7 @@ export class Phase3IntegrationTester {
       compressionTime: avgCompressionTime,
       decompressionTime: avgDecompressionTime,
       accuracyLoss: avgAccuracyLoss,
-      passed
+      passed,
     };
     
     const totalTime = performance.now() - startTime;
@@ -326,14 +326,14 @@ export class Phase3IntegrationTester {
       const queryCenter = {
         x: (Math.random() - 0.5) * 1000,
         y: (Math.random() - 0.5) * 1000,
-        z: Math.random() * 10
+        z: Math.random() * 10,
       };
       
       const query: SpatialQuery = {
         type: 'radius',
         center: queryCenter,
         radius: 50 + Math.random() * 100,
-        maxResults: 100
+        maxResults: 100,
       };
       
       const queryStart = performance.now();
@@ -360,7 +360,7 @@ export class Phase3IntegrationTester {
       averageQueryTime: avgQueryTime,
       memoryReduction: memoryReduction ? 50 : 0, // Percentage
       spatialAccuracy: avgResults > 0 ? 100 : 0, // Simplified accuracy
-      passed
+      passed,
     };
     
     const totalTime = performance.now() - startTime;
@@ -389,7 +389,7 @@ export class Phase3IntegrationTester {
         type: 'ant_data',
         priority: Math.floor(Math.random() * 10),
         accessPattern: Math.random() > 0.5 ? 'spatial' : 'temporal',
-        expectedLifetime: 10000 + Math.random() * 50000
+        expectedLifetime: 10000 + Math.random() * 50000,
       };
       allocationRequests.push(request);
     }
@@ -459,10 +459,10 @@ export class Phase3IntegrationTester {
         hot: memoryStats.tierDistribution[MemoryTier.HOT] * 100,
         warm: memoryStats.tierDistribution[MemoryTier.WARM] * 100,
         cold: memoryStats.tierDistribution[MemoryTier.COLD] * 100,
-        frozen: memoryStats.tierDistribution[MemoryTier.FROZEN] * 100
+        frozen: memoryStats.tierDistribution[MemoryTier.FROZEN] * 100,
       },
       fragmentationRatio: memoryStats.fragmentationRatio,
-      passed
+      passed,
     };
     
     const totalTime = performance.now() - startTime;
@@ -519,10 +519,10 @@ export class Phase3IntegrationTester {
           center: {
             x: (Math.random() - 0.5) * 1000,
             y: (Math.random() - 0.5) * 1000,
-            z: Math.random() * 10
+            z: Math.random() * 10,
           },
           radius: 25 + Math.random() * 50,
-          maxResults: 50
+          maxResults: 50,
         };
         
         await this.spatialStructure.query(query);
@@ -552,7 +552,7 @@ export class Phase3IntegrationTester {
     const performanceScore = this.calculatePerformanceScore(
       avgStepTime,
       finalMemoryStats,
-      finalSpatialStats
+      finalSpatialStats,
     );
     
     const passed = avgStepTime < this.config.performanceThreshold &&
@@ -563,7 +563,7 @@ export class Phase3IntegrationTester {
       endToEndPerformance: avgStepTime,
       memoryUsage: finalMemoryStats.totalAllocated,
       overallScore: performanceScore,
-      passed
+      passed,
     };
     
     console.log(`   Average step time: ${avgStepTime.toFixed(2)}ms`);
@@ -579,7 +579,7 @@ export class Phase3IntegrationTester {
   private calculatePerformanceScore(
     avgStepTime: number,
     memoryStats: any,
-    spatialStats: any
+    spatialStats: any,
   ): number {
     const timeScore = Math.max(0, 100 - (avgStepTime / this.config.performanceThreshold) * 100);
     const memoryScore = Math.max(0, 100 - (memoryStats.totalAllocated / this.config.memoryBudget) * 100);
@@ -616,7 +616,7 @@ export class Phase3IntegrationTester {
         this.testResults.compressionTests?.passed &&
         this.testResults.spatialTests?.passed &&
         this.testResults.memoryTests?.passed &&
-        this.testResults.integrationTests?.passed
+        this.testResults.integrationTests?.passed,
       );
       
       const overallScore = this.testResults.integrationTests?.overallScore || 0;
@@ -632,8 +632,8 @@ export class Phase3IntegrationTester {
         overall: {
           allTestsPassed,
           performanceScore: overallScore,
-          recommendations
-        }
+          recommendations,
+        },
       };
       
       const totalTime = performance.now() - overallStartTime;

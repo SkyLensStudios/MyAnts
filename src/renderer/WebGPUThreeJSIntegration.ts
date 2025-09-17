@@ -54,7 +54,7 @@ export class WebGPUThreeJSIntegration {
     triangles: 0,
     instances: 0,
     lastFrameTime: 0,
-    webgpuUtilization: 0
+    webgpuUtilization: 0,
   };
   
   private config: WebGPURendererConfig;
@@ -64,7 +64,7 @@ export class WebGPUThreeJSIntegration {
     scene: THREE.Scene,
     camera: THREE.PerspectiveCamera,
     renderer: THREE.WebGLRenderer,
-    config: Partial<WebGPURendererConfig> = {}
+    config: Partial<WebGPURendererConfig> = {},
   ) {
     this.scene = scene;
     this.camera = camera;
@@ -77,7 +77,7 @@ export class WebGPUThreeJSIntegration {
       enableInstancedRendering: true,
       enableComputeShaderAcceleration: true,
       gpuBufferPoolSize: 64 * 1024 * 1024, // 64MB
-      ...config
+      ...config,
     };
   }
 
@@ -188,7 +188,7 @@ export class WebGPUThreeJSIntegration {
       const legPos = new THREE.Vector3(
         Math.cos(angle) * 0.04,
         Math.sin(angle) * 0.04,
-        -0.02 + (i < 2 ? 0.04 : i < 4 ? 0 : -0.04)
+        -0.02 + (i < 2 ? 0.04 : i < 4 ? 0 : -0.04),
       );
       this.addCylinderVertices(vertices, normals, uvs, legPos, 0.002, 0.06, 4);
     }
@@ -251,7 +251,7 @@ export class WebGPUThreeJSIntegration {
     center: THREE.Vector3, 
     radius: number, 
     widthSegments: number, 
-    heightSegments: number
+    heightSegments: number,
   ): void {
     for (let i = 0; i <= heightSegments; i++) {
       const theta = (i / heightSegments) * Math.PI;
@@ -284,7 +284,7 @@ export class WebGPUThreeJSIntegration {
     radiusY: number, 
     radiusZ: number,
     widthSegments: number, 
-    heightSegments: number
+    heightSegments: number,
   ): void {
     for (let i = 0; i <= heightSegments; i++) {
       const theta = (i / heightSegments) * Math.PI;
@@ -319,7 +319,7 @@ export class WebGPUThreeJSIntegration {
     center: THREE.Vector3, 
     radius: number, 
     height: number, 
-    segments: number
+    segments: number,
   ): void {
     for (let i = 0; i <= segments; i++) {
       const angle = (i / segments) * Math.PI * 2;
@@ -358,7 +358,7 @@ export class WebGPUThreeJSIntegration {
       color: 0x654321,
       shininess: 30,
       transparent: true,
-      opacity: 1.0
+      opacity: 1.0,
     });
     this.materialPool.set(0, fullDetailMaterial);
     
@@ -366,7 +366,7 @@ export class WebGPUThreeJSIntegration {
     const simplifiedMaterial = new THREE.MeshLambertMaterial({
       color: 0x654321,
       transparent: true,
-      opacity: 1.0
+      opacity: 1.0,
     });
     this.materialPool.set(1, simplifiedMaterial);
     
@@ -374,7 +374,7 @@ export class WebGPUThreeJSIntegration {
     const basicMaterial = new THREE.MeshBasicMaterial({
       color: 0x654321,
       transparent: true,
-      opacity: 1.0
+      opacity: 1.0,
     });
     this.materialPool.set(2, basicMaterial);
     
@@ -383,7 +383,7 @@ export class WebGPUThreeJSIntegration {
       color: 0x654321,
       transparent: true,
       opacity: 0.8,
-      side: THREE.DoubleSide
+      side: THREE.DoubleSide,
     });
     this.materialPool.set(3, planeMaterial);
   }
@@ -400,7 +400,7 @@ export class WebGPUThreeJSIntegration {
         const instancedMesh = new THREE.InstancedMesh(
           geometry, 
           material, 
-          Math.floor(this.config.maxInstances / this.config.lodLevels)
+          Math.floor(this.config.maxInstances / this.config.lodLevels),
         );
         
         // Initialize instance matrices

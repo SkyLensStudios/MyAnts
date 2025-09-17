@@ -1,10 +1,10 @@
 # 🐜 MyAnts - Hyper-Realistic Ant Farm Simulator
 
-[![Build Status](https://img.shields.io/badge/build-passing-brightgreen)]()
-[![Version](https://img.shields.io/badge/version-1.0.0-blue)]()
-[![License](https://img.shields.io/badge/license-MIT-green)]()
-[![WebGPU](https://img.shields.io/badge/WebGPU-enabled-orange)]()
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.2.2-blue)]()
+[![Build Status](https://img.shields.io/badge/build-passing-brightgreen)](https://github.com/yourusername/MyAnts/actions)
+[![Version](https://img.shields.io/badge/version-1.0.0-blue)](https://github.com/yourusername/MyAnts/releases)
+[![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+[![WebGPU](https://img.shields.io/badge/WebGPU-enabled-orange)](https://developer.mozilla.org/en-US/docs/Web/API/WebGPU_API)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.2.2-blue)](https://www.typescriptlang.org/)
 
 > A scientifically accurate, high-performance ant colony simulator.
 
@@ -17,18 +17,21 @@ The project features a modular Entity Component System (ECS) architecture, GPU-a
 ## 🎮 Features
 
 ### 🔬 Scientific Accuracy
+
 - **Biologically-accurate behavioral modeling** based on real ant research.
 - **Realistic chemical communication** with pheromone diffusion.
 - **Colony-level emergent behaviors** from individual ant interactions.
 - **Environmental factor integration** (e.g., temperature, humidity).
 
 ### 📊 High Performance
+
 - **50,000+ ant simulation** capability at interactive frame rates.
 - **GPU-accelerated** compute for performance-critical systems.
 - **Cross-platform compatibility** with a WebGPU -> WebGL -> 2D Canvas fallback system.
 - **Memory-efficient** architecture using an Entity Component System (ECS).
 
 ### 🎨 Advanced Rendering
+
 - **2D and 3D rendering** modes.
 - **Instanced rendering** for large numbers of ants.
 - **Level of Detail (LOD)** system for optimal performance.
@@ -45,6 +48,7 @@ The project features a modular Entity Component System (ECS) architecture, GPU-a
 ## 🚀 Quick Start
 
 ### Prerequisites
+
 - Node.js 18+
 - A modern browser with WebGPU support (e.g., Chrome 113+, Edge 113+)
 - 8GB+ RAM recommended for large simulations
@@ -90,6 +94,7 @@ npm run build         # Creates optimized production build
 We welcome contributions from researchers, developers, and enthusiasts! Please see the [Project Status & Roadmap](./PROJECT_STATUS.md) for areas where you can contribute.
 
 ### Development Setup
+
 1. Fork the repository
 2. Create a feature branch
 3. Make your changes
@@ -112,4 +117,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-**Made with ❤️ for scientific discovery and educational advancement**
+### Made with ❤️ for scientific discovery and educational advancement

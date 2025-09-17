@@ -47,7 +47,7 @@ export class CNNDiffusionModel {
     validationLoss: 0,
     accuracy: 0,
     speedupFactor: 1,
-    inferenceTime: 0
+    inferenceTime: 0,
   };
 
   constructor(config: CNNModelConfig) {
@@ -109,7 +109,7 @@ export class CNNDiffusionModel {
     
     // Input layer
     model.add(tf.layers.inputLayer({
-      inputShape: [this.config.inputHeight, this.config.inputWidth, this.config.inputChannels]
+      inputShape: [this.config.inputHeight, this.config.inputWidth, this.config.inputChannels],
     }));
     
     // Encoder layers
@@ -119,7 +119,7 @@ export class CNNDiffusionModel {
       strides: 1,
       padding: 'same',
       activation: 'relu',
-      name: 'encoder_conv1'
+      name: 'encoder_conv1',
     }));
     
     model.add(tf.layers.batchNormalization({ name: 'encoder_bn1' }));
@@ -130,7 +130,7 @@ export class CNNDiffusionModel {
       strides: 1,
       padding: 'same',
       activation: 'relu',
-      name: 'encoder_conv2'
+      name: 'encoder_conv2',
     }));
     
     model.add(tf.layers.batchNormalization({ name: 'encoder_bn2' }));
@@ -141,7 +141,7 @@ export class CNNDiffusionModel {
       strides: 1,
       padding: 'same',
       activation: 'relu',
-      name: 'encoder_conv3'
+      name: 'encoder_conv3',
     }));
     
     model.add(tf.layers.batchNormalization({ name: 'encoder_bn3' }));
@@ -153,7 +153,7 @@ export class CNNDiffusionModel {
       strides: 1,
       padding: 'same',
       activation: 'relu',
-      name: 'bottleneck'
+      name: 'bottleneck',
     }));
     
     // Decoder layers
@@ -163,7 +163,7 @@ export class CNNDiffusionModel {
       strides: 1,
       padding: 'same',
       activation: 'relu',
-      name: 'decoder_conv1'
+      name: 'decoder_conv1',
     }));
     
     model.add(tf.layers.batchNormalization({ name: 'decoder_bn1' }));
@@ -174,7 +174,7 @@ export class CNNDiffusionModel {
       strides: 1,
       padding: 'same',
       activation: 'relu',
-      name: 'decoder_conv2'
+      name: 'decoder_conv2',
     }));
     
     model.add(tf.layers.batchNormalization({ name: 'decoder_bn2' }));
@@ -185,7 +185,7 @@ export class CNNDiffusionModel {
       strides: 1,
       padding: 'same',
       activation: 'relu',
-      name: 'decoder_conv3'
+      name: 'decoder_conv3',
     }));
     
     model.add(tf.layers.batchNormalization({ name: 'decoder_bn3' }));
@@ -197,14 +197,14 @@ export class CNNDiffusionModel {
       strides: 1,
       padding: 'same',
       activation: 'linear',
-      name: 'output'
+      name: 'output',
     }));
     
     // Compile model with custom loss for chemical simulation
     model.compile({
       optimizer: tf.train.adam(this.config.learningRate),
       loss: this.createCustomLoss(tf),
-      metrics: ['mae', 'mse']
+      metrics: ['mae', 'mse'],
     });
     
     console.log('CNN Model Architecture:');
@@ -243,7 +243,7 @@ export class CNNDiffusionModel {
    */
   public async predict(
     concentrations: Float32Array,
-    environmentalFactors: { temperature: number; humidity: number; windSpeed: number; pressure: number }
+    environmentalFactors: { temperature: number; humidity: number; windSpeed: number; pressure: number },
   ): Promise<Float32Array> {
     if (!this.isLoaded || !this.model) {
       throw new Error('Model not loaded');
@@ -282,7 +282,7 @@ export class CNNDiffusionModel {
    */
   private prepareInput(
     concentrations: Float32Array,
-    environmentalFactors: { temperature: number; humidity: number; windSpeed: number; pressure: number }
+    environmentalFactors: { temperature: number; humidity: number; windSpeed: number; pressure: number },
   ): Float32Array {
     const gridSize = this.config.inputWidth * this.config.inputHeight;
     const totalSize = gridSize * this.config.inputChannels;
@@ -347,12 +347,12 @@ export class CNNDiffusionModel {
       // Create tensors
       const xs = tf.tensor4d(
         inputs.flat(),
-        [inputs.length, this.config.inputHeight, this.config.inputWidth, this.config.inputChannels]
+        [inputs.length, this.config.inputHeight, this.config.inputWidth, this.config.inputChannels],
       );
       
       const ys = tf.tensor4d(
         outputs.flat(),
-        [outputs.length, this.config.inputHeight, this.config.inputWidth, this.config.outputChannels]
+        [outputs.length, this.config.inputHeight, this.config.inputWidth, this.config.outputChannels],
       );
       
       // Train model
@@ -370,8 +370,8 @@ export class CNNDiffusionModel {
             console.log(`Epoch ${epoch + 1}/${this.config.epochs}: ` +
                        `loss=${logs.loss.toFixed(4)}, val_loss=${logs.val_loss.toFixed(4)}, ` +
                        `accuracy=${this.performance.accuracy.toFixed(4)}`);
-          }
-        }
+          },
+        },
       });
       
       // Calculate speedup factor

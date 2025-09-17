@@ -3,21 +3,16 @@
  * High-performance 2D rendering component to replace Three.js components
  */
 
-import React, { useRef, useEffect, useCallback, useState } from 'react';
-import { Canvas2DRenderer, Canvas2DRendererConfig, RenderMetrics2D, Camera2D } from '../Canvas2DRenderer';
-import { 
-  AntRenderInstance2D, 
-  PheromoneRenderData2D, 
-  EnvironmentRenderData2D,
-  Vector2D,
-  Vector2DUtils 
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import {
+    Vector2D,
+    Vector2DUtils,
 } from '../../shared/types-2d';
-import { 
-  SimulationMode, 
-  UnifiedSimulationUpdate, 
-  ModeConversionUtils,
-  isSimulationMode2D
+import {
+    ModeConversionUtils,
+    UnifiedSimulationUpdate,
 } from '../../shared/types-unified';
+import { Camera2D, Canvas2DRenderer, Canvas2DRendererConfig, RenderMetrics2D } from '../Canvas2DRenderer';
 
 interface Canvas2DRendererProps {
   width: number;
@@ -43,7 +38,7 @@ const Canvas2DRendererComponent: React.FC<Canvas2DRendererProps> = ({
   onMetricsUpdate,
   enableControls = true,
   className,
-  style
+  style,
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const rendererRef = useRef<Canvas2DRenderer | null>(null);
@@ -55,7 +50,7 @@ const Canvas2DRendererComponent: React.FC<Canvas2DRendererProps> = ({
     zoom: 1.0,
     rotation: 0,
     viewportWidth: width,
-    viewportHeight: height
+    viewportHeight: height,
   });
 
   // Mouse interaction state
@@ -83,7 +78,7 @@ const Canvas2DRendererComponent: React.FC<Canvas2DRendererProps> = ({
         enablePerformanceOptimizations: true,
         cullingEnabled: true,
         batchSize: 500,
-        ...config
+        ...config,
       });
 
       // Set initial camera
@@ -110,24 +105,11 @@ const Canvas2DRendererComponent: React.FC<Canvas2DRendererProps> = ({
     lastRenderTime.current = now;
 
     try {
-      // Convert data to 2D format if needed
-      let antData: AntRenderInstance2D[] = [];
-      let pheromoneData: PheromoneRenderData2D[] = [];
-      let environmentData: EnvironmentRenderData2D[] = [];
-
-      if (isSimulationMode2D(simulationData.mode)) {
-        // Data is already in 2D format
-        const converted = ModeConversionUtils.updateTo2D(simulationData);
-        antData = converted.antData;
-        pheromoneData = converted.pheromoneData;
-        environmentData = converted.environmentData;
-      } else {
-        // Convert 3D data to 2D
-        const converted = ModeConversionUtils.updateTo2D(simulationData);
-        antData = converted.antData;
-        pheromoneData = converted.pheromoneData;
-        environmentData = converted.environmentData;
-      }
+      // Convert data to 2D format
+      const converted = ModeConversionUtils.updateTo2D(simulationData);
+      const antData = converted.antData;
+      const pheromoneData = converted.pheromoneData;
+      const environmentData = converted.environmentData;
 
       // Render the frame
       rendererRef.current.render(antData, pheromoneData, environmentData);
@@ -165,7 +147,7 @@ const Canvas2DRendererComponent: React.FC<Canvas2DRendererProps> = ({
         const newCamera: Camera2D = {
           ...prevCamera,
           viewportWidth: width,
-          viewportHeight: height
+          viewportHeight: height,
         };
         rendererRef.current?.setCamera(newCamera);
         if (onCameraChange) {
@@ -203,7 +185,7 @@ const Canvas2DRendererComponent: React.FC<Canvas2DRendererProps> = ({
       // Update camera position
       const newCamera: Camera2D = {
         ...prevCamera,
-        position: Vector2DUtils.add(prevCamera.position, worldDelta)
+        position: Vector2DUtils.add(prevCamera.position, worldDelta),
       };
 
       rendererRef.current?.setCamera(newCamera);
@@ -239,7 +221,7 @@ const Canvas2DRendererComponent: React.FC<Canvas2DRendererProps> = ({
 
       const newCamera: Camera2D = {
         ...prevCamera,
-        zoom: newZoom
+        zoom: newZoom,
       };
 
       rendererRef.current?.setCamera(newCamera);
@@ -287,7 +269,7 @@ const Canvas2DRendererComponent: React.FC<Canvas2DRendererProps> = ({
       case '=':
         const zoomInCamera: Camera2D = {
           ...camera,
-          zoom: Math.min(10, camera.zoom * 1.1)
+          zoom: Math.min(10, camera.zoom * 1.1),
         };
         setCamera(zoomInCamera);
         rendererRef.current.setCamera(zoomInCamera);
@@ -296,7 +278,7 @@ const Canvas2DRendererComponent: React.FC<Canvas2DRendererProps> = ({
       case '-':
         const zoomOutCamera: Camera2D = {
           ...camera,
-          zoom: Math.max(0.1, camera.zoom * 0.9)
+          zoom: Math.max(0.1, camera.zoom * 0.9),
         };
         setCamera(zoomOutCamera);
         rendererRef.current.setCamera(zoomOutCamera);
@@ -310,7 +292,7 @@ const Canvas2DRendererComponent: React.FC<Canvas2DRendererProps> = ({
           zoom: 1.0,
           rotation: 0,
           viewportWidth: width,
-          viewportHeight: height
+          viewportHeight: height,
         };
         setCamera(resetCamera);
         rendererRef.current.setCamera(resetCamera);
@@ -323,7 +305,7 @@ const Canvas2DRendererComponent: React.FC<Canvas2DRendererProps> = ({
     if (deltaX !== 0 || deltaY !== 0) {
       const newCamera: Camera2D = {
         ...camera,
-        position: Vector2DUtils.add(camera.position, { x: deltaX, y: deltaY })
+        position: Vector2DUtils.add(camera.position, { x: deltaX, y: deltaY }),
       };
       setCamera(newCamera);
       rendererRef.current.setCamera(newCamera);
@@ -395,8 +377,12 @@ const Canvas2DRendererComponent: React.FC<Canvas2DRendererProps> = ({
         onWheel={handleWheel}
         style={{
           display: 'block',
-          cursor: isDragging ? 'grabbing' : (enableControls ? 'grab' : 'default'),
-          ...style
+          cursor: (() => {
+            if (isDragging) return 'grabbing';
+            if (enableControls) return 'grab';
+            return 'default';
+          })(),
+          ...style,
         }}
       />
       
@@ -413,7 +399,7 @@ const Canvas2DRendererComponent: React.FC<Canvas2DRendererProps> = ({
             borderRadius: '4px',
             fontSize: '12px',
             fontFamily: 'monospace',
-            pointerEvents: 'none'
+            pointerEvents: 'none',
           }}
         >
           <div>Controls: WASD/Arrows=Move, Mouse=Drag, Wheel=Zoom</div>

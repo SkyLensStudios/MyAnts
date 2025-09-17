@@ -11,7 +11,7 @@ import {
   Vector3D, 
   AntCaste, 
   PerformanceMetrics,
-  SimulationConfiguration 
+  SimulationConfiguration, 
 } from '../../shared/types-enhanced';
 import { typeValidator, TypeValidator, FastTypeChecker } from '../../shared/type-validation';
 import { SpatialOptimizationIntegration } from '../performance/SpatialOptimizationIntegration';
@@ -55,7 +55,7 @@ export class Phase2IntegrationTester {
     lodSystem: [],
     webWorkers: [],
     typeSystem: [],
-    integration: []
+    integration: [],
   };
 
   constructor() {
@@ -71,7 +71,7 @@ export class Phase2IntegrationTester {
       maxFPS: 120,
       targetFrameTime: 16.67,
       maxMemoryUsage: 2 * 1024 * 1024 * 1024, // 2GB
-      maxCPUUsage: 80
+      maxCPUUsage: 80,
     };
     
     const lodController = new LODController();
@@ -80,7 +80,7 @@ export class Phase2IntegrationTester {
     this.performanceManager = new AdaptivePerformanceManager(
       performanceTargets,
       lodController,
-      hybridComputeCoordinator
+      hybridComputeCoordinator,
     );
     
     this.typeValidator = TypeValidator.getInstance();
@@ -231,15 +231,15 @@ export class Phase2IntegrationTester {
         triangleCount: 50000,
         drawCalls: 100,
         shaderSwitches: 20,
-        textureBindings: 30
+        textureBindings: 30,
       };
       
       // Update LOD system with new config to simulate performance adjustment
       this.lodSystem.updateConfig({
         adaptiveThresholds: {
           performanceTarget: 25, // Lower target FPS
-          qualityReduction: 0.5  // More aggressive quality reduction
-        }
+          qualityReduction: 0.5,  // More aggressive quality reduction
+        },
       });
       
       const config = this.lodSystem.getConfig();
@@ -262,7 +262,7 @@ export class Phase2IntegrationTester {
       
       // Verify render data has proper LOD geometry
       const hasValidLOD = renderData.every(ant => 
-        ant.lodLevel !== undefined && ant.position !== undefined
+        ant.lodLevel !== undefined && ant.position !== undefined,
       );
       
       if (!hasValidLOD) {
@@ -302,7 +302,7 @@ export class Phase2IntegrationTester {
         enableGenetics: false,
         enableLearning: false,
         maxAnts: 100,
-        worldSeed: 12345
+        worldSeed: 12345,
       };
       
       await this.workerManager.configureSimulation(config);
@@ -374,7 +374,7 @@ export class Phase2IntegrationTester {
         triangleCount: 50000,
         drawCalls: 100,
         shaderSwitches: 20,
-        textureBindings: 30
+        textureBindings: 30,
       };
       
       const validResult = this.typeValidator.validatePerformanceMetrics(validMetrics);
@@ -465,7 +465,7 @@ export class Phase2IntegrationTester {
         timeScale: 1.0,
         colonySize: 100,
         maxAnts: 1000,
-        complexityLevel: 2 as const
+        complexityLevel: 2 as const,
       });
       
       // Start simulation
@@ -505,7 +505,7 @@ export class Phase2IntegrationTester {
         const queryPos: Vector3D = {
           x: Math.random() * 2000,
           y: Math.random() * 2000,
-          z: Math.random() * 200
+          z: Math.random() * 200,
         };
         this.spatialOptimization.findNeighbors(queryPos, 50);
       }
@@ -546,7 +546,7 @@ export class Phase2IntegrationTester {
   private async runTest(
     category: keyof Phase2TestSuite, 
     testName: string, 
-    testFunction: () => Promise<void>
+    testFunction: () => Promise<void>,
   ): Promise<void> {
     const startTime = performance.now();
     
@@ -557,7 +557,7 @@ export class Phase2IntegrationTester {
       this.testResults[category].push({
         testName,
         passed: true,
-        duration
+        duration,
       });
       
       console.log(`  ✅ ${testName} (${duration.toFixed(2)}ms)`);
@@ -570,7 +570,7 @@ export class Phase2IntegrationTester {
         testName,
         passed: false,
         duration,
-        error: errorMessage
+        error: errorMessage,
       });
       
       console.log(`  ❌ ${testName} (${duration.toFixed(2)}ms): ${errorMessage}`);
@@ -589,17 +589,17 @@ export class Phase2IntegrationTester {
         position: {
           x: Math.random() * 1000,
           y: Math.random() * 1000,
-          z: Math.random() * 100
+          z: Math.random() * 100,
         },
         velocity: {
           x: (Math.random() - 0.5) * 10,
           y: (Math.random() - 0.5) * 10,
-          z: (Math.random() - 0.5) * 2
+          z: (Math.random() - 0.5) * 2,
         },
         caste: Object.values(AntCaste)[Math.floor(Math.random() * Object.values(AntCaste).length)],
         energy: Math.random() * 100,
         age: Math.random() * 1000,
-        lodLevel: 0
+        lodLevel: 0,
       });
     }
     

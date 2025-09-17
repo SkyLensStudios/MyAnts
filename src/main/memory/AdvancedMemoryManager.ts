@@ -103,7 +103,7 @@ export class AdvancedMemoryManager {
     [MemoryTier.HOT]: 0,
     [MemoryTier.WARM]: 0,
     [MemoryTier.COLD]: 0,
-    [MemoryTier.FROZEN]: 0
+    [MemoryTier.FROZEN]: 0,
   };
   
   // Memory pools by tier
@@ -111,7 +111,7 @@ export class AdvancedMemoryManager {
     [MemoryTier.HOT]: new Map(),
     [MemoryTier.WARM]: new Map(),
     [MemoryTier.COLD]: new Map(),
-    [MemoryTier.FROZEN]: new Map()
+    [MemoryTier.FROZEN]: new Map(),
   };
   
   // Spatial locality tracking
@@ -131,7 +131,7 @@ export class AdvancedMemoryManager {
     compressionEvents: 0,
     decompressionEvents: 0,
     defragmentationEvents: 0,
-    spatialLocalityScore: 0
+    spatialLocalityScore: 0,
   };
   
   // Adaptive algorithms
@@ -147,7 +147,7 @@ export class AdvancedMemoryManager {
   constructor(
     config: MemoryPoolConfig,
     compressionConfig: ISABELAConfig,
-    spatialConfig: MEBVHConfig
+    spatialConfig: MEBVHConfig,
   ) {
     this.config = config;
     
@@ -202,7 +202,7 @@ export class AdvancedMemoryManager {
       accessFrequency: 1.0,
       isCompressed: false,
       priority: request.priority,
-      age: 0
+      age: 0,
     };
     
     // Handle spatial locality
@@ -286,7 +286,7 @@ export class AdvancedMemoryManager {
     block.accessFrequency = recentHistory.length / Math.max(1, (now - recentHistory[0]) / 1000);
     
     // Get data from appropriate tier
-    let buffer = this.memoryPools[block.tier].get(blockId);
+    const buffer = this.memoryPools[block.tier].get(blockId);
     
     // Handle compressed data
     if (block.isCompressed && buffer) {
@@ -306,7 +306,7 @@ export class AdvancedMemoryManager {
         
         const chunk = {
           ...chunkInfo,
-          data: new Uint8Array(buffer)
+          data: new Uint8Array(buffer),
         };
         
         const decompressed = await this.compressionEngine.decompressChunk(chunk);
@@ -566,7 +566,7 @@ export class AdvancedMemoryManager {
       [MemoryTier.FROZEN]: 0.1,
       [MemoryTier.COLD]: 0.5,
       [MemoryTier.WARM]: 2.0,
-      [MemoryTier.HOT]: Infinity
+      [MemoryTier.HOT]: Infinity,
     };
     
     const threshold = promotionThresholds[block.tier];
@@ -619,7 +619,7 @@ export class AdvancedMemoryManager {
           
           const chunk = {
             ...chunkInfo,
-            data: new Uint8Array(buffer)
+            data: new Uint8Array(buffer),
           };
           
           const decompressed = await this.compressionEngine.decompressChunk(chunk);

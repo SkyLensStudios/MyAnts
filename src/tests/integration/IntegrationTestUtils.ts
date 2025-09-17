@@ -4,9 +4,7 @@
  */
 
 import { SimulationEngine } from '../../main/simulation/SimulationEngine';
-import { SimulationConfig, AntSpecies } from '../../shared/types';
-import { WeatherSystem } from '../../../engine/environmental/weather';
-import { PheromoneSystem } from '../../../engine/chemical/pheromones';
+import { AntSpecies, SimulationConfig } from '../../shared/types';
 
 // Real configuration for integration tests
 export const createTestConfiguration = (overrides: Partial<SimulationConfig> = {}): SimulationConfig => ({
@@ -72,7 +70,11 @@ export class IntegrationTestEnvironment {
     const engine = this.getEngine();
     engine.start();
     
+    // Wait real time to allow async operations, and advance mocked time so performance.now() moves
     await new Promise(resolve => setTimeout(resolve, durationMs));
+    if (typeof (global as any).advanceMockTime === 'function') {
+      (global as any).advanceMockTime(durationMs);
+    }
     
     engine.pause();
   }
@@ -83,7 +85,7 @@ export class IntegrationTestEnvironment {
     
     if (positions) {
       for (const pos of positions.slice(0, count)) {
-        engine.addAnt({ x: pos.x, y: pos.y, z: 0 });
+        await engine.addAnt({ x: pos.x, y: pos.y, z: 0 });
       }
     } else {
       // Add ants in a grid pattern for predictable testing
@@ -91,7 +93,7 @@ export class IntegrationTestEnvironment {
       for (let i = 0; i < count; i++) {
         const x = (i % gridSize) * 10;
         const y = Math.floor(i / gridSize) * 10;
-        engine.addAnt({ x, y, z: 0 });
+        await engine.addAnt({ x, y, z: 0 });
       }
     }
   }

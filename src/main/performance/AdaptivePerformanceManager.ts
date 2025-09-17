@@ -81,7 +81,7 @@ export class AdaptivePerformanceManager {
   constructor(
     targets: PerformanceTargets,
     lodController: LODController,
-    computeCoordinator: HybridComputeCoordinator
+    computeCoordinator: HybridComputeCoordinator,
   ) {
     this.targets = targets;
     this.lodController = lodController;
@@ -92,7 +92,7 @@ export class AdaptivePerformanceManager {
       enablePredictiveScaling: true,
       samplingWindow: 30,
       scalingThreshold: 0.15, // 15% deviation
-      hysteresisTime: 2000    // 2 seconds
+      hysteresisTime: 2000,    // 2 seconds
     };
 
     this.initializeQualityPresets();
@@ -112,13 +112,13 @@ export class AdaptivePerformanceManager {
         fullDetail: 80,
         simplified: 15,
         statistical: 5,
-        aggregate: 0
+        aggregate: 0,
       },
       enableGPUCompute: true,
       enableWebAssembly: true,
       pheromoneResolution: 2048,
       physicsAccuracy: 1.0,
-      renderQuality: 1.0
+      renderQuality: 1.0,
     });
 
     this.presets.set('high', {
@@ -129,13 +129,13 @@ export class AdaptivePerformanceManager {
         fullDetail: 40,
         simplified: 35,
         statistical: 20,
-        aggregate: 5
+        aggregate: 5,
       },
       enableGPUCompute: true,
       enableWebAssembly: true,
       pheromoneResolution: 1024,
       physicsAccuracy: 0.8,
-      renderQuality: 0.85
+      renderQuality: 0.85,
     });
 
     this.presets.set('balanced', {
@@ -146,13 +146,13 @@ export class AdaptivePerformanceManager {
         fullDetail: 20,
         simplified: 30,
         statistical: 35,
-        aggregate: 15
+        aggregate: 15,
       },
       enableGPUCompute: true,
       enableWebAssembly: true,
       pheromoneResolution: 512,
       physicsAccuracy: 0.6,
-      renderQuality: 0.7
+      renderQuality: 0.7,
     });
 
     this.presets.set('performance', {
@@ -163,13 +163,13 @@ export class AdaptivePerformanceManager {
         fullDetail: 5,
         simplified: 15,
         statistical: 40,
-        aggregate: 40
+        aggregate: 40,
       },
       enableGPUCompute: true,
       enableWebAssembly: true,
       pheromoneResolution: 256,
       physicsAccuracy: 0.4,
-      renderQuality: 0.5
+      renderQuality: 0.5,
     });
 
     this.presets.set('extreme', {
@@ -180,13 +180,13 @@ export class AdaptivePerformanceManager {
         fullDetail: 1,
         simplified: 4,
         statistical: 25,
-        aggregate: 70
+        aggregate: 70,
       },
       enableGPUCompute: true,
       enableWebAssembly: true,
       pheromoneResolution: 128,
       physicsAccuracy: 0.2,
-      renderQuality: 0.3
+      renderQuality: 0.3,
     });
   }
 
@@ -249,7 +249,7 @@ export class AdaptivePerformanceManager {
       antCount: lodStats.performance.totalAnts,
       lodDistribution: lodStats.lodDistribution,
       gpuUtilization: this.estimateGPUUtilization(),
-      wasmUtilization: computeStats.processingTasks / computeStats.totalCapacity
+      wasmUtilization: computeStats.processingTasks / computeStats.totalCapacity,
     };
   }
 
@@ -375,7 +375,7 @@ export class AdaptivePerformanceManager {
     // Update LOD targets
     this.lodController.setPerformanceTargets(
       this.targets.targetFPS,
-      1.0 - this.currentComplexityFactor * 0.2
+      1.0 - this.currentComplexityFactor * 0.2,
     );
     
     // Adjust pheromone resolution
@@ -424,7 +424,7 @@ export class AdaptivePerformanceManager {
     this.scalingHistory.push({
       time: Date.now(),
       action,
-      reason
+      reason,
     });
     
     // Limit history size
@@ -494,7 +494,7 @@ export class AdaptivePerformanceManager {
       complexityFactor: this.currentComplexityFactor,
       trend: this.performanceTrend,
       autoScalingEnabled: this.isAutoScalingEnabled,
-      recentActions: this.scalingHistory.slice(-10)
+      recentActions: this.scalingHistory.slice(-10),
     };
   }
 

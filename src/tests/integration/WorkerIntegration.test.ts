@@ -4,13 +4,15 @@
  */
 
 import { SimulationWorkerManager } from '../../main/workers/SimulationWorkerManager';
+import { AntSpecies, SimulationConfig } from '../../shared/types';
 import { PerformanceMeasurement, TestFixtures } from './IntegrationTestUtils';
-import { SimulationConfig, AntSpecies } from '../../shared/types';
 
 // Mock Web Worker for testing environment
 class MockWorker {
   private messageHandlers: Set<(event: MessageEvent) => void> = new Set();
   private isTerminated = false;
+  public onmessage: ((event: MessageEvent) => void) | null = null;
+  public onerror: ((event: ErrorEvent) => void) | null = null;
 
   constructor(public scriptURL: string) {}
 
@@ -24,17 +26,20 @@ class MockWorker {
       // Mock worker responses based on message type
       let response;
       switch (message.type) {
+        case 'PING':
+          response = { type: 'PONG', success: true, requestId: message.requestId };
+          break;
         case 'INIT':
-          response = { type: 'INIT_COMPLETE', success: true };
+          response = { type: 'INIT_COMPLETE', success: true, requestId: message.requestId };
           break;
         case 'START_SIMULATION':
-          response = { type: 'SIMULATION_STARTED', success: true };
+          response = { type: 'SIMULATION_STARTED', success: true, requestId: message.requestId };
           break;
         case 'PAUSE_SIMULATION':
-          response = { type: 'SIMULATION_PAUSED', success: true };
+          response = { type: 'SIMULATION_PAUSED', success: true, requestId: message.requestId };
           break;
         case 'STOP_SIMULATION':
-          response = { type: 'SIMULATION_STOPPED', success: true };
+          response = { type: 'SIMULATION_STOPPED', success: true, requestId: message.requestId };
           break;
         case 'GET_STATE':
           response = { 
@@ -43,22 +48,31 @@ class MockWorker {
               isRunning: true,
               isPaused: false,
               currentTime: Date.now(),
-              totalAnts: 10
-            }
+              totalAnts: 10,
+            },
+            requestId: message.requestId,
           };
           break;
         case 'SET_SPEED':
-          response = { type: 'SPEED_SET', success: true };
+          response = { type: 'SPEED_SET', success: true, requestId: message.requestId };
           break;
         case 'ADD_ANTS':
-          response = { type: 'ANTS_ADDED', success: true };
+          response = { type: 'ANTS_ADDED', success: true, requestId: message.requestId };
           break;
         default:
-          response = { type: 'UNKNOWN_MESSAGE', error: 'Unknown message type' };
+          response = { type: 'UNKNOWN_MESSAGE', error: 'Unknown message type', requestId: message.requestId };
       }
       
+      const messageEvent = { data: response } as MessageEvent;
+      
+      // Call onmessage if set
+      if (this.onmessage) {
+        this.onmessage(messageEvent);
+      }
+      
+      // Also call addEventListener handlers for compatibility
       this.messageHandlers.forEach(handler => {
-        handler({ data: response } as MessageEvent);
+        handler(messageEvent);
       });
     }, 10 + Math.random() * 40); // Simulate realistic latency
   }
@@ -78,6 +92,8 @@ class MockWorker {
   terminate(): void {
     this.isTerminated = true;
     this.messageHandlers.clear();
+    this.onmessage = null;
+    this.onerror = null;
   }
 }
 
@@ -150,7 +166,7 @@ describe('Worker Integration Tests', () => {
         enableGenetics: true,
         enableLearning: true,
         maxAnts: 100,
-        worldSeed: 42
+        worldSeed: 42,
       };
       
       // Test configuration message
@@ -188,7 +204,7 @@ describe('Worker Integration Tests', () => {
         workerManager.getSimulationState(),
         workerManager.getPerformanceStats(),
         workerManager.getSimulationState(),
-        workerManager.getPerformanceStats()
+        workerManager.getPerformanceStats(),
       ];
       
       performanceMeasurer.startMeasurement('concurrent_ops');

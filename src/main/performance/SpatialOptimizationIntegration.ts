@@ -4,9 +4,8 @@
  * Replaces O(n²) collision detection with spatial hashing for massive performance gains
  */
 
-import { MEBVHSpatialStructure, SpatialEntity, SpatialQuery, MEBVHConfig } from '../spatial/MEBVHSpatialStructure';
 import { AntEntity } from '../simulation/AntEntity';
-import { FoodSourceSystem } from '../simulation/FoodSourceSystem';
+import { MEBVHConfig, MEBVHSpatialStructure, SpatialEntity, SpatialQuery } from '../spatial/MEBVHSpatialStructure';
 
 export interface SpatialOptimizationConfig {
   enabled: boolean;
@@ -37,7 +36,7 @@ export class SpatialOptimizationIntegration {
     averageQueryTime: 0,
     spatialHits: 0,
     bruteForceQueries: 0,
-    performanceImprovement: 0
+    performanceImprovement: 0,
   };
 
   constructor(config: Partial<SpatialOptimizationConfig> = {}) {
@@ -48,7 +47,7 @@ export class SpatialOptimizationIntegration {
       rebuildThreshold: 0.2, // Rebuild when 20% of entities move significantly
       spatialHashBuckets: 1024,
       updateFrequency: 1, // Update every frame for maximum accuracy
-      ...config
+      ...config,
     };
 
     // Initialize spatial structure
@@ -60,7 +59,7 @@ export class SpatialOptimizationIntegration {
       enableMemoryOptimization: true,
       enableSIMDOptimization: true,
       spatialHashBuckets: this.config.spatialHashBuckets,
-      temporalCoherence: true
+      temporalCoherence: true,
     };
 
     this.spatialStructure = new MEBVHSpatialStructure(spatialConfig);
@@ -77,7 +76,7 @@ export class SpatialOptimizationIntegration {
   public async updateSpatialStructure(
     ants: Map<string, AntEntity>,
     foodSources: any[],
-    obstacles: any[] = []
+    obstacles: any[] = [],
   ): Promise<void> {
     if (!this.config.enabled) return;
 
@@ -102,28 +101,28 @@ export class SpatialOptimizationIntegration {
         position: {
           x: ant.position.x,
           y: ant.position.y,
-          z: ant.position.z
+          z: ant.position.z,
         },
         velocity: ant.velocity ? {
           x: ant.velocity.x,
           y: ant.velocity.y,
-          z: ant.velocity.z
+          z: ant.velocity.z,
         } : undefined,
         radius: 0.5, // Ant interaction radius
         bounds: {
           min: {
             x: ant.position.x - 0.5,
             y: ant.position.y - 0.5,
-            z: ant.position.z - 0.5
+            z: ant.position.z - 0.5,
           },
           max: {
             x: ant.position.x + 0.5,
             y: ant.position.y + 0.5,
-            z: ant.position.z + 0.5
-          }
+            z: ant.position.z + 0.5,
+          },
         },
         type: 'ant',
-        lastUpdate: performance.now()
+        lastUpdate: performance.now(),
       };
 
       this.spatialStructure.addEntity(spatialEntity);
@@ -139,23 +138,23 @@ export class SpatialOptimizationIntegration {
         position: {
           x: food.position.x,
           y: food.position.y,
-          z: food.position.z || 0
+          z: food.position.z || 0,
         },
         radius: food.radius || 2.0,
         bounds: {
           min: {
             x: food.position.x - (food.radius || 2.0),
             y: food.position.y - (food.radius || 2.0),
-            z: (food.position.z || 0) - (food.radius || 2.0)
+            z: (food.position.z || 0) - (food.radius || 2.0),
           },
           max: {
             x: food.position.x + (food.radius || 2.0),
             y: food.position.y + (food.radius || 2.0),
-            z: (food.position.z || 0) + (food.radius || 2.0)
-          }
+            z: (food.position.z || 0) + (food.radius || 2.0),
+          },
         },
         type: 'food',
-        lastUpdate: performance.now()
+        lastUpdate: performance.now(),
       };
 
       this.spatialStructure.addEntity(spatialEntity);
@@ -170,23 +169,23 @@ export class SpatialOptimizationIntegration {
         position: {
           x: obstacle.position.x,
           y: obstacle.position.y,
-          z: obstacle.position.z || 0
+          z: obstacle.position.z || 0,
         },
         radius: obstacle.radius || 1.0,
         bounds: {
           min: {
             x: obstacle.position.x - (obstacle.radius || 1.0),
             y: obstacle.position.y - (obstacle.radius || 1.0),
-            z: (obstacle.position.z || 0) - (obstacle.radius || 1.0)
+            z: (obstacle.position.z || 0) - (obstacle.radius || 1.0),
           },
           max: {
             x: obstacle.position.x + (obstacle.radius || 1.0),
             y: obstacle.position.y + (obstacle.radius || 1.0),
-            z: (obstacle.position.z || 0) + (obstacle.radius || 1.0)
-          }
+            z: (obstacle.position.z || 0) + (obstacle.radius || 1.0),
+          },
         },
         type: 'obstacle',
-        lastUpdate: performance.now()
+        lastUpdate: performance.now(),
       };
 
       this.spatialStructure.addEntity(spatialEntity);
@@ -213,7 +212,7 @@ export class SpatialOptimizationIntegration {
     radius: number,
     antMap: Map<string, AntEntity>,
     foodSources: any[] = [],
-    maxResults: number = 50
+    maxResults: number = 50,
   ): Promise<NeighborQueryResult> {
     const startTime = performance.now();
     
@@ -226,18 +225,29 @@ export class SpatialOptimizationIntegration {
       type: 'radius',
       center: position,
       radius: radius,
-      maxResults: maxResults
+      maxResults: maxResults,
     };
 
     const result = await this.spatialStructure.query(query);
     
+    // If query failed or returned unexpected shape, return a safe default
+    if (!result || !Array.isArray(result.entities)) {
+      return {
+        ants: [],
+        foodSources: [],
+        obstacles: [],
+        queryTime: typeof result === 'object' && result && typeof result.queryTime === 'number' ? result.queryTime : 0,
+        spatialStructureHit: false,
+      } as NeighborQueryResult;
+    }
+
     // Convert spatial entities back to game objects
     const neighbors: NeighborQueryResult = {
       ants: [],
       foodSources: [],
       obstacles: [],
-      queryTime: result.queryTime,
-      spatialStructureHit: true
+      queryTime: result.queryTime || 0,
+      spatialStructureHit: true,
     };
 
     for (const entity of result.entities) {
@@ -269,7 +279,7 @@ export class SpatialOptimizationIntegration {
     radius: number,
     antMap: Map<string, AntEntity>,
     foodSources: any[] = [],
-    maxResults: number = 50
+    maxResults: number = 50,
   ): Promise<NeighborQueryResult> {
     const startTime = performance.now();
     const radiusSquared = radius * radius;
@@ -279,7 +289,7 @@ export class SpatialOptimizationIntegration {
       foodSources: [],
       obstacles: [],
       queryTime: 0,
-      spatialStructureHit: false
+      spatialStructureHit: false,
     };
 
     let count = 0;
@@ -376,7 +386,7 @@ export class SpatialOptimizationIntegration {
       enableMemoryOptimization: true,
       enableSIMDOptimization: true,
       spatialHashBuckets: this.config.spatialHashBuckets,
-      temporalCoherence: true
+      temporalCoherence: true,
     };
 
     this.spatialStructure = new MEBVHSpatialStructure(mebvhConfig);
@@ -397,7 +407,7 @@ export class SpatialOptimizationIntegration {
       type: 'radius',
       center: position,
       radius: radius,
-      maxResults: 100 // reasonable default
+      maxResults: 100, // reasonable default
     };
 
     const result = await this.spatialStructure.query(query);

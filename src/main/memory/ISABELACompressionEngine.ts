@@ -83,7 +83,7 @@ export class ISABELACompressionEngine {
     averageCompressionTime: 0,
     averageDecompressionTime: 0,
     chunksProcessed: 0,
-    errorRate: 0
+    errorRate: 0,
   };
 
   // Quantization tables for different data types
@@ -322,7 +322,7 @@ export class ISABELACompressionEngine {
   async compressChunk(
     data: Float32Array | Int32Array | Uint8Array,
     type: DataChunk['type'],
-    dimensions?: { width: number; height: number; depth?: number }
+    dimensions?: { width: number; height: number; depth?: number },
   ): Promise<DataChunk> {
     const startTime = performance.now();
     const originalSize = data.byteLength;
@@ -366,8 +366,8 @@ export class ISABELACompressionEngine {
           dimensions,
           dataType: this.inferDataType(data),
           compressionMethod,
-          checksum: this.calculateChecksum(compressedData)
-        }
+          checksum: this.calculateChecksum(compressedData),
+        },
       };
 
       console.log(`🗜️ Compressed ${type}: ${originalSize} → ${compressedData.byteLength} bytes (${compressionRatio.toFixed(1)}× ratio)`);
@@ -421,7 +421,7 @@ export class ISABELACompressionEngine {
    */
   private async applySpatialCompression(
     data: Float32Array, 
-    dimensions: { width: number; height: number; depth?: number }
+    dimensions: { width: number; height: number; depth?: number },
   ): Promise<Uint8Array> {
     const blockSize = this.config.blockSize;
     const blocks: Uint8Array[] = [];
@@ -476,7 +476,7 @@ export class ISABELACompressionEngine {
     startY: number,
     startZ: number,
     blockSize: number,
-    dimensions: { width: number; height: number; depth?: number }
+    dimensions: { width: number; height: number; depth?: number },
   ): Float32Array {
     const depth = dimensions.depth || 1;
     const maxX = Math.min(startX + blockSize, dimensions.width);
@@ -502,7 +502,7 @@ export class ISABELACompressionEngine {
    */
   private async applyQuantizationCompression(
     data: Float32Array | Int32Array | Uint8Array,
-    type: string
+    type: string,
   ): Promise<Uint8Array> {
     if (data instanceof Uint8Array) {
       // Already quantized, apply lightweight compression
@@ -860,7 +860,7 @@ export class ISABELACompressionEngine {
       temporalFrames: temporalFrames / (1024 * 1024),
       spatialBlocks: spatialBlocks / (1024 * 1024),
       quantizationTables: quantizationTables / (1024 * 1024),
-      total: total / (1024 * 1024)
+      total: total / (1024 * 1024),
     };
   }
 

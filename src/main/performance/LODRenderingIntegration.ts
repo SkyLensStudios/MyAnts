@@ -57,8 +57,8 @@ export class LODRenderingIntegration {
       [LODLevel.FULL_DETAIL]: 0,
       [LODLevel.SIMPLIFIED]: 0,
       [LODLevel.STATISTICAL]: 0,
-      [LODLevel.AGGREGATE]: 0
-    }
+      [LODLevel.AGGREGATE]: 0,
+    },
   };
 
   constructor(config: Partial<LODRenderingConfig> = {}) {
@@ -68,7 +68,7 @@ export class LODRenderingIntegration {
       performanceTargetFPS: 60,
       aggressiveCulling: false,
       debugLODLevels: false,
-      ...config
+      ...config,
     };
 
     // Initialize enhanced LOD system
@@ -78,18 +78,18 @@ export class LODRenderingIntegration {
         fullDetail: 30,
         simplified: 80,
         statistical: 180,
-        aggregate: Number.MAX_VALUE
+        aggregate: Number.MAX_VALUE,
       },
       maxAntsPerLOD: {
         fullDetail: 400,
         simplified: 1500,
         statistical: 8000,
-        aggregate: Number.MAX_VALUE
+        aggregate: Number.MAX_VALUE,
       },
       adaptiveThresholds: {
         performanceTarget: this.config.performanceTargetFPS,
-        qualityReduction: 0.75
-      }
+        qualityReduction: 0.75,
+      },
     });
 
     console.log('🎯 LOD Rendering Integration initialized');
@@ -112,12 +112,12 @@ export class LODRenderingIntegration {
   public registerGeometry(
     lodLevel: LODLevel,
     geometry: THREE.BufferGeometry,
-    triangleCount: number
+    triangleCount: number,
   ): void {
     this.geometryMapping[lodLevel] = {
       geometry,
       triangleCount,
-      complexityScore: this.calculateGeometryComplexity(geometry, triangleCount)
+      complexityScore: this.calculateGeometryComplexity(geometry, triangleCount),
     };
 
     console.log(`📐 Registered ${LODLevel[lodLevel]} geometry: ${triangleCount} triangles`);
@@ -129,7 +129,7 @@ export class LODRenderingIntegration {
   public processAntsForRendering(
     antData: AntRenderData[],
     cameraPosition: { x: number; y: number; z: number },
-    currentFPS: number
+    currentFPS: number,
   ): {
     lodData: LODRenderData[];
     renderInstructions: LODRenderInstructions;
@@ -159,13 +159,13 @@ export class LODRenderingIntegration {
       lodSystem: lodMetrics,
       rendering: this.renderStats,
       processingTimeMs: processingTime,
-      frameCount: this.frameCount
+      frameCount: this.frameCount,
     };
 
     return {
       lodData,
       renderInstructions,
-      performanceMetrics
+      performanceMetrics,
     };
   }
 
@@ -177,7 +177,7 @@ export class LODRenderingIntegration {
       [LODLevel.FULL_DETAIL]: [],
       [LODLevel.SIMPLIFIED]: [],
       [LODLevel.STATISTICAL]: [],
-      [LODLevel.AGGREGATE]: []
+      [LODLevel.AGGREGATE]: [],
     };
 
     // Group ants by LOD level for batched rendering
@@ -189,7 +189,7 @@ export class LODRenderingIntegration {
         scale: { x: 1, y: 1, z: 1 },
         color: this.getAntColor(ant),
         priority: ant.renderPriority,
-        geometryComplexity: ant.geometryComplexity
+        geometryComplexity: ant.geometryComplexity,
       });
     }
 
@@ -209,7 +209,7 @@ export class LODRenderingIntegration {
       worker: { r: 0.5, g: 0.3, b: 0.1 },   // Brown
       soldier: { r: 0.7, g: 0.1, b: 0.1 },  // Red-brown
       queen: { r: 0.8, g: 0.6, b: 0.2 },    // Golden
-      scout: { r: 0.3, g: 0.5, b: 0.2 }     // Greenish
+      scout: { r: 0.3, g: 0.5, b: 0.2 },     // Greenish
     };
 
     let baseColor = casteColors[ant.caste as string] || casteColors.worker;
@@ -220,7 +220,7 @@ export class LODRenderingIntegration {
       baseColor = {
         r: baseColor.r * 0.7,
         g: baseColor.g * 0.7,
-        b: baseColor.b * 0.7
+        b: baseColor.b * 0.7,
       };
     }
 
@@ -230,7 +230,7 @@ export class LODRenderingIntegration {
         [LODLevel.FULL_DETAIL]: { r: 0.0, g: 1.0, b: 0.0 },    // Green
         [LODLevel.SIMPLIFIED]: { r: 1.0, g: 1.0, b: 0.0 },     // Yellow
         [LODLevel.STATISTICAL]: { r: 1.0, g: 0.5, b: 0.0 },    // Orange
-        [LODLevel.AGGREGATE]: { r: 1.0, g: 0.0, b: 0.0 }       // Red
+        [LODLevel.AGGREGATE]: { r: 1.0, g: 0.0, b: 0.0 },       // Red
       };
       baseColor = lodColors[ant.lodLevel];
     }
@@ -243,7 +243,7 @@ export class LODRenderingIntegration {
    */
   private calculateGeometryComplexity(
     geometry: THREE.BufferGeometry,
-    triangleCount: number
+    triangleCount: number,
   ): number {
     // Base complexity from triangle count
     let complexity = triangleCount / 1000; // Normalize to 1000 triangles = 1.0
@@ -306,8 +306,8 @@ export class LODRenderingIntegration {
       enabled: this.config.enableLOD,
       adaptiveThresholds: {
         performanceTarget: this.config.performanceTargetFPS,
-        qualityReduction: 0.75
-      }
+        qualityReduction: 0.75,
+      },
     });
 
     console.log('🎯 LOD rendering configuration updated');
@@ -340,7 +340,7 @@ export class LODRenderingIntegration {
       rendering: this.renderStats,
       frameCount: this.frameCount,
       currentFPS: this.currentFPS,
-      estimatedSpeedup: 1.0 + (triangleSavings * 2.0) // Conservative estimate
+      estimatedSpeedup: 1.0 + (triangleSavings * 2.0), // Conservative estimate
     };
   }
 }

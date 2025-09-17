@@ -38,7 +38,7 @@ export class LODController {
       position: { x: 0, y: 0, z: 0 },
       direction: { x: 0, y: 0, z: -1 },
       fov: 75,
-      farClip: 1000
+      farClip: 1000,
     };
   }
 
@@ -66,7 +66,7 @@ export class LODController {
    */
   public processLODAssignments(
     ants: AntLODData[], 
-    deltaTime: number
+    deltaTime: number,
   ): Map<LODLevel, string[]> {
     this.cleanupInteractionHistory();
     
@@ -91,7 +91,7 @@ export class LODController {
       userFocus: this.calculateFocusScore(ant.id),
       systemLoad: 0, // Will be set by LOD system
       antImportance: this.calculateImportanceScore(ant),
-      groupDensity: this.calculateGroupDensity(ant, ants)
+      groupDensity: this.calculateGroupDensity(ant, ants),
     };
   }
 
@@ -154,7 +154,7 @@ export class LODController {
       ['nurse', 4],
       ['forager', 3],
       ['worker', 2],
-      ['male', 1]
+      ['male', 1],
     ]);
     
     return casteImportance.get(ant.caste) || 2;
@@ -227,7 +227,7 @@ export class LODController {
       lodDistribution: this.lodSystem.getLODStatistics(),
       performance: this.lodSystem.getPerformanceMetrics(),
       focusedAnts: this.focusedAnts.size,
-      trackedInteractions: this.userInteractionHistory.size
+      trackedInteractions: this.userInteractionHistory.size,
     };
   }
 
