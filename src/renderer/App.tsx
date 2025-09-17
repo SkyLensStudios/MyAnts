@@ -8,7 +8,7 @@ import { SimulationState, AntRenderData, PerformanceStats, SimulationConfig, Phe
 import { AntSpecies } from '../shared/types';
 import SimulationControls from './components/SimulationControls';
 import DataPanel from './components/DataPanel';
-import AdvancedThreeJSRenderer from './components/SimpleThreeJSRenderer';
+import AdvancedThreeJSRenderer from './components/AdvancedThreeJSRenderer';
 import PerformanceMonitor from './components/PerformanceMonitor';
 import ErrorBoundary from './components/ErrorBoundary';
 import './App.css';
@@ -241,8 +241,8 @@ const App: React.FC = () => {
             <AdvancedThreeJSRenderer
               antData={antData}
               pheromoneData={pheromoneData}
-              environmentData={environmentData}
-              simulationState={simulationState}
+              environmentData={environmentData || { tunnels: [], foodSources: [], obstacles: [], plants: [], soilMoisture: new Float32Array(), temperature: new Float32Array(), weatherState: { temperature: 20, humidity: 0.5, pressure: 101.3, windSpeed: 0, windDirection: 0, precipitation: 0, cloudCover: 0, visibility: 1000, uvIndex: 5 }}}
+              simulationState={simulationState || { isRunning: false, isPaused: false, currentTime: 0, realTimeElapsed: 0, timeScale: 1, totalAnts: 0, livingAnts: 0, deadAnts: 0, colonyAge: 0, season: 'spring', dayPhase: 'day', temperature: 20, humidity: 0.5, foodStores: 0, currentGeneration: 1 }}
               onAntSelected={setSelectedAnt}
               selectedAnt={selectedAnt}
             />
