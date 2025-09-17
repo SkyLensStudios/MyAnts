@@ -3,12 +3,12 @@
  * Integrates all biological, AI, and behavioral systems for individual ants
  */
 
-import { AntGenetics } from '@engine/biological/genetics';
-import { PhysiologicalSystem } from '@engine/biological/physiology';
-import { BehaviorDecisionTree } from '@engine/ai/decisionTree';
-import { SpatialMemory } from '@engine/ai/spatialMemory';
-import { AntCaste } from '@engine/colony/casteSystem';
-import { PheromoneSystem, PheromoneType } from '@engine/chemical/pheromones';
+import { AntGenetics } from '../../../engine/biological/genetics';
+import { PhysiologicalSystem } from '../../../engine/biological/physiology';
+import { BehaviorDecisionTree } from '../../../engine/ai/decisionTree';
+import { SpatialMemory } from '../../../engine/ai/spatialMemory';
+import { AntCaste } from '../../../engine/colony/casteSystem';
+import { PheromoneSystem, PheromoneType } from '../../../engine/chemical/pheromones';
 
 export interface Vector3 {
   x: number;
@@ -242,16 +242,18 @@ export class AntEntity {
     // Calculate movement velocity
     const finalSpeed = currentSpeed * movementIntensity;
     this.velocity.x = Math.cos(this.rotation) * finalSpeed;
-    this.velocity.y = Math.sin(this.rotation) * finalSpeed;
+    this.velocity.z = Math.sin(this.rotation) * finalSpeed; // Use Z axis for ground movement
+    this.velocity.y = 0; // Keep Y constant for ground movement
     
     // Update position with boundary checking
     const newX = this.position.x + this.velocity.x * deltaTime;
-    const newY = this.position.y + this.velocity.y * deltaTime;
+    const newZ = this.position.z + this.velocity.z * deltaTime; // Use Z for ground movement
     
     // Simple boundary constraints (keep ants in reasonable area)
     const worldSize = 100; // 100m world
     this.position.x = Math.max(-worldSize, Math.min(worldSize, newX));
-    this.position.y = Math.max(-worldSize, Math.min(worldSize, newY));
+    this.position.z = Math.max(-worldSize, Math.min(worldSize, newZ)); // Constrain Z axis
+    // Keep Y position stable on ground (don't change Y unless jumping/climbing)
     
     // Update spatial memory with new position
     this.spatialMemory.updatePosition(this.position);

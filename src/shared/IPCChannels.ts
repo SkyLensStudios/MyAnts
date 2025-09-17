@@ -1,6 +1,7 @@
 /**
  * IPC Channel Definitions
  * Centralized channel names for type-safe communication between main and renderer processes
+ * Enhanced with 2D/3D mode support
  */
 
 export const IPCChannels = {
@@ -11,17 +12,26 @@ export const IPCChannels = {
   SIMULATION_CONFIG: 'simulation:config',
   SIMULATION_UPDATE: 'simulation:update',
   SIMULATION_SPEED_CHANGED: 'simulation:speed-changed',
+  SIMULATION_MODE_CHANGED: 'simulation:mode-changed', // New: 2D/3D mode switching
 
   // Data Queries (High-frequency)
   GET_SIMULATION_STATE: 'data:get-simulation-state',
   GET_ANT_DATA: 'data:get-ant-data',
   GET_PHEROMONE_DATA: 'data:get-pheromone-data',
   GET_ENVIRONMENT_DATA: 'data:get-environment-data',
+  GET_UNIFIED_SIMULATION_DATA: 'data:get-unified-simulation-data', // New: Unified 2D/3D data
 
   // Bulk Data Transfer (SharedArrayBuffer)
   SHARED_BUFFER_INIT: 'shared:buffer-init',
   SHARED_BUFFER_UPDATE: 'shared:buffer-update',
   SHARED_BUFFER_METADATA: 'shared:buffer-metadata',
+
+  // Rendering Mode Management
+  RENDERER_MODE_SWITCH: 'renderer:mode-switch',
+  RENDERER_2D_CAMERA_UPDATE: 'renderer:2d-camera-update',
+  RENDERER_3D_CAMERA_UPDATE: 'renderer:3d-camera-update',
+  RENDERER_METRICS_2D: 'renderer:metrics-2d',
+  RENDERER_METRICS_3D: 'renderer:metrics-3d',
 
   // File Operations
   SAVE_SIMULATION: 'file:save-simulation',

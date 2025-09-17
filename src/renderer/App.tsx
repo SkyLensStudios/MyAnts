@@ -6,8 +6,10 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { SimulationState, AntRenderData, PerformanceStats, SimulationConfig, PheromoneRenderData, EnvironmentRenderData } from '../shared/types';
 import { AntSpecies } from '../shared/types';
+import { SimulationMode, ModeConversionUtils } from '../shared/types-unified';
 import SimulationControls from './components/SimulationControls';
 import DataPanel from './components/DataPanel';
+import Canvas2DRendererComponent from './components/Canvas2DRenderer';
 import AdvancedThreeJSRenderer from './components/AdvancedThreeJSRenderer';
 import PerformanceMonitor from './components/PerformanceMonitor';
 import ErrorBoundary from './components/ErrorBoundary';
@@ -26,6 +28,7 @@ const App: React.FC = () => {
   const [showDataPanel, setShowDataPanel] = useState(true);
   const [showPerformanceMonitor, setShowPerformanceMonitor] = useState(true);
   const [selectedAnt, setSelectedAnt] = useState<string | null>(null);
+  const [renderMode, setRenderMode] = useState<SimulationMode>(SimulationMode.MODE_2D);
 
   // Check if Electron API is available
   useEffect(() => {
@@ -94,6 +97,17 @@ const App: React.FC = () => {
     }, 100); // Update every 100ms
 
     return () => clearInterval(updateInterval);
+  }, []);
+
+  // Mode switching handlers
+  const handleSwitchTo2D = useCallback(async () => {
+    setRenderMode(SimulationMode.MODE_2D);
+    console.log('Switched to 2D mode');
+  }, []);
+
+  const handleSwitchTo3D = useCallback(async () => {
+    setRenderMode(SimulationMode.MODE_3D);
+    console.log('Switched to 3D mode');
   }, []);
 
   // Simulation control handlers
@@ -241,6 +255,47 @@ const App: React.FC = () => {
               onSave={handleSaveSimulation}
               onLoad={handleLoadSimulation}
             />
+            
+            {/* Render Mode Toggle */}
+            <div style={{ 
+              marginTop: '10px', 
+              padding: '10px', 
+              background: 'rgba(0,0,0,0.7)', 
+              borderRadius: '5px',
+              display: 'flex',
+              gap: '10px',
+              alignItems: 'center'
+            }}>
+              <span style={{ color: 'white', fontSize: '12px' }}>Render Mode:</span>
+              <button
+                onClick={handleSwitchTo2D}
+                style={{
+                  padding: '5px 10px',
+                  fontSize: '12px',
+                  backgroundColor: renderMode === SimulationMode.MODE_2D ? '#4CAF50' : '#555',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '3px',
+                  cursor: 'pointer'
+                }}
+              >
+                2D
+              </button>
+              <button
+                onClick={handleSwitchTo3D}
+                style={{
+                  padding: '5px 10px',
+                  fontSize: '12px',
+                  backgroundColor: renderMode === SimulationMode.MODE_3D ? '#4CAF50' : '#555',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '3px',
+                  cursor: 'pointer'
+                }}
+              >
+                3D
+              </button>
+            </div>
           </div>
         </div>
 
@@ -254,18 +309,77 @@ const App: React.FC = () => {
         >
           <ErrorBoundary fallback={
             <div style={{ padding: '20px', textAlign: 'center', color: '#ff6b6b' }}>
-              <h3>3D Renderer Error</h3>
-              <p>The 3D visualization failed to load. This may be due to WebGL compatibility issues.</p>
+              <h3>Renderer Error</h3>
+              <p>The visualization failed to load. Please try switching render modes.</p>
+              <button onClick={handleSwitchTo2D} style={{ margin: '10px' }}>Try 2D Mode</button>
+              <button onClick={handleSwitchTo3D} style={{ margin: '10px' }}>Try 3D Mode</button>
             </div>
           }>
-            <AdvancedThreeJSRenderer
-              antData={antData}
-              pheromoneData={pheromoneData}
-              environmentData={environmentData || { tunnels: [], foodSources: [], obstacles: [], plants: [], soilMoisture: new Float32Array(), temperature: new Float32Array(), weatherState: { temperature: 20, humidity: 0.5, pressure: 101.3, windSpeed: 0, windDirection: 0, precipitation: 0, cloudCover: 0, visibility: 1000, uvIndex: 5 }}}
-              simulationState={simulationState || { isRunning: false, isPaused: false, currentTime: 0, realTimeElapsed: 0, timeScale: 1, totalAnts: 0, livingAnts: 0, deadAnts: 0, colonyAge: 0, season: 'spring', dayPhase: 'day', temperature: 20, humidity: 0.5, foodStores: 0, currentGeneration: 1 }}
-              onAntSelected={setSelectedAnt}
-              selectedAnt={selectedAnt}
-            />
+            {renderMode === SimulationMode.MODE_2D ? (
+              <Canvas2DRendererComponent
+                width={window.innerWidth - (showDataPanel || showPerformanceMonitor ? 300 : 0)}
+                height={window.innerHeight - 60}
+                simulationData={{
+                  timestamp: Date.now(),
+                  mode: SimulationMode.MODE_2D,
+                  antData: antData.map(ant => ({
+                    id: ant.id,
+                    position: { x: ant.position.x, y: ant.position.y },
+                    rotation: ant.rotation,
+                    scale: { x: ant.scale?.x || 1, y: ant.scale?.y || 1 },
+                    caste: ant.caste,
+                    health: ant.health,
+                    energy: ant.energy,
+                    carryingFood: ant.carryingFood,
+                    currentTask: ant.task || 'exploring',
+                    age: ant.age,
+                    color: { r: 0.54, g: 0.27, b: 0.07, a: 1.0 }, // Brown ant color
+                    visible: true,
+                    generation: ant.generation || 1,
+                    animationState: 0,
+                    lodLevel: 0
+                  })),
+                  pheromoneData: [], // Simplified for now - will convert pheromone grid data later
+                  environmentData: [{
+                    position: { x: 0, y: 0 },
+                    size: { x: 1000, y: 1000 },
+                    type: 'nest',
+                    properties: {}
+                  }],
+                  deltaTime: 16.67,
+                  performanceMetrics: performanceStats ? {
+                    fps: performanceStats.fps,
+                    frameTime: performanceStats.frameTime,
+                    antCount: antData.length
+                  } : undefined
+                }}
+                config={{
+                  enableBackgroundGrid: true,
+                  enablePerformanceOptimizations: true,
+                  cullingEnabled: true,
+                  batchSize: 100,
+                  maxAntsToRender: 5000,
+                  antSize: 4,
+                  pheromoneAlpha: 0.7,
+                  enableAntiAliasing: true,
+                  enablePheromoneVisualizations: true,
+                  enableEnvironmentObjects: true,
+                  backgroundColor: '#2a2a2a',
+                  gridColor: '#444444'
+                }}
+                onCameraChange={(camera) => console.log('Camera changed:', camera)}
+                onMetricsUpdate={(metrics) => console.log('2D Metrics:', metrics)}
+              />
+            ) : (
+              <AdvancedThreeJSRenderer
+                antData={antData}
+                pheromoneData={pheromoneData}
+                environmentData={environmentData || { tunnels: [], foodSources: [], obstacles: [], plants: [], soilMoisture: new Float32Array(), temperature: new Float32Array(), weatherState: { temperature: 20, humidity: 0.5, pressure: 101.3, windSpeed: 0, windDirection: 0, precipitation: 0, cloudCover: 0, visibility: 1000, uvIndex: 5 }}}
+                simulationState={simulationState || { isRunning: false, isPaused: false, currentTime: 0, realTimeElapsed: 0, timeScale: 1, totalAnts: 0, livingAnts: 0, deadAnts: 0, colonyAge: 0, season: 'spring', dayPhase: 'day', temperature: 20, humidity: 0.5, foodStores: 0, currentGeneration: 1 }}
+                onAntSelected={setSelectedAnt}
+                selectedAnt={selectedAnt}
+              />
+            )}
           </ErrorBoundary>
         </div>
 

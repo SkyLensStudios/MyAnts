@@ -124,7 +124,7 @@ export class WeatherSystem {
   private generateInitialWeather(): WeatherState {
     const season = this.currentSeason;
     
-    return {
+    const weather = {
       temperature: this.generateTemperature(),
       humidity: 0.4 + Math.random() * 0.4 + this.climateZone.proximity_to_water * 0.2,
       pressure: 101.325 + (Math.random() - 0.5) * 5, // Standard pressure ± variation
@@ -133,8 +133,12 @@ export class WeatherSystem {
       precipitation: Math.random() < season.precipitationChance ? Math.random() * 5 : 0,
       cloudCover: Math.random(),
       visibility: 1000 + Math.random() * 9000,
-      uvIndex: this.calculateUVIndex(),
+      uvIndex: 0, // Will be calculated after weather object is complete
     };
+    
+    // Now calculate UV index with complete weather data
+    weather.uvIndex = this.calculateUVIndexForWeather(weather);
+    return weather;
   }
 
   private generateTemperature(): number {
@@ -171,6 +175,29 @@ export class WeatherSystem {
     
     // Cloud cover reduces UV
     uvIndex *= (1 - this.currentWeather.cloudCover * 0.7);
+    
+    // Elevation increases UV
+    uvIndex *= (1 + this.climateZone.elevation / 10000);
+    
+    return Math.max(0, Math.min(12, uvIndex));
+  }
+
+  private calculateUVIndexForWeather(weather: WeatherState): number {
+    // UV depends on time of day, season, cloud cover, and elevation
+    let uvIndex = 0;
+    
+    // Base UV from sun angle
+    if (this.timeOfDay >= 6 && this.timeOfDay <= 18) {
+      const sunAngle = Math.sin(((this.timeOfDay - 6) / 12) * Math.PI);
+      uvIndex = sunAngle * 12; // Max UV of 12
+    }
+    
+    // Seasonal adjustment
+    const seasonalMultiplier = 0.5 + Math.sin((this.timeOfYear - 0.25) * 2 * Math.PI) * 0.4;
+    uvIndex *= seasonalMultiplier;
+    
+    // Cloud cover reduces UV (use provided weather instead of instance)
+    uvIndex *= (1 - weather.cloudCover * 0.7);
     
     // Elevation increases UV
     uvIndex *= (1 + this.climateZone.elevation / 10000);

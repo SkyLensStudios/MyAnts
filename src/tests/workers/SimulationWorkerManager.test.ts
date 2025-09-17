@@ -15,6 +15,8 @@ const mockSimulationEngine = {
   stop: jest.fn(),
   reset: jest.fn(),
   update: jest.fn(),
+  setSpeed: jest.fn(),
+  setTimeScale: jest.fn(),
   getState: jest.fn().mockReturnValue({
     isRunning: false,
     isPaused: false,

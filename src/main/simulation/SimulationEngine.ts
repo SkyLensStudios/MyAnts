@@ -11,14 +11,14 @@ import { FoodSourceSystem } from './FoodSourceSystem';
 import { SpatialOptimizationIntegration } from '../performance/SpatialOptimizationIntegration';
 
 // Import engine systems - using relative paths
-import { AntGenetics } from '@engine/biological/genetics';
-import { PhysiologicalSystem } from '@engine/biological/physiology';
-import { PheromoneSystem, PheromoneType } from '@engine/chemical/pheromones';
-import { WeatherSystem, ClimateZone } from '@engine/environmental/weather';
-import { SoilSystem } from '@engine/environmental/soil';
-import { BehaviorDecisionTree } from '@engine/ai/decisionTree';
-import { SpatialMemory } from '@engine/ai/spatialMemory';
-import { AntCaste } from '@engine/colony/casteSystem';
+import { AntGenetics } from '../../../engine/biological/genetics';
+import { PhysiologicalSystem } from '../../../engine/biological/physiology';
+import { PheromoneSystem, PheromoneType } from '../../../engine/chemical/pheromones';
+import { WeatherSystem, ClimateZone } from '../../../engine/environmental/weather';
+import { SoilSystem } from '../../../engine/environmental/soil';
+import { BehaviorDecisionTree } from '../../../engine/ai/decisionTree';
+import { SpatialMemory } from '../../../engine/ai/spatialMemory';
+import { AntCaste } from '../../../engine/colony/casteSystem';
 
 export class SimulationEngine {
   private config: SimulationConfig;
@@ -229,7 +229,7 @@ export class SimulationEngine {
     
     // Create queen
     for (let i = 0; i < queenCount; i++) {
-      this.createAnt('queen', { x: 0, y: 0, z: 0 });
+      this.createAnt('queen', { x: 0, y: 0.5, z: 0 }); // Queen at center, on ground
     }
     
     // Create workers
@@ -238,8 +238,8 @@ export class SimulationEngine {
       const radius = Math.random() * 5; // Spawn within 5m radius
       const position = {
         x: Math.cos(angle) * radius,
-        y: Math.sin(angle) * radius,
-        z: 0,
+        y: 0.5, // Fixed Y position above ground
+        z: Math.sin(angle) * radius, // Use Z for the circle, not Y
       };
       this.createAnt('worker', position);
     }
@@ -514,10 +514,35 @@ export class SimulationEngine {
     console.log(`SimulationEngine.getAntData(): ${antArray.length} ants in map`);
 
     if (antArray.length > 0) {
-      console.log(`First ant: ${antArray[0].toRenderData().id}, alive: ${antArray[0].isAlive}`);
+      const firstAnt = antArray[0];
+      console.log(`First ant: ${firstAnt.toRenderData().id}, alive: ${firstAnt.isAlive}`);
+      console.log(`First ant position: (${firstAnt.position.x.toFixed(2)}, ${firstAnt.position.y.toFixed(2)}, ${firstAnt.position.z.toFixed(2)})`);
+      console.log(`First ant task: ${firstAnt.currentTask}, rotation: ${firstAnt.rotation.toFixed(2)}`);
     }
 
-    return antArray.map(ant => ant.toRenderData());
+    return antArray.map(ant => {
+      const entityData = ant.toRenderData();
+      // Convert AntEntityData to AntRenderData format
+      return {
+        id: entityData.id,
+        position: {
+          x: entityData.position.x,
+          y: entityData.position.y,
+          z: entityData.position.z
+        },
+        rotation: entityData.rotation,
+        caste: entityData.caste,
+        health: entityData.health,
+        energy: entityData.energy,
+        age: entityData.age,
+        task: entityData.task,
+        carryingFood: entityData.carryingFood,
+        carryingConstruction: entityData.carryingConstruction,
+        speed: entityData.speed,
+        isAlive: entityData.isAlive,
+        generation: entityData.generation
+      } as AntRenderData;
+    });
   }
 
   public getPheromoneData(): PheromoneRenderData[] {

@@ -18,8 +18,8 @@ import MEBVHSpatialStructure, { MEBVHConfig, SpatialEntity } from '../spatial/ME
 import AdvancedMemoryManager, { MemoryPoolConfig, MemoryTier } from '../memory/AdvancedMemoryManager';
 
 // Phase 4 Environmental Systems imports
-import { WeatherSystem, WeatherState, ClimateZone } from '@engine/environmental/weather';
-import { SoilSystem, SoilCell, SoilType } from '@engine/environmental/soil';
+import { WeatherSystem, WeatherState, ClimateZone } from '../../../engine/environmental/weather';
+import { SoilSystem, SoilCell, SoilType } from '../../../engine/environmental/soil';
 
 // New v3 imports
 export interface WebGPUComputeSystem {

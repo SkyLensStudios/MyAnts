@@ -57,9 +57,9 @@ const AdvancedThreeJSRenderer: React.FC<AdvancedThreeJSRendererProps> = ({
     queens?: Float32Array;
   }>({});
   const maxInstancesRef = useRef({
-    workers: 800,
-    soldiers: 150,
-    queens: 50
+    workers: 1500,  // Increased to handle 1000+ workers
+    soldiers: 300,  // Increased for larger colonies
+    queens: 100     // Increased for multiple queens
   });
   
   const [isInitialized, setIsInitialized] = useState(false);
@@ -83,12 +83,21 @@ const AdvancedThreeJSRenderer: React.FC<AdvancedThreeJSRendererProps> = ({
     const antGroup = antGroupRef.current;
     
     // Create simple ant geometry for instancing (combine all parts into one)
-    const combinedGeometry = new THREE.BoxGeometry(0.3, 0.1, 0.8); // Simple box ant
+    const combinedGeometry = new THREE.BoxGeometry(2.0, 0.5, 3.0); // Much larger box ant for visibility
     
-    // Create instanced materials for different castes
-    const workerMaterial = new THREE.MeshLambertMaterial({ color: 0x8B4513 }); // Brown
-    const soldierMaterial = new THREE.MeshLambertMaterial({ color: 0x800000 }); // Dark red
-    const queenMaterial = new THREE.MeshLambertMaterial({ color: 0xFFD700 }); // Gold
+    // Create instanced materials for different castes (with vertex colors enabled)
+    const workerMaterial = new THREE.MeshLambertMaterial({ 
+      color: 0x8B4513, // Brown fallback
+      vertexColors: true // Enable instance colors
+    }); 
+    const soldierMaterial = new THREE.MeshLambertMaterial({ 
+      color: 0x800000, // Dark red fallback
+      vertexColors: true // Enable instance colors
+    }); 
+    const queenMaterial = new THREE.MeshLambertMaterial({ 
+      color: 0xFFD700, // Gold fallback
+      vertexColors: true // Enable instance colors
+    });
 
     // Create instanced meshes for each caste
     instancedMeshesRef.current.workers = new THREE.InstancedMesh(
@@ -508,19 +517,36 @@ const AdvancedThreeJSRenderer: React.FC<AdvancedThreeJSRendererProps> = ({
 
   // Update ant positions using high-performance instanced rendering
   useEffect(() => {
-    if (!sceneRef.current || !antGroupRef.current || !isInitialized) return;
-    if (!instancedMeshesRef.current.workers) return; // Wait for instanced meshes
+    console.log(`🐜 AdvancedThreeJSRenderer: useEffect triggered with ${antData.length} ants`);
+    console.log(`AdvancedThreeJSRenderer: Received ${antData.length} ants for rendering`);
+    if (!sceneRef.current || !antGroupRef.current || !isInitialized) {
+      console.log('🚫 AdvancedThreeJSRenderer: Scene not ready for rendering', {
+        scene: !!sceneRef.current,
+        antGroup: !!antGroupRef.current,
+        initialized: isInitialized
+      });
+      return;
+    }
+    if (!instancedMeshesRef.current.workers) {
+      console.log('🚫 AdvancedThreeJSRenderer: Instanced meshes not ready');
+      return; // Wait for instanced meshes
+    }
+
+    console.log('✅ AdvancedThreeJSRenderer: All systems ready, proceeding with rendering');
 
     // Separate ants by caste for instanced rendering
     const workers = antData.filter(ant => ant.caste === 'worker' || !ant.caste);
     const soldiers = antData.filter(ant => ant.caste === 'soldier');
     const queens = antData.filter(ant => ant.caste === 'queen');
 
+    console.log(`🎯 AdvancedThreeJSRenderer: Rendering ${workers.length} workers, ${soldiers.length} soldiers, ${queens.length} queens`);
+
     const matrix = new THREE.Matrix4();
 
     // Update worker instances
     if (instancedMeshesRef.current.workers && instanceMatricesRef.current.workers) {
       const maxWorkers = Math.min(workers.length, maxInstancesRef.current.workers);
+      console.log(`AdvancedThreeJSRenderer: Setting up ${maxWorkers} worker instances`);
       
       for (let i = 0; i < maxWorkers; i++) {
         const ant = workers[i];
@@ -530,9 +556,14 @@ const AdvancedThreeJSRenderer: React.FC<AdvancedThreeJSRendererProps> = ({
         matrix.makeRotationY(ant.rotation || 0);
         matrix.setPosition(
           ant.position.x,
-          Math.max(ant.position.y, 0.5), // Ensure above ground
+          Math.max(ant.position.y, 1.25), // Position above nest (nest height=1, top at Y=1)
           ant.position.z
         );
+        
+        // Debug first few ants
+        if (i < 3) {
+          console.log(`Worker ${i}: position (${ant.position.x}, ${ant.position.y}, ${ant.position.z}), rotation: ${ant.rotation}`);
+        }
         
         // Apply matrix to instance
         matrix.toArray(instanceMatricesRef.current.workers, i * 16);
@@ -553,6 +584,7 @@ const AdvancedThreeJSRenderer: React.FC<AdvancedThreeJSRendererProps> = ({
       instancedMeshesRef.current.workers.instanceMatrix.needsUpdate = true;
       instancedMeshesRef.current.workers.instanceColor!.needsUpdate = true;
       instancedMeshesRef.current.workers.count = maxWorkers;
+      console.log(`AdvancedThreeJSRenderer: Set worker mesh count to ${maxWorkers}`);
     }
 
     // Update soldier instances
@@ -566,7 +598,7 @@ const AdvancedThreeJSRenderer: React.FC<AdvancedThreeJSRendererProps> = ({
         matrix.makeRotationY(ant.rotation || 0);
         matrix.setPosition(
           ant.position.x,
-          Math.max(ant.position.y, 0.5),
+          Math.max(ant.position.y, 1.25), // Position above nest
           ant.position.z
         );
         
@@ -599,7 +631,7 @@ const AdvancedThreeJSRenderer: React.FC<AdvancedThreeJSRendererProps> = ({
         matrix.makeRotationY(ant.rotation || 0);
         matrix.setPosition(
           ant.position.x,
-          Math.max(ant.position.y, 0.5),
+          Math.max(ant.position.y, 1.25), // Position above nest
           ant.position.z
         );
         

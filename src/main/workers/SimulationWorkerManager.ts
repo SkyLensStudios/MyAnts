@@ -194,7 +194,7 @@ export class SimulationWorkerManager {
     if (this.isWorkerMode) {
       await this.sendWorkerMessage('SET_SPEED', { speed });
     } else {
-      this.fallbackEngine.setTimeScale(speed);
+      this.fallbackEngine.setSpeed(speed);
     }
   }
 
