@@ -7,11 +7,12 @@ import { SimulationConfig, SimulationState, AntRenderData, PheromoneRenderData,
          EnvironmentRenderData, SimulationUpdate, PerformanceStats } from '../../shared/types';
 import { SharedBufferManager } from './SharedBufferManager';
 import { AntEntity } from './AntEntity';
+import { FoodSourceSystem } from './FoodSourceSystem';
 
 // Import engine systems - fix paths to match actual structure
 import { AntGenetics } from '../../../engine/biological/genetics';
 import { PhysiologicalSystem } from '../../../engine/biological/physiology';
-import { PheromoneSystem } from '../../../engine/chemical/pheromones';
+import { PheromoneSystem, PheromoneType } from '../../../engine/chemical/pheromones';
 import { WeatherSystem } from '../../../engine/environmental/weather';
 import { SoilSystem } from '../../../engine/environmental/soil';
 import { BehaviorDecisionTree } from '../../../engine/ai/decisionTree';
@@ -31,6 +32,7 @@ export class SimulationEngine {
   private pheromoneSystem: PheromoneSystem | null = null;
   private weatherSystem: WeatherSystem | null = null;
   private soilSystem: SoilSystem | null = null;
+  private foodSourceSystem: FoodSourceSystem;
   
   // Data management
   private sharedBufferManager: SharedBufferManager;
@@ -48,6 +50,7 @@ export class SimulationEngine {
     this.state = this.getInitialState();
     this.sharedBufferManager = new SharedBufferManager();
     this.performanceStats = this.getInitialPerformanceStats();
+    this.foodSourceSystem = new FoodSourceSystem();
     
     console.log('SimulationEngine initialized');
   }
@@ -150,18 +153,23 @@ export class SimulationEngine {
   }
 
   public start(): void {
-    if (this.isRunning) return;
-    
+    if (this.isRunning) {
+      console.log('Simulation already running');
+      return;
+    }
+
+    console.log('Starting simulation...');
     this.isRunning = true;
     this.isPaused = false;
     this.state.isRunning = true;
     this.state.isPaused = false;
     this.lastUpdateTime = Date.now();
-    
+
     // Create initial colony
     this.createInitialColony();
-    
-    console.log('Simulation started');
+
+    console.log('Simulation started successfully');
+    console.log(`Simulation state: running=${this.isRunning}, ants=${this.ants.size}`);
   }
 
   public pause(): void {
@@ -228,7 +236,11 @@ export class SimulationEngine {
     this.state.totalAnts = queenCount + workerCount;
     this.state.livingAnts = this.state.totalAnts;
     
+    // Generate initial food sources
+    this.foodSourceSystem.generateRandomFoodSources(10, 100); // 10 food sources in 100m world
+    
     console.log(`Created initial colony: ${queenCount} queens, ${workerCount} workers`);
+    console.log(`Total ants created: ${this.ants.size}`);
   }
 
   private createAnt(casteString: string, position: { x: number; y: number; z: number }): void {
@@ -275,6 +287,7 @@ export class SimulationEngine {
     this.updateEnvironment(scaledDeltaTime);
     this.updatePhysics(scaledDeltaTime);
     this.updateWeather(scaledDeltaTime);
+    this.updateFoodSources(scaledDeltaTime);
     
     // Update simulation state
     this.updateSimulationState(scaledDeltaTime);
@@ -294,7 +307,7 @@ export class SimulationEngine {
       danger: 0, // Could be calculated from threats
       threats: 0,
       resources: 0,
-      pheromoneStrength: 0,
+      pheromoneStrength: 0, // Will be calculated per ant based on their position
       alarmLevel: 0,
       crowding: this.ants.size / 1000, // Simple crowding metric
       colonyNeeds: {
@@ -303,6 +316,8 @@ export class SimulationEngine {
         construction: 0.4,
         nursing: 0.2,
       },
+      foodSourceSystem: this.foodSourceSystem, // Provide access to food sources
+      pheromoneSystem: this.pheromoneSystem, // Provide access to pheromone system
     };
 
     // Update each ant using their comprehensive systems
@@ -365,6 +380,10 @@ export class SimulationEngine {
     if (this.weatherSystem && this.config.enableWeather) {
       // this.weatherSystem.update(deltaTime);
     }
+  }
+
+  private updateFoodSources(deltaTime: number): void {
+    this.foodSourceSystem.update(deltaTime);
   }
 
   private updateDayNightCycle(deltaTime: number): void {
@@ -436,20 +455,58 @@ export class SimulationEngine {
   }
 
   public getAntData(): AntRenderData[] {
-    return Array.from(this.ants.values()).map(ant => ant.toRenderData());
+    const antArray = Array.from(this.ants.values());
+    console.log(`SimulationEngine.getAntData(): ${antArray.length} ants in map`);
+
+    if (antArray.length > 0) {
+      console.log(`First ant: ${antArray[0].toRenderData().id}, alive: ${antArray[0].isAlive}`);
+    }
+
+    return antArray.map(ant => ant.toRenderData());
   }
 
   public getPheromoneData(): PheromoneRenderData[] {
     if (!this.pheromoneSystem) return [];
     
-    // Return pheromone data for rendering
-    return []; // TODO: Implement pheromone data extraction
+    // Extract visualization data for each pheromone type
+    const pheromoneData: PheromoneRenderData[] = [];
+    const pheromoneTypes: PheromoneType[] = ['trail', 'recruitment', 'alarm', 'territorial', 'queen', 'nestmate'];
+    
+    for (const type of pheromoneTypes) {
+      const layerData = this.pheromoneSystem.getVisualizationData(type);
+      if (layerData && layerData.data.some(value => value > 0.001)) {
+        // Only include layers with visible concentrations
+        const maxConcentration = Math.max(...layerData.data);
+        
+        pheromoneData.push({
+          type,
+          concentrationGrid: layerData.data,
+          width: layerData.width,
+          height: layerData.height,
+          cellSize: layerData.cellSize,
+          maxConcentration,
+          lastUpdate: Date.now(),
+        });
+      }
+    }
+    
+    return pheromoneData;
   }
 
   public getEnvironmentData(): EnvironmentRenderData {
+    const foodSources = this.foodSourceSystem.getAllFoodSources().map(fs => ({
+      id: fs.id,
+      position: fs.position,
+      type: this.mapFoodType(fs.type),
+      quantity: fs.currentAmount,
+      quality: fs.quality,
+      depletion: fs.totalAmount - fs.currentAmount,
+      discoveryTime: fs.discoveryTime
+    }));
+
     return {
       tunnels: [],
-      foodSources: [],
+      foodSources,
       obstacles: [],
       plants: [],
       soilMoisture: new Float32Array(0),
@@ -466,6 +523,29 @@ export class SimulationEngine {
         uvIndex: 5,
       },
     };
+  }
+
+  private mapFoodType(type: 'fruit' | 'seed' | 'insect' | 'nectar' | 'carrion'): 'sugar' | 'protein' | 'seed' | 'insect' | 'leaf' {
+    switch (type) {
+      case 'fruit':
+      case 'nectar':
+        return 'sugar';
+      case 'carrion':
+        return 'protein';
+      case 'seed':
+        return 'seed';
+      case 'insect':
+        return 'insect';
+      default:
+        return 'sugar';
+    }
+  }
+
+  /**
+   * Get food source system for external access
+   */
+  public getFoodSourceSystem(): FoodSourceSystem {
+    return this.foodSourceSystem;
   }
 
   public getUpdates(): SimulationUpdate {

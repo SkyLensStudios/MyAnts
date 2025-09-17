@@ -13,14 +13,24 @@ class AntFarmApplication {
   private mainWindow: BrowserWindow | null = null;
   private simulationEngine: SimulationEngine | null = null;
   private isSimulationRunning = false;
+  private static instance: AntFarmApplication | null = null;
 
   constructor() {
+    console.log('ElectronApp constructor called');
+    if (AntFarmApplication.instance) {
+      console.log('Instance already exists, returning existing instance');
+      return AntFarmApplication.instance;
+    }
+    
+    AntFarmApplication.instance = this;
     this.setupElectronEvents();
     this.setupIPCHandlers();
   }
 
   private setupElectronEvents(): void {
+    console.log('Setting up Electron events...');
     app.whenReady().then(() => {
+      console.log('App is ready, creating main window...');
       this.createMainWindow();
       this.setupApplicationMenu();
       
@@ -44,6 +54,7 @@ class AntFarmApplication {
   }
 
   private createMainWindow(): void {
+    console.log('Creating main window...');
     this.mainWindow = new BrowserWindow({
       width: 1400,
       height: 900,
@@ -52,24 +63,30 @@ class AntFarmApplication {
       webPreferences: {
         nodeIntegration: false,
         contextIsolation: true,
+        sandbox: false, // Disable sandbox to avoid permission issues in development
         preload: path.join(__dirname, '../preload/preload.js'),
         // Enable SharedArrayBuffer for high-performance data transfer
         additionalArguments: ['--enable-features=SharedArrayBuffer'],
       },
       title: 'Hyper-Realistic Ant Farm Simulator',
-      icon: path.join(__dirname, '../../assets/icon.png'),
+      icon: path.join(__dirname, '../../../assets/icon.png'),
       show: false, // Show after ready-to-show to prevent visual flash
     });
 
+    console.log('Window created, loading content...');
     // Load the renderer
     if (process.env.NODE_ENV === 'development') {
+      console.log('Loading development URL...');
       this.mainWindow.loadURL('http://localhost:3000');
       this.mainWindow.webContents.openDevTools();
     } else {
-      this.mainWindow.loadFile(path.join(__dirname, '../../dist/index.html'));
+      const htmlPath = path.join(__dirname, '../../../dist/index.html');
+      console.log('Loading HTML file:', htmlPath);
+      this.mainWindow.loadFile(htmlPath);
     }
 
     this.mainWindow.once('ready-to-show', () => {
+      console.log('Window ready to show, making visible...');
       this.mainWindow?.show();
       this.mainWindow?.focus();
     });
@@ -200,11 +217,12 @@ class AntFarmApplication {
   // Simulation control handlers
   private async handleStartSimulation(): Promise<boolean> {
     try {
+      console.log('IPC: Start simulation requested');
       if (!this.simulationEngine) {
         console.log('Creating new simulation engine...');
         this.simulationEngine = new SimulationEngine();
       }
-      
+
       this.isSimulationRunning = true;
       this.simulationEngine.start();
       
@@ -270,7 +288,10 @@ class AntFarmApplication {
 
   private async handleGetAntData(): Promise<any> {
     try {
-      return this.simulationEngine?.getAntData() || null;
+      console.log('IPC: Getting ant data...');
+      const result = this.simulationEngine?.getAntData() || [];
+      console.log(`IPC: Returning ${result.length} ants`);
+      return result;
     } catch (error) {
       console.error('Failed to get ant data:', error);
       return null;
@@ -411,4 +432,8 @@ class AntFarmApplication {
 }
 
 // Create the application instance
+console.log('Starting Electron app...');
+if (require.main === module) {
+  new AntFarmApplication();
+}
 new AntFarmApplication();

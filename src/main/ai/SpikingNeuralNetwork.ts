@@ -1,3 +1,5 @@
+/// <reference path="../../types/webgpu.d.ts" />
+
 /**
  * Spiking Neural Network Engine for Ant Colony AI
  * Biologically-accurate neural modeling with GeNN framework integration

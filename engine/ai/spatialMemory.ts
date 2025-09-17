@@ -629,4 +629,48 @@ export class SpatialMemory {
       foodSources: new Map(memoryMap.foodSources),
     };
   }
+
+  /**
+   * Get direction for exploration based on spatial memory
+   * Returns direction toward unexplored or promising areas
+   */
+  public getExplorationDirection(): number {
+    // Analyze current position relative to known landmarks
+    const nearbyLandmarks = this.getNearbyLandmarks(20);
+    
+    // If no landmarks, encourage random exploration
+    if (nearbyLandmarks.length === 0) {
+      return Math.random() * Math.PI * 2;
+    }
+    
+    // Find direction with least landmark density (unexplored areas)
+    const sectors = 8; // Divide space into 8 sectors
+    const sectorCounts = new Array(sectors).fill(0);
+    
+    for (const landmark of nearbyLandmarks) {
+      const dx = landmark.position.x - this.currentPosition.x;
+      const dy = landmark.position.y - this.currentPosition.y;
+      const angle = Math.atan2(dy, dx);
+      const normalizedAngle = (angle + Math.PI) / (2 * Math.PI); // 0-1
+      const sector = Math.floor(normalizedAngle * sectors) % sectors;
+      sectorCounts[sector]++;
+    }
+    
+    // Find sector with lowest density
+    let minCount = Math.min(...sectorCounts);
+    let bestSectors = sectorCounts
+      .map((count, index) => ({ count, index }))
+      .filter(s => s.count === minCount)
+      .map(s => s.index);
+    
+    // Choose random sector from best options
+    const chosenSector = bestSectors[Math.floor(Math.random() * bestSectors.length)];
+    
+    // Convert sector back to angle
+    const sectorAngle = (chosenSector / sectors) * 2 * Math.PI - Math.PI;
+    
+    // Add some randomness within the sector
+    const sectorWidth = (2 * Math.PI) / sectors;
+    return sectorAngle + (Math.random() - 0.5) * sectorWidth;
+  }
 }

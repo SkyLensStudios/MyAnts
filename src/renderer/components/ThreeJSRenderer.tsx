@@ -5,11 +5,13 @@
  */
 
 import React, { useEffect, useRef, useState, useCallback } from 'react';
-import { AntRenderData, SimulationState } from '../../shared/types';
+import { AntRenderData, SimulationState, PheromoneRenderData, EnvironmentRenderData } from '../../shared/types';
 import * as THREE from 'three';
 
 interface ThreeJSRendererProps {
   antData: AntRenderData[];
+  pheromoneData: PheromoneRenderData[];
+  environmentData: EnvironmentRenderData | null;
   simulationState: SimulationState | null;
   onAntSelected: (antId: string | null) => void;
   selectedAnt: string | null;
@@ -37,6 +39,8 @@ interface PerformanceMetrics {
  */
 const ThreeJSRenderer: React.FC<ThreeJSRendererProps> = ({
   antData,
+  pheromoneData,
+  environmentData,
   simulationState,
   onAntSelected,
   selectedAnt,
@@ -75,7 +79,12 @@ const ThreeJSRenderer: React.FC<ThreeJSRendererProps> = ({
    * Initialize Three.js scene with advanced features
    */
   const initializeThreeJS = useCallback(async () => {
-    if (!mountRef.current) return;
+    if (!mountRef.current) {
+      console.error('mountRef.current is null');
+      return;
+    }
+
+    console.log('Initializing Three.js renderer...');
 
     try {
       // Create renderer with WebGL2 context
@@ -86,13 +95,15 @@ const ThreeJSRenderer: React.FC<ThreeJSRendererProps> = ({
         stencil: false,
         depth: true
       });
+
+      console.log('WebGL renderer created successfully');
       
       // Enable advanced rendering features
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
       renderer.setSize(mountRef.current.clientWidth, mountRef.current.clientHeight);
       renderer.shadowMap.enabled = true;
       renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-      renderer.outputEncoding = THREE.sRGBEncoding;
+      renderer.outputColorSpace = THREE.SRGBColorSpace;
       renderer.toneMapping = THREE.ACESFilmicToneMapping;
       renderer.toneMappingExposure = 1.2;
       
@@ -118,7 +129,8 @@ const ThreeJSRenderer: React.FC<ThreeJSRendererProps> = ({
         0.1,
         2000
       );
-      camera.position.set(50, 50, 50);
+      // Position camera closer to see small ant objects (0.5x0.5x0.5 units)
+      camera.position.set(5, 8, 5);
       camera.lookAt(0, 0, 0);
       cameraRef.current = camera;
 
@@ -136,6 +148,31 @@ const ThreeJSRenderer: React.FC<ThreeJSRendererProps> = ({
 
       setIsInitialized(true);
       console.log('Advanced Three.js renderer initialized successfully');
+
+      // Add a test cube to verify rendering is working
+      const testGeometry = new THREE.BoxGeometry(10, 10, 10);
+      const testMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+      const testCube = new THREE.Mesh(testGeometry, testMaterial);
+      testCube.position.set(0, 5, 0);
+      sceneRef.current.add(testCube);
+      console.log('Added test cube to scene');
+
+      // Add more visible objects
+      const groundGeo = new THREE.PlaneGeometry(100, 100);
+      const groundMat = new THREE.MeshBasicMaterial({ color: 0x666666, side: THREE.DoubleSide });
+      const ground = new THREE.Mesh(groundGeo, groundMat);
+      ground.rotation.x = -Math.PI / 2;
+      sceneRef.current.add(ground);
+
+      // Add some lights
+      const ambientLight = new THREE.AmbientLight(0x404040, 0.4);
+      sceneRef.current.add(ambientLight);
+
+      const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+      directionalLight.position.set(50, 50, 50);
+      sceneRef.current.add(directionalLight);
+
+      console.log('Added basic scene objects for debugging');
       
     } catch (err) {
       console.error('Failed to initialize Three.js renderer:', err);
@@ -368,14 +405,41 @@ const ThreeJSRenderer: React.FC<ThreeJSRendererProps> = ({
     const pointLight2 = new THREE.PointLight(0x0066ff, 0.3, 100);
     pointLight2.position.set(-25, 10, -25);
     sceneRef.current.add(pointLight2);
-    
-    console.log('Advanced lighting system initialized');
   };
 
   /**
    * Update ant instances based on simulation data
    */
   const updateAntInstances = useCallback(() => {
+    if (!sceneRef.current) return;
+
+    // Simple fallback: render first 100 ants as individual cubes
+    if (antData.length > 0) {
+      // Clear existing ant objects
+      const existingAnts = sceneRef.current.children.filter(child => child.userData?.isAnt);
+      existingAnts.forEach(ant => sceneRef.current!.remove(ant));
+
+      // Add simple cube representation for first 100 ants
+      const antsToRender = Math.min(antData.length, 100);
+      for (let i = 0; i < antsToRender; i++) {
+        const ant = antData[i];
+        if (!ant.isAlive) continue;
+
+        const antGeometry = new THREE.BoxGeometry(1.0, 0.5, 1.0);
+        const antMaterial = new THREE.MeshBasicMaterial({
+          color: ant.caste === 'queen' ? 0xffd700 : 0x8B4513
+        });
+        const antMesh = new THREE.Mesh(antGeometry, antMaterial);
+
+        antMesh.position.set(ant.position.x, ant.position.z + 0.25, ant.position.y);
+        antMesh.userData = { isAnt: true };
+        sceneRef.current!.add(antMesh);
+      }
+
+      console.log(`Rendered ${antsToRender} ants as simple cubes`);
+    }
+
+    // Keep the original instanced rendering logic as backup
     if (!antInstancedMeshRef.current || !antData.length) return;
 
     const dummy = new THREE.Object3D();
@@ -408,20 +472,83 @@ const ThreeJSRenderer: React.FC<ThreeJSRendererProps> = ({
   }, [antData, renderingConfig.antInstanceLimit]);
 
   /**
-   * Update pheromone particle system
+   * Update pheromone particle system with real data
    */
   const updatePheromoneSystem = useCallback(() => {
-    if (!pheromoneSystemRef.current) return;
+    if (!pheromoneSystemRef.current || !pheromoneData.length) return;
 
     const positions = pheromoneSystemRef.current.geometry.attributes.position.array as Float32Array;
     const colors = pheromoneSystemRef.current.geometry.attributes.color.array as Float32Array;
     
-    // Update particle positions and colors based on pheromone data
-    // This would integrate with the chemical simulation system
+    let particleIndex = 0;
+    const maxParticles = positions.length / 3;
+    
+    // Convert pheromone grid data to particles
+    for (const pheromoneLayer of pheromoneData) {
+      if (particleIndex >= maxParticles) break;
+      
+      const { concentrationGrid, width, height, cellSize, type, maxConcentration } = pheromoneLayer;
+      
+      // Sample the concentration grid and create particles
+      const step = Math.max(1, Math.floor(Math.sqrt(concentrationGrid.length / 1000))); // Adaptive sampling
+      
+      for (let i = 0; i < concentrationGrid.length; i += step) {
+        if (particleIndex >= maxParticles) break;
+        
+        const concentration = concentrationGrid[i];
+        if (concentration < 0.01) continue; // Skip low concentrations
+        
+        // Convert grid index to world position
+        const gridX = i % width;
+        const gridY = Math.floor(i / width);
+        const worldX = (gridX - width / 2) * cellSize;
+        const worldY = (gridY - height / 2) * cellSize;
+        
+        // Set particle position
+        positions[particleIndex * 3] = worldX;
+        positions[particleIndex * 3 + 1] = worldY;
+        positions[particleIndex * 3 + 2] = 0.1; // Slightly above ground
+        
+        // Set particle color based on pheromone type and concentration
+        const intensity = Math.min(1.0, concentration / maxConcentration);
+        const [r, g, b] = getPheromoneColor(type, intensity);
+        
+        colors[particleIndex * 3] = r;
+        colors[particleIndex * 3 + 1] = g;
+        colors[particleIndex * 3 + 2] = b;
+        
+        particleIndex++;
+      }
+    }
+    
+    // Clear unused particles
+    for (let i = particleIndex; i < maxParticles; i++) {
+      positions[i * 3 + 2] = -1000; // Move off-screen
+      colors[i * 3] = 0;
+      colors[i * 3 + 1] = 0;
+      colors[i * 3 + 2] = 0;
+    }
     
     pheromoneSystemRef.current.geometry.attributes.position.needsUpdate = true;
     pheromoneSystemRef.current.geometry.attributes.color.needsUpdate = true;
-  }, []);
+  }, [pheromoneData]);
+
+  /**
+   * Get color for pheromone type and intensity
+   */
+  const getPheromoneColor = (type: string, intensity: number): [number, number, number] => {
+    const colors = {
+      trail: [0.2, 0.8, 0.2], // Green for food trails
+      recruitment: [0.8, 0.6, 0.2], // Orange for recruitment
+      alarm: [0.8, 0.2, 0.2], // Red for alarm
+      territorial: [0.6, 0.2, 0.8], // Purple for territory
+      queen: [0.9, 0.9, 0.2], // Yellow for queen
+      nestmate: [0.2, 0.6, 0.8], // Blue for nestmate recognition
+    };
+    
+    const baseColor = colors[type as keyof typeof colors] || [0.5, 0.5, 0.5];
+    return baseColor.map(c => c * intensity) as [number, number, number];
+  };
 
   /**
    * Start the render loop with performance monitoring

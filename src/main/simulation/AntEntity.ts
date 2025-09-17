@@ -8,6 +8,7 @@ import { PhysiologicalSystem } from '../../../engine/biological/physiology';
 import { BehaviorDecisionTree } from '../../../engine/ai/decisionTree';
 import { SpatialMemory } from '../../../engine/ai/spatialMemory';
 import { AntCaste } from '../../../engine/colony/casteSystem';
+import { PheromoneSystem, PheromoneType } from '../../../engine/chemical/pheromones';
 
 export interface Vector3 {
   x: number;
@@ -128,10 +129,10 @@ export class AntEntity {
     this.spatialMemory.updatePosition(this.position);
     
     // Update movement based on current task
-    this.updateMovement(deltaTime);
+    this.updateMovement(deltaTime, environmentContext);
     
     // Update task-specific behaviors
-    this.updateTaskBehavior(deltaTime);
+    this.updateTaskBehavior(deltaTime, environmentContext);
   }
 
   private shouldDie(): boolean {
@@ -188,31 +189,78 @@ export class AntEntity {
     }
   }
 
-  private updateMovement(deltaTime: number): void {
-    // Basic movement based on current task and genetics
+  private updateMovement(deltaTime: number, environmentContext?: any): void {
+    // Enhanced movement based on current task and genetics
     const baseSpeed = this.genetics.traits.speed;
     const currentSpeed = this.getCurrentSpeed() * baseSpeed;
     
-    // Simple random movement for now - could be enhanced with pathfinding
-    const direction = this.rotation;
+    // Task-based movement behavior
+    let targetDirection = this.rotation;
+    let movementIntensity = 1.0;
     
-    this.velocity.x = Math.cos(direction) * currentSpeed;
-    this.velocity.y = Math.sin(direction) * currentSpeed;
-    
-    // Update position
-    this.position.x += this.velocity.x * deltaTime;
-    this.position.y += this.velocity.y * deltaTime;
-    
-    // Occasionally change direction
-    if (Math.random() < 0.05) { // 5% chance per update
-      this.rotation += (Math.random() - 0.5) * 0.5;
-    }
-  }
-
-  private updateTaskBehavior(deltaTime: number): void {
     switch (this.currentTask) {
       case 'forage':
-        this.updateForaging(deltaTime);
+        // Foraging ants move in exploratory patterns with pheromone trail following
+        targetDirection = this.calculateForagingDirection(environmentContext);
+        movementIntensity = 1.2; // More active when foraging
+        break;
+      case 'construct':
+        // Construction ants move toward work sites
+        targetDirection = this.calculateConstructionDirection();
+        movementIntensity = 0.8; // Slower when carrying materials
+        break;
+      case 'nurture':
+        // Nurse ants stay near nursery areas
+        targetDirection = this.calculateNursingDirection();
+        movementIntensity = 0.5; // Gentle movement around larvae
+        break;
+      case 'defend':
+        // Defensive ants patrol or move toward threats
+        targetDirection = this.calculateDefenseDirection();
+        movementIntensity = 1.5; // Fast response to threats
+        break;
+      case 'rest':
+        // Resting ants barely move
+        movementIntensity = 0.1;
+        break;
+      default:
+        // Idle ants wander randomly but purposefully
+        targetDirection = this.calculateIdleDirection();
+        movementIntensity = 0.6;
+        break;
+    }
+    
+    // Smooth rotation toward target direction
+    const rotationSpeed = 2.0 * deltaTime;
+    const angleDiff = targetDirection - this.rotation;
+    const normalizedAngleDiff = Math.atan2(Math.sin(angleDiff), Math.cos(angleDiff));
+    
+    if (Math.abs(normalizedAngleDiff) > 0.1) {
+      this.rotation += Math.sign(normalizedAngleDiff) * Math.min(rotationSpeed, Math.abs(normalizedAngleDiff));
+    }
+    
+    // Calculate movement velocity
+    const finalSpeed = currentSpeed * movementIntensity;
+    this.velocity.x = Math.cos(this.rotation) * finalSpeed;
+    this.velocity.y = Math.sin(this.rotation) * finalSpeed;
+    
+    // Update position with boundary checking
+    const newX = this.position.x + this.velocity.x * deltaTime;
+    const newY = this.position.y + this.velocity.y * deltaTime;
+    
+    // Simple boundary constraints (keep ants in reasonable area)
+    const worldSize = 100; // 100m world
+    this.position.x = Math.max(-worldSize, Math.min(worldSize, newX));
+    this.position.y = Math.max(-worldSize, Math.min(worldSize, newY));
+    
+    // Update spatial memory with new position
+    this.spatialMemory.updatePosition(this.position);
+  }
+
+  private updateTaskBehavior(deltaTime: number, environmentContext?: any): void {
+    switch (this.currentTask) {
+      case 'forage':
+        this.updateForaging(deltaTime, environmentContext);
         break;
       case 'construct':
         this.updateConstruction(deltaTime);
@@ -232,11 +280,67 @@ export class AntEntity {
     }
   }
 
-  private updateForaging(deltaTime: number): void {
-    // TODO: Implement foraging behavior
-    // - Search for food sources
-    // - Follow pheromone trails
-    // - Carry food back to nest
+  private updateForaging(deltaTime: number, environmentContext?: any): void {
+    // Enhanced foraging behavior with food source interaction and pheromone trails
+    if (!environmentContext?.foodSourceSystem) {
+      return; // No food source system available
+    }
+
+    const foodSourceSystem = environmentContext.foodSourceSystem;
+    const pheromoneSystem = environmentContext.pheromoneSystem;
+    
+    if (!this.carryingFood) {
+      // Phase 1: Search for food
+      const nearbyFood = foodSourceSystem.findNearbyFoodSources(this.position, 5.0);
+      
+      if (nearbyFood.length > 0) {
+        // Found food! Try to collect it
+        const collectionResult = foodSourceSystem.collectFood(
+          this.id,
+          this.position,
+          1.0, // Try to collect 1 unit
+          deltaTime
+        );
+        
+        if (collectionResult.success && collectionResult.actualAmount > 0) {
+          this.carryingFood = true;
+          this.physiology.metabolic.energy += collectionResult.actualAmount * 0.1; // Small energy boost
+          
+          // Learn about this food source
+          this.spatialMemory.learnFoodSource(this.position, collectionResult.actualAmount);
+          
+          // Lay recruitment pheromone to attract other ants to this food source
+          if (pheromoneSystem) {
+            this.layPheromoneTrail(pheromoneSystem, 'recruitment', 1.0);
+          }
+          
+          console.log(`🐜 Ant ${this.id} collected ${collectionResult.actualAmount.toFixed(2)} food units and laid recruitment trail`);
+        }
+      } else {
+        // No food nearby, continue exploring
+        // The movement system will handle exploration direction
+      }
+    } else {
+      // Phase 2: Return to nest with food
+      const nestCenter = { x: 0, y: 0, z: 0 };
+      const dx = nestCenter.x - this.position.x;
+      const dy = nestCenter.y - this.position.y;
+      const distanceToNest = Math.sqrt(dx * dx + dy * dy);
+      
+      if (distanceToNest < 3.0) {
+        // Close enough to nest, deposit food
+        this.carryingFood = false;
+        this.physiology.metabolic.energy += 5.0; // Reward for bringing food home
+        
+        // Task completed, might switch to resting or continue foraging
+        if (this.physiology.metabolic.energy < this.physiology.metabolic.maxEnergy * 0.8) {
+          this.changeTask('rest');
+        }
+        
+        console.log(`🏠 Ant ${this.id} deposited food at nest`);
+      }
+      // If not at nest, movement system will handle returning direction
+    }
   }
 
   private updateConstruction(deltaTime: number): void {
@@ -266,6 +370,141 @@ export class AntEntity {
       this.physiology.metabolic.maxEnergy, 
       this.physiology.metabolic.energy + 0.1 * deltaTime
     );
+  }
+
+  // Movement direction calculation methods
+  private calculateForagingDirection(environmentContext?: any): number {
+    // Foraging ants use pheromone trails, memory, and random exploration
+    const pheromoneSystem = environmentContext?.pheromoneSystem;
+    
+    if (!pheromoneSystem) {
+      // Fallback to simple memory + random if no pheromone system
+      const memoryInfluence = 0.3;
+      const randomInfluence = 0.7;
+      
+      const memoryDirection = this.spatialMemory.getExplorationDirection();
+      const randomDirection = this.rotation + (Math.random() - 0.5) * Math.PI;
+      
+      return memoryDirection * memoryInfluence + randomDirection * randomInfluence;
+    }
+    
+    // Enhanced pheromone-based foraging behavior
+    if (this.carryingFood) {
+      // RETURNING TO NEST: Follow home trail and lay trail pheromone
+      this.layPheromoneTrail(pheromoneSystem, 'trail', 0.8);
+      
+      // Follow existing trail back to nest
+      const homeDirection = this.followPheromoneTrail(pheromoneSystem, 'trail');
+      if (homeDirection !== null) {
+        return homeDirection;
+      }
+      
+      // No trail found, use memory to return to nest
+      const nestCenter = { x: 0, y: 0, z: 0 };
+      const dx = nestCenter.x - this.position.x;
+      const dy = nestCenter.y - this.position.y;
+      return Math.atan2(dy, dx);
+    } else {
+      // SEARCHING FOR FOOD: Follow recruitment or trail pheromones
+      const recruitmentDirection = this.followPheromoneTrail(pheromoneSystem, 'recruitment');
+      const trailDirection = this.followPheromoneTrail(pheromoneSystem, 'trail');
+      
+      // Prefer recruitment pheromones (indicate fresh food sources)
+      if (recruitmentDirection !== null) {
+        const recruitmentInfluence = 0.8;
+        const explorationInfluence = 0.2;
+        const explorationDirection = this.spatialMemory.getExplorationDirection();
+        
+        return recruitmentDirection * recruitmentInfluence + explorationDirection * explorationInfluence;
+      } else if (trailDirection !== null) {
+        // Found a trail, follow it (might lead to food)
+        const trailInfluence = 0.6;
+        const explorationInfluence = 0.4;
+        const explorationDirection = this.spatialMemory.getExplorationDirection();
+        
+        return trailDirection * trailInfluence + explorationDirection * explorationInfluence;
+      } else {
+        // No pheromone trails found, use memory-guided exploration
+        const memoryInfluence = 0.4;
+        const randomInfluence = 0.6;
+        
+        const memoryDirection = this.spatialMemory.getExplorationDirection();
+        const randomDirection = this.rotation + (Math.random() - 0.5) * Math.PI * 0.5;
+        
+        return memoryDirection * memoryInfluence + randomDirection * randomInfluence;
+      }
+    }
+  }
+
+  private calculateConstructionDirection(): number {
+    // Construction ants move toward work sites (for now, toward nest center)
+    const nestCenter = { x: 0, y: 0 }; // Nest is at origin
+    const dx = nestCenter.x - this.position.x;
+    const dy = nestCenter.y - this.position.y;
+    
+    // If carrying materials, move toward nest; otherwise explore for materials
+    if (this.carryingConstruction) {
+      return Math.atan2(dy, dx);
+    } else {
+      // Look for construction materials (add some randomness)
+      return this.rotation + (Math.random() - 0.5) * 0.5;
+    }
+  }
+
+  private calculateNursingDirection(): number {
+    // Nurse ants stay near nursery areas (close to nest center)
+    const nestCenter = { x: 0, y: 0 };
+    const dx = nestCenter.x - this.position.x;
+    const dy = nestCenter.y - this.position.y;
+    const distanceToNest = Math.sqrt(dx * dx + dy * dy);
+    
+    // If too far from nest, return to it; otherwise move gently around nursery
+    if (distanceToNest > 10) {
+      return Math.atan2(dy, dx);
+    } else {
+      // Gentle circular movement around nursery
+      return this.rotation + 0.1;
+    }
+  }
+
+  private calculateDefenseDirection(): number {
+    // Defensive ants patrol territory or respond to threats
+    const nestCenter = { x: 0, y: 0 };
+    const dx = nestCenter.x - this.position.x;
+    const dy = nestCenter.y - this.position.y;
+    const distanceToNest = Math.sqrt(dx * dx + dy * dy);
+    
+    // Patrol around the nest perimeter
+    const patrolRadius = 20;
+    
+    if (distanceToNest < patrolRadius * 0.8) {
+      // Move outward to patrol perimeter
+      return Math.atan2(-dy, -dx) + (Math.random() - 0.5) * 0.3;
+    } else if (distanceToNest > patrolRadius * 1.2) {
+      // Move back toward nest
+      return Math.atan2(dy, dx);
+    } else {
+      // Patrol along perimeter
+      return this.rotation + 0.2;
+    }
+  }
+
+  private calculateIdleDirection(): number {
+    // Idle ants wander randomly but tend to stay near nest
+    const nestCenter = { x: 0, y: 0 };
+    const dx = nestCenter.x - this.position.x;
+    const dy = nestCenter.y - this.position.y;
+    const distanceToNest = Math.sqrt(dx * dx + dy * dy);
+    
+    // If too far from nest, slowly return; otherwise random walk
+    if (distanceToNest > 30) {
+      const returnDirection = Math.atan2(dy, dx);
+      const randomComponent = (Math.random() - 0.5) * Math.PI;
+      return returnDirection * 0.7 + randomComponent * 0.3;
+    } else {
+      // Random walk with slight bias toward current direction
+      return this.rotation + (Math.random() - 0.5) * 1.0;
+    }
   }
 
   private changeTask(newTask: string): void {
@@ -363,6 +602,48 @@ export class AntEntity {
       [AntCaste.MALE]: 0.9,
     };
     return multipliers[caste] || 1.0;
+  }
+
+  // Pheromone trail laying and following methods
+  private layPheromoneTrail(pheromoneSystem: PheromoneSystem, type: PheromoneType, intensity: number): void {
+    // Add a pheromone source at current position
+    pheromoneSystem.addSource({
+      position: { ...this.position },
+      type: type,
+      intensity: intensity * this.genetics.traits.communicationSkill, // Genetics affect pheromone strength
+      radius: 2.0, // Trail radius
+      duration: 30000, // Trail lasts 30 seconds
+      owner: this.id,
+    });
+  }
+
+  private followPheromoneTrail(pheromoneSystem: PheromoneSystem, type: PheromoneType): number | null {
+    // Get pheromone gradient at current position to find trail direction
+    const gradient = pheromoneSystem.getGradient(this.position, type);
+    const concentration = pheromoneSystem.getConcentration(this.position, type);
+    
+    // Only follow if there's a detectable trail
+    if (concentration < 0.1) {
+      return null; // No significant trail found
+    }
+    
+    // Calculate direction based on gradient
+    const gradientMagnitude = Math.sqrt(gradient.x * gradient.x + gradient.y * gradient.y);
+    if (gradientMagnitude < 0.01) {
+      return null; // Gradient too weak to follow
+    }
+    
+    // Follow the gradient (ants follow concentration gradients)
+    const trailDirection = Math.atan2(gradient.y, gradient.x);
+    
+    // Add some randomness to avoid perfect following (more realistic)
+    const noise = (Math.random() - 0.5) * 0.3; // ±0.15 radians
+    return trailDirection + noise;
+  }
+
+  private sensePheromoneEnvironment(pheromoneSystem: PheromoneSystem): Map<PheromoneType, number> {
+    // Get all pheromone concentrations at current position
+    return pheromoneSystem.getAllConcentrations(this.position);
   }
 
   // Data export for rendering

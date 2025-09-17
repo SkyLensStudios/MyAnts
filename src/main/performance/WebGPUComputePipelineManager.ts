@@ -1,3 +1,5 @@
+/// <reference path="../../types/webgpu.d.ts" />
+
 /**
  * WebGPU Compute Pipeline Manager
  * Orchestrates WebGPU compute shaders for massive ant colony simulation

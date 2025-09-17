@@ -24,11 +24,16 @@ const PerformanceMonitor: React.FC<PerformanceMonitorProps> = ({ stats, onClose 
     );
   }
 
-  const memoryUsageMB = {
+  const memoryUsageMB = stats?.memoryUsage ? {
     rss: (stats.memoryUsage.rss / 1024 / 1024).toFixed(1),
     heapUsed: (stats.memoryUsage.heapUsed / 1024 / 1024).toFixed(1),
     heapTotal: (stats.memoryUsage.heapTotal / 1024 / 1024).toFixed(1),
     external: (stats.memoryUsage.external / 1024 / 1024).toFixed(1),
+  } : {
+    rss: '0.0',
+    heapUsed: '0.0',
+    heapTotal: '0.0',
+    external: '0.0',
   };
 
   return (
@@ -49,15 +54,15 @@ const PerformanceMonitor: React.FC<PerformanceMonitorProps> = ({ stats, onClose 
           </div>
           <div className="stat">
             <span className="label">Frame Time:</span>
-            <span className="value">{stats.frameTime.toFixed(1)}ms</span>
+            <span className="value">{stats?.frameTime?.toFixed(1) ?? '0.0'}ms</span>
           </div>
           <div className="stat">
             <span className="label">Update Time:</span>
-            <span className="value">{stats.updateTime.toFixed(1)}ms</span>
+            <span className="value">{stats?.updateTime?.toFixed(1) ?? '0.0'}ms</span>
           </div>
           <div className="stat">
             <span className="label">Render Time:</span>
-            <span className="value">{stats.renderTime.toFixed(1)}ms</span>
+            <span className="value">{stats?.renderTime?.toFixed(1) ?? '0.0'}ms</span>
           </div>
         </div>
       </div>
@@ -89,19 +94,19 @@ const PerformanceMonitor: React.FC<PerformanceMonitorProps> = ({ stats, onClose 
         <div className="stats-grid">
           <div className="stat">
             <span className="label">Ants:</span>
-            <span className="value">{stats.antCount.toLocaleString()}</span>
+            <span className="value">{stats?.antCount?.toLocaleString() ?? '0'}</span>
           </div>
           <div className="stat">
             <span className="label">Physics Objects:</span>
-            <span className="value">{stats.physicsObjects.toLocaleString()}</span>
+            <span className="value">{stats?.physicsObjects?.toLocaleString() ?? '0'}</span>
           </div>
           <div className="stat">
             <span className="label">Pheromone Grid:</span>
-            <span className="value">{stats.pheromoneGridSize.toLocaleString()}</span>
+            <span className="value">{stats?.pheromoneGridSize?.toLocaleString() ?? '0'}</span>
           </div>
           <div className="stat">
             <span className="label">Triangles:</span>
-            <span className="value">{stats.trianglesRendered.toLocaleString()}</span>
+            <span className="value">{stats?.trianglesRendered?.toLocaleString() ?? '0'}</span>
           </div>
         </div>
       </div>
@@ -111,11 +116,11 @@ const PerformanceMonitor: React.FC<PerformanceMonitorProps> = ({ stats, onClose 
         <div className="stats-grid">
           <div className="stat">
             <span className="label">User:</span>
-            <span className="value">{(stats.cpuUsage.user / 1000).toFixed(1)}ms</span>
+            <span className="value">{stats?.cpuUsage?.user ? (stats.cpuUsage.user / 1000).toFixed(1) : '0.0'}ms</span>
           </div>
           <div className="stat">
             <span className="label">System:</span>
-            <span className="value">{(stats.cpuUsage.system / 1000).toFixed(1)}ms</span>
+            <span className="value">{stats?.cpuUsage?.system ? (stats.cpuUsage.system / 1000).toFixed(1) : '0.0'}ms</span>
           </div>
         </div>
       </div>

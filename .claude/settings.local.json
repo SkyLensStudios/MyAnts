@@ -2,7 +2,16 @@
   "permissions": {
     "allow": [
       "Bash(awk:*)",
-      "Bash(find:*)"
+      "Bash(find:*)",
+      "Bash(claude doctor)",
+      "Bash(node:*)",
+      "Bash(npm --version)",
+      "Bash(tree:*)",
+      "Bash(npm run build:*)",
+      "Bash(npm run lint:*)",
+      "Bash(npm install:*)",
+      "Bash(npm run dev:*)",
+      "Bash(npm run start:electron:*)"
     ],
     "deny": [],
     "ask": []

@@ -4,18 +4,21 @@
  */
 
 import React, { useEffect, useState, useCallback } from 'react';
-import { SimulationState, AntRenderData, PerformanceStats, SimulationConfig } from '../shared/types';
+import { SimulationState, AntRenderData, PerformanceStats, SimulationConfig, PheromoneRenderData, EnvironmentRenderData } from '../shared/types';
 import { AntSpecies } from '../shared/types';
 import SimulationControls from './components/SimulationControls';
 import DataPanel from './components/DataPanel';
-import ThreeJSRenderer from './components/ThreeJSRenderer';
+import AdvancedThreeJSRenderer from './components/SimpleThreeJSRenderer';
 import PerformanceMonitor from './components/PerformanceMonitor';
+import ErrorBoundary from './components/ErrorBoundary';
 import './App.css';
 
 const App: React.FC = () => {
   // Simulation state
   const [simulationState, setSimulationState] = useState<SimulationState | null>(null);
   const [antData, setAntData] = useState<AntRenderData[]>([]);
+  const [pheromoneData, setPheromoneData] = useState<PheromoneRenderData[]>([]);
+  const [environmentData, setEnvironmentData] = useState<EnvironmentRenderData | null>(null);
   const [performanceStats, setPerformanceStats] = useState<PerformanceStats | null>(null);
   const [isConnected, setIsConnected] = useState(false);
 
@@ -62,7 +65,22 @@ const App: React.FC = () => {
         // Get ant data
         const ants = await window.electronAPI.data.getAntData();
         if (ants) {
+          console.log(`Received ${ants.length} ants from simulation`);
           setAntData(ants);
+        } else {
+          console.log('No ant data received from simulation');
+        }
+
+        // Get pheromone data
+        const pheromones = await window.electronAPI.data.getPheromoneData();
+        if (pheromones) {
+          setPheromoneData(pheromones);
+        }
+
+        // Get environment data
+        const environment = await window.electronAPI.data.getEnvironmentData();
+        if (environment) {
+          setEnvironmentData(environment);
         }
 
         // Get performance stats
@@ -81,11 +99,18 @@ const App: React.FC = () => {
   // Simulation control handlers
   const handleStartSimulation = useCallback(async () => {
     if (!window.electronAPI) return;
-    
+
     try {
+      console.log('Starting simulation...');
       const success = await window.electronAPI.simulation.start();
       if (success) {
-        console.log('Simulation started');
+        console.log('Simulation started successfully');
+
+        // Immediately check if we get data after starting
+        setTimeout(async () => {
+          const ants = await window.electronAPI.data.getAntData();
+          console.log('Initial ant data check:', ants ? ants.length : 'none');
+        }, 1000);
       } else {
         console.error('Failed to start simulation');
       }
@@ -207,30 +232,43 @@ const App: React.FC = () => {
 
         {/* Main visualization area */}
         <div className="visualization-container">
-          <ThreeJSRenderer
-            antData={antData}
-            simulationState={simulationState}
-            onAntSelected={setSelectedAnt}
-            selectedAnt={selectedAnt}
-          />
+          <ErrorBoundary fallback={
+            <div style={{ padding: '20px', textAlign: 'center', color: '#ff6b6b' }}>
+              <h3>3D Renderer Error</h3>
+              <p>The 3D visualization failed to load. This may be due to WebGL compatibility issues.</p>
+            </div>
+          }>
+            <AdvancedThreeJSRenderer
+              antData={antData}
+              pheromoneData={pheromoneData}
+              environmentData={environmentData}
+              simulationState={simulationState}
+              onAntSelected={setSelectedAnt}
+              selectedAnt={selectedAnt}
+            />
+          </ErrorBoundary>
         </div>
 
         {/* Side panels */}
         <div className="side-panels">
           {showDataPanel && (
-            <DataPanel
-              simulationState={simulationState}
-              antData={antData}
-              selectedAnt={selectedAnt}
-              onClose={() => setShowDataPanel(false)}
-            />
+            <ErrorBoundary>
+              <DataPanel
+                simulationState={simulationState}
+                antData={antData}
+                selectedAnt={selectedAnt}
+                onClose={() => setShowDataPanel(false)}
+              />
+            </ErrorBoundary>
           )}
 
           {showPerformanceMonitor && (
-            <PerformanceMonitor
-              stats={performanceStats}
-              onClose={() => setShowPerformanceMonitor(false)}
-            />
+            <ErrorBoundary>
+              <PerformanceMonitor
+                stats={performanceStats}
+                onClose={() => setShowPerformanceMonitor(false)}
+              />
+            </ErrorBoundary>
           )}
         </div>
       </main>

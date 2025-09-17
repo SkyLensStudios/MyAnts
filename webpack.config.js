@@ -1,7 +1,15 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
-module.exports = {
+module.exports = (env, argv) => {
+  const isDevelopment = argv.mode === 'development';
+  
+  // CSP policies - more restrictive in production
+  const cspPolicy = isDevelopment 
+    ? "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' ws: wss:;"
+    : "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self';";
+
+  return {
   entry: './src/renderer/index.tsx',
   output: {
     path: path.resolve(__dirname, 'dist'),
@@ -43,6 +51,9 @@ module.exports = {
     new HtmlWebpackPlugin({
       template: './src/renderer/index.html',
       title: 'Hyper-Realistic Ant Farm Simulator',
+      templateParameters: {
+        cspPolicy: cspPolicy
+      }
     }),
   ],
   devServer: {
@@ -51,4 +62,5 @@ module.exports = {
     hot: true,
   },
   target: 'electron-renderer',
+  };
 };

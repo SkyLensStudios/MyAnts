@@ -67,15 +67,15 @@ const DataPanel: React.FC<DataPanelProps> = ({
             </div>
             <div className="stat">
               <span className="label">Temperature:</span>
-              <span className="value">{simulationState.temperature.toFixed(1)}°C</span>
+              <span className="value">{simulationState?.temperature?.toFixed(1) ?? 'N/A'}°C</span>
             </div>
             <div className="stat">
               <span className="label">Humidity:</span>
-              <span className="value">{(simulationState.humidity * 100).toFixed(1)}%</span>
+              <span className="value">{simulationState?.humidity ? (simulationState.humidity * 100).toFixed(1) : 'N/A'}%</span>
             </div>
             <div className="stat">
               <span className="label">Colony Age:</span>
-              <span className="value">{simulationState.colonyAge.toFixed(1)} days</span>
+              <span className="value">{simulationState?.colonyAge?.toFixed(1) ?? 'N/A'} days</span>
             </div>
           </div>
         </div>
@@ -98,11 +98,11 @@ const DataPanel: React.FC<DataPanelProps> = ({
           </div>
           <div className="stat">
             <span className="label">Avg Health:</span>
-            <span className="value">{(avgHealth * 100).toFixed(1)}%</span>
+            <span className="value">{livingAnts.length > 0 ? (avgHealth * 100).toFixed(1) : '0.0'}%</span>
           </div>
           <div className="stat">
             <span className="label">Avg Energy:</span>
-            <span className="value">{(avgEnergy * 100).toFixed(1)}%</span>
+            <span className="value">{livingAnts.length > 0 ? (avgEnergy * 100).toFixed(1) : '0.0'}%</span>
           </div>
         </div>
       </div>
@@ -162,13 +162,13 @@ const DataPanel: React.FC<DataPanelProps> = ({
             <div className="detail">
               <span className="label">Health:</span>
               <span className={`value ${selectedAntData.health < 0.3 ? 'low' : selectedAntData.health > 0.7 ? 'high' : 'medium'}`}>
-                {(selectedAntData.health * 100).toFixed(1)}%
+                {selectedAntData.health ? (selectedAntData.health * 100).toFixed(1) : '0.0'}%
               </span>
             </div>
             <div className="detail">
               <span className="label">Energy:</span>
               <span className={`value ${selectedAntData.energy < 0.3 ? 'low' : selectedAntData.energy > 0.7 ? 'high' : 'medium'}`}>
-                {(selectedAntData.energy * 100).toFixed(1)}%
+                {selectedAntData.energy ? (selectedAntData.energy * 100).toFixed(1) : '0.0'}%
               </span>
             </div>
             <div className="detail">
