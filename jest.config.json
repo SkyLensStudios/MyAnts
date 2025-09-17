@@ -1,0 +1,39 @@
+{
+  "preset": "ts-jest",
+  "testEnvironment": "jsdom",
+  "setupFilesAfterEnv": ["<rootDir>/src/tests/setup.ts"],
+  "roots": ["<rootDir>/src"],
+  "testMatch": [
+    "<rootDir>/src/**/__tests__/**/*.(ts|tsx|js)",
+    "<rootDir>/src/**/*.(test|spec).(ts|tsx|js)"
+  ],
+  "transform": {
+    "^.+\\.(ts|tsx)$": "ts-jest"
+  },
+  "moduleFileExtensions": ["ts", "tsx", "js", "jsx", "json", "node"],
+  "moduleNameMapper": {
+    "^@/(.*)$": "<rootDir>/src/$1",
+    "^@engine/(.*)$": "<rootDir>/engine/$1",
+    "^@shared/(.*)$": "<rootDir>/src/shared/$1",
+    "^@renderer/(.*)$": "<rootDir>/src/renderer/$1",
+    "^@main/(.*)$": "<rootDir>/src/main/$1"
+  },
+  "coverageDirectory": "coverage",
+  "collectCoverageFrom": [
+    "src/**/*.{ts,tsx}",
+    "engine/**/*.{ts,tsx}",
+    "!src/**/*.d.ts",
+    "!src/tests/**/*",
+    "!**/node_modules/**"
+  ],
+  "coverageReporters": ["text", "lcov", "html"],
+  "testTimeout": 10000,
+  "globals": {
+    "ts-jest": {
+      "tsconfig": "tsconfig.json"
+    }
+  },
+  "testEnvironmentOptions": {
+    "url": "http://localhost"
+  }
+}

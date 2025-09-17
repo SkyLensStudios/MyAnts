@@ -11,14 +11,14 @@ import { FoodSourceSystem } from './FoodSourceSystem';
 import { SpatialOptimizationIntegration } from '../performance/SpatialOptimizationIntegration';
 
 // Import engine systems - using relative paths
-import { AntGenetics } from '../../../engine/biological/genetics';
-import { PhysiologicalSystem } from '../../../engine/biological/physiology';
-import { PheromoneSystem, PheromoneType } from '../../../engine/chemical/pheromones';
-import { WeatherSystem } from '../../../engine/environmental/weather';
-import { SoilSystem } from '../../../engine/environmental/soil';
-import { BehaviorDecisionTree } from '../../../engine/ai/decisionTree';
-import { SpatialMemory } from '../../../engine/ai/spatialMemory';
-import { AntCaste } from '../../../engine/colony/casteSystem';
+import { AntGenetics } from '@engine/biological/genetics';
+import { PhysiologicalSystem } from '@engine/biological/physiology';
+import { PheromoneSystem, PheromoneType } from '@engine/chemical/pheromones';
+import { WeatherSystem, ClimateZone } from '@engine/environmental/weather';
+import { SoilSystem } from '@engine/environmental/soil';
+import { BehaviorDecisionTree } from '@engine/ai/decisionTree';
+import { SpatialMemory } from '@engine/ai/spatialMemory';
+import { AntCaste } from '@engine/colony/casteSystem';
 
 export class SimulationEngine {
   private config: SimulationConfig;
@@ -637,5 +637,92 @@ export class SimulationEngine {
 
   public getSharedBuffers(): any {
     return this.sharedBufferManager.getBuffers();
+  }
+
+  /**
+   * Set time scale for simulation speed
+   */
+  public setTimeScale(scale: number): void {
+    this.config.timeScale = Math.max(0.1, Math.min(10, scale)); // Clamp between 0.1x and 10x
+    this.state.timeScale = this.config.timeScale;
+    console.log(`Time scale set to ${this.config.timeScale}x`);
+  }
+
+  /**
+   * Initialize simulation systems
+   */
+  public initialize(): Promise<void> {
+    return new Promise((resolve) => {
+      console.log('Initializing simulation systems...');
+      
+      // Systems are already initialized in constructor
+      // This method provides explicit initialization if needed
+      if (!this.pheromoneSystem) {
+        const worldSize = Math.sqrt(this.config.environmentSize);
+        this.pheromoneSystem = new PheromoneSystem(worldSize, worldSize);
+      }
+      
+      if (!this.weatherSystem) {
+        const defaultClimate: ClimateZone = {
+          name: 'temperate',
+          latitude: 45,
+          elevation: 100,
+          proximity_to_water: 0.5,
+          seasonal_configs: new Map()
+        };
+        this.weatherSystem = new WeatherSystem(defaultClimate);
+      }
+      
+      if (!this.soilSystem) {
+        const worldSize = Math.sqrt(this.config.environmentSize);
+        this.soilSystem = new SoilSystem(worldSize, worldSize, 10); // Default depth of 10
+      }
+      
+      console.log('Simulation systems initialized');
+      resolve();
+    });
+  }
+
+  /**
+   * Get render data for visualization
+   */
+  public getRenderData(): any {
+    const renderData: any[] = [];
+    
+    for (const [id, ant] of this.ants) {
+      renderData.push(ant.toRenderData());
+    }
+    
+    return {
+      ants: renderData,
+      colonies: [], // TODO: Implement colony data
+      environment: {} // TODO: Implement environment data
+    };
+  }
+
+  /**
+   * Add an ant at specified position
+   */
+  public async addAnt(position: { x: number; y: number; z: number }, caste: AntCaste = AntCaste.WORKER): Promise<void> {
+    const antId = `ant_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    
+    // Create ant with proper constructor parameters
+    const ant = new AntEntity(antId, position, caste, 1);
+    
+    // Add to colony
+    this.ants.set(antId, ant);
+    
+    // Update spatial optimization with proper parameters
+    await this.spatialOptimization.updateSpatialStructure(
+      this.ants,
+      this.foodSourceSystem.getAllFoodSources(),
+      []
+    );
+    
+    // Update state
+    this.state.totalAnts++;
+    this.state.livingAnts++;
+    
+    console.log(`Added ant ${antId} at position (${position.x}, ${position.y}, ${position.z})`);
   }
 }

@@ -5,7 +5,7 @@
 
 import { LODLevel } from './LODSystem';
 import { AntEntity } from '../simulation/AntEntity';
-import { AntCaste } from '../../../engine/colony/casteSystem';
+import { AntCaste } from '@engine/colony/casteSystem';
 import { Vector3D } from '../../shared/types';
 
 export interface AntBehaviorConfig {

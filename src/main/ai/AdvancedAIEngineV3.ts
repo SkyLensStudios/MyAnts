@@ -7,7 +7,7 @@
  * - Swarm Intelligence with contribution-based cooperation
  */
 
-import { AntGenetics } from '../../../engine/biological/genetics';
+import { AntGenetics } from '@engine/biological/genetics';
 
 // Enhanced AI interfaces
 export interface BranchingQNetwork {

@@ -365,6 +365,57 @@ export class SpatialOptimizationIntegration {
   }
 
   /**
+   * Initialize spatial structure with world bounds
+   */
+  public async initializeSpatialStructure(worldBounds: { x: number; y: number; z: number }): Promise<void> {
+    const mebvhConfig: MEBVHConfig = {
+      maxEntitiesPerLeaf: this.config.maxEntitiesPerLeaf,
+      maxDepth: this.config.maxDepth,
+      enableDynamicRebuilding: true,
+      rebuildThreshold: this.config.rebuildThreshold,
+      enableMemoryOptimization: true,
+      enableSIMDOptimization: true,
+      spatialHashBuckets: this.config.spatialHashBuckets,
+      temporalCoherence: true
+    };
+
+    this.spatialStructure = new MEBVHSpatialStructure(mebvhConfig);
+    console.log(`🏗️ Spatial structure initialized with bounds: ${worldBounds.x}x${worldBounds.y}x${worldBounds.z}`);
+  }
+
+  /**
+   * Find neighbors around a position
+   */
+  public async findNeighbors(position: { x: number; y: number; z: number }, radius: number): Promise<any[]> {
+    if (!this.config.enabled || !this.spatialStructure) {
+      return []; // Return empty array if spatial optimization disabled
+    }
+
+    const startTime = performance.now();
+    
+    const query: SpatialQuery = {
+      type: 'radius',
+      center: position,
+      radius: radius,
+      maxResults: 100 // reasonable default
+    };
+
+    const result = await this.spatialStructure.query(query);
+    
+    const queryTime = performance.now() - startTime;
+    this.updateQueryStats(queryTime, true);
+    
+    return result.entities;
+  }
+
+  /**
+   * Get the spatial structure for debugging
+   */
+  public getSpatialStructure(): MEBVHSpatialStructure | null {
+    return this.spatialStructure || null;
+  }
+
+  /**
    * Clean up resources
    */
   public dispose(): void {

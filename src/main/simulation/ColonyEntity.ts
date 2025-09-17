@@ -3,9 +3,9 @@
  * Provides high-level colony operations and data aggregation for rendering
  */
 
-import { ColonyManagementSystem, ColonyState, ColonyMetrics } from '../../../engine/colony/index';
-import { AntCaste } from '../../../engine/colony/casteSystem';
-import { ResourceType } from '../../../engine/colony/resourceAllocation';
+import { ColonyManagementSystem, ColonyState, ColonyMetrics } from '@engine/colony/index';
+import { AntCaste } from '@engine/colony/casteSystem';
+import { ResourceType } from '@engine/colony/resourceAllocation';
 import { AntEntity } from './AntEntity';
 
 export interface ColonyRenderData {

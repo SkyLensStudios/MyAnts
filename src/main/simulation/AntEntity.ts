@@ -3,12 +3,12 @@
  * Integrates all biological, AI, and behavioral systems for individual ants
  */
 
-import { AntGenetics } from '../../../engine/biological/genetics';
-import { PhysiologicalSystem } from '../../../engine/biological/physiology';
-import { BehaviorDecisionTree } from '../../../engine/ai/decisionTree';
-import { SpatialMemory } from '../../../engine/ai/spatialMemory';
-import { AntCaste } from '../../../engine/colony/casteSystem';
-import { PheromoneSystem, PheromoneType } from '../../../engine/chemical/pheromones';
+import { AntGenetics } from '@engine/biological/genetics';
+import { PhysiologicalSystem } from '@engine/biological/physiology';
+import { BehaviorDecisionTree } from '@engine/ai/decisionTree';
+import { SpatialMemory } from '@engine/ai/spatialMemory';
+import { AntCaste } from '@engine/colony/casteSystem';
+import { PheromoneSystem, PheromoneType } from '@engine/chemical/pheromones';
 
 export interface Vector3 {
   x: number;

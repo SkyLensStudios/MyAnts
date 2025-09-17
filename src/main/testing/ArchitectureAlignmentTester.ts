@@ -209,7 +209,7 @@ export class ArchitectureAlignmentTester {
             computeGroupSize: [64, 1, 1] as [number, number, number]
           };
           
-          this.webgpuPipeline = new WebGPUComputePipelineManager(webgpuConfig, this.performanceSystem);
+          this.webgpuPipeline = new WebGPUComputePipelineManager();
           await this.webgpuPipeline.initialize();
           this.testResults.webgpuPerformance.supported = true;
           console.log('✅ WebGPU pipeline initialized');
@@ -307,8 +307,8 @@ export class ArchitectureAlignmentTester {
     this.testResults.webgpuPerformance = {
       supported: true,
       computeTime: avgComputeTime,
-      memoryBandwidth: metrics.memoryBandwidth || 0,
-      threadEfficiency: metrics.threadEfficiency || 0
+      memoryBandwidth: metrics.lastComputeTime || 0,
+      threadEfficiency: metrics.averageComputeTime || 0
     };
     
     console.log(`✅ WebGPU Performance: ${avgComputeTime.toFixed(2)}ms avg compute time`);

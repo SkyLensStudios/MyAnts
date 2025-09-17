@@ -63,7 +63,6 @@ const AdvancedThreeJSRenderer: React.FC<AdvancedThreeJSRendererProps> = ({
   });
   
   const [isInitialized, setIsInitialized] = useState(false);
-  const [debugInfo, setDebugInfo] = useState<string>('');
 
   // Memory management functions
   const initializeObjectPools = () => {
@@ -76,8 +75,6 @@ const AdvancedThreeJSRenderer: React.FC<AdvancedThreeJSRendererProps> = ({
     materialPoolRef.current.antBody = new THREE.MeshLambertMaterial({ color: 0x000000 });
     materialPoolRef.current.antHead = new THREE.MeshLambertMaterial({ color: 0x1a1a1a });
     materialPoolRef.current.antLeg = new THREE.MeshLambertMaterial({ color: 0x000000 });
-
-    console.log('Object pools initialized for memory efficiency');
   };
 
   const initializeInstancedMeshes = () => {
@@ -157,8 +154,6 @@ const AdvancedThreeJSRenderer: React.FC<AdvancedThreeJSRendererProps> = ({
     antGroup.add(instancedMeshesRef.current.workers);
     antGroup.add(instancedMeshesRef.current.soldiers);
     antGroup.add(instancedMeshesRef.current.queens);
-
-    console.log('Instanced meshes initialized for massive performance improvement');
   };
 
   const disposeObjectPools = () => {
@@ -175,8 +170,6 @@ const AdvancedThreeJSRenderer: React.FC<AdvancedThreeJSRendererProps> = ({
     // Clear references
     geometryPoolRef.current = {};
     materialPoolRef.current = {};
-
-    console.log('Object pools disposed');
   };
 
   const disposeInstancedMeshes = () => {
@@ -214,8 +207,6 @@ const AdvancedThreeJSRenderer: React.FC<AdvancedThreeJSRendererProps> = ({
     instancedMeshesRef.current = {};
     instanceMatricesRef.current = {};
     instanceColorsRef.current = {};
-
-    console.log('Instanced meshes disposed');
   };
 
   const disposeAntMesh = (antGroup: THREE.Group) => {
@@ -248,7 +239,6 @@ const AdvancedThreeJSRenderer: React.FC<AdvancedThreeJSRendererProps> = ({
       disposeAntMesh(antGroup);
     });
     antMeshesRef.current = {};
-    console.log('All ant meshes disposed');
   };
 
   const disposePheromoneSystem = () => {
@@ -267,8 +257,6 @@ const AdvancedThreeJSRenderer: React.FC<AdvancedThreeJSRendererProps> = ({
   // Initialize Three.js scene
   useEffect(() => {
     if (!mountRef.current || isInitialized) return;
-
-    console.log('Initializing Three.js scene...');
 
     // Initialize object pools for memory efficiency
     initializeObjectPools();
@@ -321,7 +309,6 @@ const AdvancedThreeJSRenderer: React.FC<AdvancedThreeJSRendererProps> = ({
     startRenderLoop();
 
     setIsInitialized(true);
-    console.log('Three.js scene initialized successfully');
 
     // Cleanup function with proper memory disposal
     return () => {
@@ -348,8 +335,6 @@ const AdvancedThreeJSRenderer: React.FC<AdvancedThreeJSRendererProps> = ({
         mountRef.current.removeChild(renderer.domElement);
       }
       renderer.dispose();
-      
-      console.log('Three.js scene and resources disposed');
     };
   }, []);
 
@@ -526,16 +511,12 @@ const AdvancedThreeJSRenderer: React.FC<AdvancedThreeJSRendererProps> = ({
     if (!sceneRef.current || !antGroupRef.current || !isInitialized) return;
     if (!instancedMeshesRef.current.workers) return; // Wait for instanced meshes
 
-    console.log(`Updating ${antData.length} ants with instanced rendering...`);
-
     // Separate ants by caste for instanced rendering
     const workers = antData.filter(ant => ant.caste === 'worker' || !ant.caste);
     const soldiers = antData.filter(ant => ant.caste === 'soldier');
     const queens = antData.filter(ant => ant.caste === 'queen');
 
     const matrix = new THREE.Matrix4();
-    let debugText = `Instanced Rendering: ${antData.length} total ants\n`;
-    debugText += `Workers: ${workers.length}, Soldiers: ${soldiers.length}, Queens: ${queens.length}\n`;
 
     // Update worker instances
     if (instancedMeshesRef.current.workers && instanceMatricesRef.current.workers) {
@@ -639,12 +620,6 @@ const AdvancedThreeJSRenderer: React.FC<AdvancedThreeJSRendererProps> = ({
       instancedMeshesRef.current.queens.instanceColor!.needsUpdate = true;
       instancedMeshesRef.current.queens.count = maxQueens;
     }
-
-    debugText += `Performance: ${workers.length + soldiers.length + queens.length} ants rendered with 3 draw calls\n`;
-    debugText += `Memory: Using instanced meshes (5-10x performance improvement)\n`;
-    
-    setDebugInfo(debugText);
-    console.log(`Instanced rendering complete: Total draw calls reduced from ${antData.length} to 3`);
   }, [antData, selectedAnt, isInitialized]);
 
   // Update pheromone visualization (keep existing code but with smaller scale)
@@ -757,42 +732,22 @@ const AdvancedThreeJSRenderer: React.FC<AdvancedThreeJSRendererProps> = ({
         overflow: 'hidden'
       }}
     >
-      {/* UI Overlay */}
+      {/* Status Overlay */}
       <div style={{
         position: 'absolute',
         top: '10px',
         left: '10px',
         color: 'white',
-        background: 'rgba(0,0,0,0.8)',
-        padding: '15px',
-        borderRadius: '8px',
+        background: 'rgba(0,0,0,0.7)',
+        padding: '10px',
+        borderRadius: '5px',
         fontFamily: 'monospace',
-        fontSize: '12px',
-        zIndex: 1000,
-        maxWidth: '300px'
+        fontSize: '14px',
+        zIndex: 1000
       }}>
-        <div style={{ color: '#00ff00', fontWeight: 'bold', marginBottom: '10px' }}>
-          🐜 Ant Farm Status
-        </div>
-        <div>Ants: {antData.length}</div>
-        <div>Visible: {Object.keys(antMeshesRef.current).length}</div>
-        <div>Pheromones: {pheromoneData.length}</div>
-        <div>Simulation: {simulationState.isRunning ? '🟢 Running' : '🔴 Paused'}</div>
+        <div>🐜 Ants: {antData.length}</div>
+        <div>{simulationState.isRunning ? '🟢 Running' : '🔴 Paused'}</div>
         {selectedAnt && <div>Selected: {selectedAnt}</div>}
-        
-        <div style={{ marginTop: '10px', fontSize: '10px', color: '#cccccc' }}>
-          <strong>Controls:</strong><br/>
-          • Mouse drag: Rotate camera<br/>
-          • Mouse wheel: Zoom<br/>
-          • Ants should now be visible!
-        </div>
-        
-        {debugInfo && (
-          <div style={{ marginTop: '10px', fontSize: '10px', color: '#ffff00' }}>
-            <strong>Debug:</strong><br/>
-            <pre>{debugInfo}</pre>
-          </div>
-        )}
       </div>
     </div>
   );

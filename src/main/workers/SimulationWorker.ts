@@ -11,7 +11,8 @@ import {
   AntRenderData, 
   PheromoneRenderData, 
   EnvironmentRenderData,
-  SimulationUpdate 
+  SimulationUpdate,
+  AntSpecies
 } from '../../shared/types';
 
 // Worker message types
@@ -119,7 +120,8 @@ class SimulationWorker {
       }
     } catch (error) {
       console.error('Error handling worker message:', error);
-      this.sendResponse('ERROR', { error: error.message }, requestId);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      this.sendResponse('ERROR', { error: errorMessage }, requestId);
     }
   }
 
@@ -127,7 +129,24 @@ class SimulationWorker {
    * Initialize simulation with configuration
    */
   private initializeSimulation(config: Partial<SimulationConfig>): void {
-    this.simulationEngine.configure(config);
+    // Provide default values for required properties
+    const fullConfig: SimulationConfig = {
+      timeScale: 1.0,
+      colonySize: 500,
+      environmentSize: 10000,
+      seasonLength: 86400, // 1 day in seconds
+      speciesType: AntSpecies.HARVESTER,
+      complexityLevel: 2,
+      enablePhysics: true,
+      enableWeather: true,
+      enableGenetics: true,
+      enableLearning: true,
+      maxAnts: 1000,
+      worldSeed: Math.random(),
+      ...config
+    };
+    
+    this.simulationEngine.configure(fullConfig);
     this.simulationEngine.initialize();
     
     console.log('🚀 Simulation initialized in worker thread');
@@ -203,7 +222,8 @@ class SimulationWorker {
 
     } catch (error) {
       console.error('Simulation update error:', error);
-      this.sendResponse('SIMULATION_ERROR', { error: error.message });
+      const errorMessage = error instanceof Error ? error.message : 'Unknown simulation error';
+      this.sendResponse('SIMULATION_ERROR', { error: errorMessage });
     }
 
     // Track performance
@@ -278,8 +298,8 @@ class SimulationWorker {
       this.performanceStats.totalUpdates;
 
     // Estimate memory usage (simplified)
-    if (typeof performance.memory !== 'undefined') {
-      this.performanceStats.memoryUsage = performance.memory.usedJSHeapSize / 1024 / 1024; // MB
+    if (typeof (performance as any).memory !== 'undefined') {
+      this.performanceStats.memoryUsage = (performance as any).memory.usedJSHeapSize / 1024 / 1024; // MB
     }
   }
 

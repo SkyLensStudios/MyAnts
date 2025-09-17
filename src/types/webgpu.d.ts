@@ -19,9 +19,17 @@ declare global {
 
   interface GPUAdapter {
     requestDevice(descriptor?: GPUDeviceDescriptor): Promise<GPUDevice>;
+    requestAdapterInfo(): Promise<GPUAdapterInfo>;
     features: GPUSupportedFeatures;
     limits: GPUSupportedLimits;
     info: GPUAdapterInfo;
+  }
+
+  interface GPUAdapterInfo {
+    vendor: string;
+    architecture: string;
+    device: string;
+    description: string;
   }
 
   interface GPUDeviceDescriptor {
@@ -207,6 +215,47 @@ declare global {
     readonly device: string;
     readonly description: string;
   }
+
+  // Texture interfaces
+  interface GPUTexture {
+    label: string;
+    width: number;
+    height: number;
+    depthOrArrayLayers: number;
+    mipLevelCount: number;
+    sampleCount: number;
+    dimension: GPUTextureDimension;
+    format: GPUTextureFormat;
+    usage: GPUTextureUsageFlags;
+    
+    createView(descriptor?: GPUTextureViewDescriptor): GPUTextureView;
+    destroy(): void;
+  }
+
+  interface GPUTextureView {
+    label: string;
+  }
+
+  interface GPUTextureViewDescriptor {
+    label?: string;
+    format?: GPUTextureFormat;
+    dimension?: GPUTextureViewDimension;
+    aspect?: GPUTextureAspect;
+    baseMipLevel?: number;
+    mipLevelCount?: number;
+    baseArrayLayer?: number;
+    arrayLayerCount?: number;
+  }
+
+  interface GPUSampler {
+    label: string;
+  }
+
+  type GPUTextureDimension = '1d' | '2d' | '3d';
+  type GPUTextureViewDimension = '1d' | '2d' | '2d-array' | 'cube' | 'cube-array' | '3d';
+  type GPUTextureFormat = string;
+  type GPUTextureAspect = 'all' | 'stencil-only' | 'depth-only';
+  type GPUTextureUsageFlags = number;
 
   type GPUFeatureName = string;
   type GPUBufferUsageFlags = number;

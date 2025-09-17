@@ -140,11 +140,10 @@ export class AdaptiveLODController {
    */
   private gatherPerformanceMetrics(): any {
     const webgpuMetrics = this.webgpuPipeline?.getPerformanceMetrics() || {
-      computeTime: 0,
-      memoryBandwidth: 0,
       gpuUtilization: 0,
-      threadEfficiency: 0,
-      cacheHitRate: 0
+      lastComputeTime: 0,
+      averageComputeTime: 0,
+      memoryUsage: 0
     };
     
     const systemMetrics = this.performanceSystem.getPerformanceStatus();
@@ -155,8 +154,8 @@ export class AdaptiveLODController {
       cpuUsage: systemMetrics.systemLoad || 0.5, // systemLoad maps to CPU usage
       memoryUsage: systemMetrics.memoryUsage || 0.5,
       gpuUtilization: webgpuMetrics.gpuUtilization,
-      computeTime: webgpuMetrics.computeTime,
-      memoryBandwidth: webgpuMetrics.memoryBandwidth,
+      computeTime: webgpuMetrics.lastComputeTime,
+      memoryBandwidth: webgpuMetrics.averageComputeTime, // Use averageComputeTime as bandwidth proxy
       thermalState: systemMetrics.systemLoad || 0.5 // Use systemLoad as thermal proxy
     };
   }
@@ -400,15 +399,10 @@ export class AdaptiveLODController {
     // For now, just log the assignments
     console.log(`LOD Distribution: Full=${assignments.fullDetail}, Simplified=${assignments.simplified}, Statistical=${assignments.statistical}, Aggregate=${assignments.aggregate}`);
     
-    // Update WebGPU pipeline with new instance counts
-    if (this.webgpuPipeline) {
-      await this.webgpuPipeline.updateParameters({
-        antCount: assignments.fullDetail + assignments.simplified + assignments.statistical + assignments.aggregate,
-        fullDetailCount: assignments.fullDetail,
-        simplifiedCount: assignments.simplified,
-        statisticalCount: assignments.statistical,
-        aggregateCount: assignments.aggregate
-      });
+    // Update WebGPU pipeline with performance step
+    if (this.webgpuPipeline && this.webgpuPipeline.isAvailable()) {
+      // Execute a compute step to apply the LOD changes
+      await this.webgpuPipeline.executeComputeStep(16.67); // 60 FPS frame time
     }
   }
 
