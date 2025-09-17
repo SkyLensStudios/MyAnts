@@ -69,6 +69,19 @@ export interface AntRenderData {
   id: string;
   position: Vector3D;
   rotation: number;            // Radians
+  // Add quaternion property for advanced rotation
+  quaternion?: {
+    x: number;
+    y: number;
+    z: number;
+    w: number;
+  };
+  // Add scale for consistent rendering
+  scale?: {
+    x: number;
+    y: number;
+    z: number;
+  };
   caste: AntCaste;
   health: number;              // 0-1
   energy: number;              // 0-1
@@ -79,6 +92,8 @@ export interface AntRenderData {
   speed: number;               // Current movement speed
   isAlive: boolean;
   generation: number;
+  // Add debug field for troubleshooting
+  debug?: any;
 }
 
 // Pheromone Field Data
