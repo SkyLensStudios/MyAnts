@@ -219,19 +219,39 @@ const App: React.FC = () => {
 
       <main className="app-main">
         {/* Simulation Controls */}
-        <SimulationControls
-          simulationState={simulationState}
-          onStart={handleStartSimulation}
-          onPause={handlePauseSimulation}
-          onReset={handleResetSimulation}
-          onConfigure={handleConfigureSimulation}
-          onSpeedChange={handleSpeedChange}
-          onSave={handleSaveSimulation}
-          onLoad={handleLoadSimulation}
-        />
+        <div 
+          style={{
+            position: 'absolute',
+            top: '1rem',
+            left: '1rem',
+            right: (showDataPanel || showPerformanceMonitor) ? '320px' : '1rem',
+            zIndex: 1001,
+            transition: 'right 0.3s ease',
+            pointerEvents: 'none'
+          }}
+        >
+          <div style={{ pointerEvents: 'auto', display: 'inline-block' }}>
+            <SimulationControls
+              simulationState={simulationState}
+              onStart={handleStartSimulation}
+              onPause={handlePauseSimulation}
+              onReset={handleResetSimulation}
+              onConfigure={handleConfigureSimulation}
+              onSpeedChange={handleSpeedChange}
+              onSave={handleSaveSimulation}
+              onLoad={handleLoadSimulation}
+            />
+          </div>
+        </div>
 
         {/* Main visualization area */}
-        <div className="visualization-container">
+        <div 
+          className="visualization-container" 
+          style={{
+            marginRight: (showDataPanel || showPerformanceMonitor) ? '300px' : '0',
+            transition: 'margin-right 0.3s ease'
+          }}
+        >
           <ErrorBoundary fallback={
             <div style={{ padding: '20px', textAlign: 'center', color: '#ff6b6b' }}>
               <h3>3D Renderer Error</h3>
@@ -250,27 +270,39 @@ const App: React.FC = () => {
         </div>
 
         {/* Side panels */}
-        <div className="side-panels">
-          {showDataPanel && (
-            <ErrorBoundary>
-              <DataPanel
-                simulationState={simulationState}
-                antData={antData}
-                selectedAnt={selectedAnt}
-                onClose={() => setShowDataPanel(false)}
-              />
-            </ErrorBoundary>
-          )}
+        {(showDataPanel || showPerformanceMonitor) && (
+          <div className="side-panels" style={{ 
+            position: 'fixed', 
+            right: 0, 
+            top: '60px', 
+            bottom: 0, 
+            width: '300px',
+            zIndex: 900,
+            backgroundColor: '#2a2a2a',
+            borderLeft: '2px solid #444',
+            overflowY: 'auto'
+          }}>
+            {showDataPanel && (
+              <ErrorBoundary>
+                <DataPanel
+                  simulationState={simulationState}
+                  antData={antData}
+                  selectedAnt={selectedAnt}
+                  onClose={() => setShowDataPanel(false)}
+                />
+              </ErrorBoundary>
+            )}
 
-          {showPerformanceMonitor && (
-            <ErrorBoundary>
-              <PerformanceMonitor
-                stats={performanceStats}
-                onClose={() => setShowPerformanceMonitor(false)}
-              />
-            </ErrorBoundary>
-          )}
-        </div>
+            {showPerformanceMonitor && (
+              <ErrorBoundary>
+                <PerformanceMonitor
+                  stats={performanceStats}
+                  onClose={() => setShowPerformanceMonitor(false)}
+                />
+              </ErrorBoundary>
+            )}
+          </div>
+        )}
       </main>
 
       {/* Toggle buttons for panels */}

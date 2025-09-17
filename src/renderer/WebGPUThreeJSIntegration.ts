@@ -17,14 +17,14 @@ export interface WebGPURendererConfig {
 }
 
 export interface AntRenderInstance {
-  id: string;
-  position: THREE.Vector3;
-  rotation: THREE.Quaternion;
-  scale: THREE.Vector3;
   lodLevel: number;
   color: THREE.Color;
   animationState: number;
   visible: boolean;
+  position: THREE.Vector3;  // Add position property
+  rotation: THREE.Quaternion; // Add rotation property
+  scale: THREE.Vector3;     // Add scale property
+  id?: string;              // Optional ID for tracking
 }
 
 /**
@@ -86,22 +86,40 @@ export class WebGPUThreeJSIntegration {
    */
   public async initialize(): Promise<void> {
     try {
+      console.log('Initializing WebGPU Three.js integration...');
+      
       // Initialize WebGPU pipeline if enabled
       if (this.config.enableWebGPU) {
-        // Note: We need PerformanceOptimizationIntegrationV3 to create WebGPUComputePipelineManager
-        // For now, we'll create a minimal config
-        console.log('WebGPU pipeline requires PerformanceOptimizationIntegrationV3 - skipping for now');
-        this.config.enableWebGPU = false;
+        try {
+          // Check for WebGPU support
+          if (navigator.gpu) {
+            console.log('WebGPU is supported, initializing pipeline...');
+            // We need to implement WebGPUComputePipelineManager
+            // For now, we'll use a fallback
+            console.log('WebGPU support detected but pipeline manager not yet implemented');
+          } else {
+            console.log('WebGPU not supported in this browser, falling back to WebGL');
+          }
+          this.config.enableWebGPU = false; // Disable for now until implementation is complete
+        } catch (gpuError) {
+          console.error('WebGPU initialization failed:', gpuError);
+          this.config.enableWebGPU = false;
+        }
       }
       
       // Create geometry and material pools
+      console.log('Creating geometry pool...');
       this.initializeGeometryPool();
+      
+      console.log('Creating material pool...');
       this.initializeMaterialPool();
       
       // Create instanced meshes for each LOD level
+      console.log('Setting up instanced meshes...');
       this.initializeInstancedMeshes();
       
       // Initialize renderer optimizations
+      console.log('Optimizing renderer...');
       this.optimizeRenderer();
       
       this.isInitialized = true;
@@ -457,15 +475,37 @@ export class WebGPUThreeJSIntegration {
     
     for (let i = 0; i < antInstances.length; i++) {
       const ant = antInstances[i];
-      positionData[i * 4] = ant.position.x;
-      positionData[i * 4 + 1] = ant.position.y;
-      positionData[i * 4 + 2] = ant.position.z;
-      positionData[i * 4 + 3] = ant.animationState;
+      if (!ant.visible) continue;
       
-      rotationData[i * 4] = ant.rotation.x;
-      rotationData[i * 4 + 1] = ant.rotation.y;
-      rotationData[i * 4 + 2] = ant.rotation.z;
-      rotationData[i * 4 + 3] = ant.rotation.w;
+      // Ensure position exists before accessing
+      if (ant.position) {
+        positionData[i * 4] = ant.position.x;
+        positionData[i * 4 + 1] = ant.position.y;
+        positionData[i * 4 + 2] = ant.position.z;
+        positionData[i * 4 + 3] = ant.animationState;
+      } else {
+        // Default position if not provided
+        positionData[i * 4] = 0;
+        positionData[i * 4 + 1] = 0;
+        positionData[i * 4 + 2] = 0;
+        positionData[i * 4 + 3] = 0;
+        console.warn(`Ant instance at index ${i} missing position data`);
+      }
+      
+      // Ensure rotation exists before accessing
+      if (ant.rotation) {
+        rotationData[i * 4] = ant.rotation.x;
+        rotationData[i * 4 + 1] = ant.rotation.y;
+        rotationData[i * 4 + 2] = ant.rotation.z;
+        rotationData[i * 4 + 3] = ant.rotation.w;
+      } else {
+        // Default rotation if not provided
+        rotationData[i * 4] = 0;
+        rotationData[i * 4 + 1] = 0;
+        rotationData[i * 4 + 2] = 0;
+        rotationData[i * 4 + 3] = 1; // Identity quaternion
+        console.warn(`Ant instance at index ${i} missing rotation data`);
+      }
     }
     
     // Dispatch WebGPU compute for instance transformations
@@ -506,15 +546,24 @@ export class WebGPUThreeJSIntegration {
     if (!instancedMesh || !matrixArray || !colorArray) return;
     
     // Update instance count
-    instancedMesh.count = Math.min(ants.length, instancedMesh.count);
+    instancedMesh.count = Math.min(ants.length, instancedMesh.instanceMatrix.count);
     
     const matrix = new THREE.Matrix4();
+    const defaultPosition = new THREE.Vector3(0, 0, 0);
+    const defaultRotation = new THREE.Quaternion();
+    const defaultScale = new THREE.Vector3(1, 1, 1);
     
     for (let i = 0; i < ants.length && i < instancedMesh.count; i++) {
       const ant = ants[i];
       
-      // Create transformation matrix
-      matrix.compose(ant.position, ant.rotation, ant.scale);
+      if (!ant.visible) continue;
+      
+      // Create transformation matrix - handle missing properties
+      const position = ant.position || defaultPosition;
+      const rotation = ant.rotation || defaultRotation;
+      const scale = ant.scale || defaultScale;
+      
+      matrix.compose(position, rotation, scale);
       matrix.toArray(matrixArray, i * 16);
       
       // Set instance color
