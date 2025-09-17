@@ -79,12 +79,7 @@ const ThreeJSRenderer: React.FC<ThreeJSRendererProps> = ({
    * Initialize Three.js scene with advanced features
    */
   const initializeThreeJS = useCallback(async () => {
-    if (!mountRef.current) {
-      console.error('mountRef.current is null');
-      return;
-    }
-
-    console.log('Initializing Three.js renderer...');
+    if (!mountRef.current) return;
 
     try {
       // Create renderer with WebGL2 context
@@ -95,8 +90,6 @@ const ThreeJSRenderer: React.FC<ThreeJSRendererProps> = ({
         stencil: false,
         depth: true
       });
-
-      console.log('WebGL renderer created successfully');
       
       // Enable advanced rendering features
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
@@ -129,8 +122,7 @@ const ThreeJSRenderer: React.FC<ThreeJSRendererProps> = ({
         0.1,
         2000
       );
-      // Position camera closer to see small ant objects (0.5x0.5x0.5 units)
-      camera.position.set(5, 8, 5);
+      camera.position.set(50, 50, 50);
       camera.lookAt(0, 0, 0);
       cameraRef.current = camera;
 
@@ -156,23 +148,6 @@ const ThreeJSRenderer: React.FC<ThreeJSRendererProps> = ({
       testCube.position.set(0, 5, 0);
       sceneRef.current.add(testCube);
       console.log('Added test cube to scene');
-
-      // Add more visible objects
-      const groundGeo = new THREE.PlaneGeometry(100, 100);
-      const groundMat = new THREE.MeshBasicMaterial({ color: 0x666666, side: THREE.DoubleSide });
-      const ground = new THREE.Mesh(groundGeo, groundMat);
-      ground.rotation.x = -Math.PI / 2;
-      sceneRef.current.add(ground);
-
-      // Add some lights
-      const ambientLight = new THREE.AmbientLight(0x404040, 0.4);
-      sceneRef.current.add(ambientLight);
-
-      const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
-      directionalLight.position.set(50, 50, 50);
-      sceneRef.current.add(directionalLight);
-
-      console.log('Added basic scene objects for debugging');
       
     } catch (err) {
       console.error('Failed to initialize Three.js renderer:', err);
@@ -405,41 +380,25 @@ const ThreeJSRenderer: React.FC<ThreeJSRendererProps> = ({
     const pointLight2 = new THREE.PointLight(0x0066ff, 0.3, 100);
     pointLight2.position.set(-25, 10, -25);
     sceneRef.current.add(pointLight2);
+    
+    console.log('Advanced lighting system initialized');
   };
 
   /**
    * Update ant instances based on simulation data
    */
   const updateAntInstances = useCallback(() => {
-    if (!sceneRef.current) return;
-
-    // Simple fallback: render first 100 ants as individual cubes
-    if (antData.length > 0) {
-      // Clear existing ant objects
-      const existingAnts = sceneRef.current.children.filter(child => child.userData?.isAnt);
-      existingAnts.forEach(ant => sceneRef.current!.remove(ant));
-
-      // Add simple cube representation for first 100 ants
-      const antsToRender = Math.min(antData.length, 100);
-      for (let i = 0; i < antsToRender; i++) {
-        const ant = antData[i];
-        if (!ant.isAlive) continue;
-
-        const antGeometry = new THREE.BoxGeometry(1.0, 0.5, 1.0);
-        const antMaterial = new THREE.MeshBasicMaterial({
-          color: ant.caste === 'queen' ? 0xffd700 : 0x8B4513
-        });
-        const antMesh = new THREE.Mesh(antGeometry, antMaterial);
-
-        antMesh.position.set(ant.position.x, ant.position.z + 0.25, ant.position.y);
-        antMesh.userData = { isAnt: true };
-        sceneRef.current!.add(antMesh);
+    // Debug: Log ant data count (throttled)
+    const now = Date.now();
+    if (now - (window as any).lastAntLogTime > 2000) { // Log every 2 seconds
+      if (antData.length > 0) {
+        console.log(`Rendering ${antData.length} ants`);
+      } else {
+        console.log('No ant data to render');
       }
-
-      console.log(`Rendered ${antsToRender} ants as simple cubes`);
+      (window as any).lastAntLogTime = now;
     }
 
-    // Keep the original instanced rendering logic as backup
     if (!antInstancedMeshRef.current || !antData.length) return;
 
     const dummy = new THREE.Object3D();
